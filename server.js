@@ -35,10 +35,16 @@ img{max-width:100%;display:block}
 .nav-links a{font-size:15px;font-weight:500;color:var(--muted);position:relative;padding:4px 0;transition:color .2s}
 .nav-links a:hover,.nav-links a.active{color:var(--ink)}
 .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--accent);border-radius:2px}
-.nav-cta{background:var(--accent);color:#fff!important;padding:9px 18px;border-radius:999px;font-size:14px}
+.nav-cta{display:inline-flex;align-items:center;line-height:1;white-space:nowrap;background:var(--accent);color:#fff!important;padding:11px 20px;border-radius:999px;font-size:14px}
 .nav-cta:hover{background:var(--accent-d)}
+.nav-cta::after{display:none!important}
+.nav-inner{gap:18px}
 .burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
 .burger span{width:24px;height:2px;background:var(--ink);border-radius:2px;transition:.3s}
+.brand-logo{height:36px;width:auto;display:block}
+.brand-has-logo{gap:0}
+.foot-logo{height:46px}
+.hero-logo{height:clamp(74px,15vw,168px);width:auto;display:block;margin:0 0 22px;filter:drop-shadow(0 10px 26px rgba(0,0,0,.14))}
 
 /* HERO */
 .hero{position:relative;min-height:78vh;display:flex;align-items:center;overflow:hidden;
@@ -155,13 +161,34 @@ textarea{resize:vertical;min-height:90px}
   .about-block{grid-template-columns:1fr;gap:24px}
 }
 @media(max-width:720px){
-  .nav-links{position:fixed;inset:72px 0 auto 0;flex-direction:column;background:var(--bg);padding:24px;gap:18px;border-bottom:1px solid var(--line);transform:translateY(-130%);transition:transform .35s ease;z-index:40}
+  .nav-inner{height:62px}
+  .nav-links{position:fixed;inset:62px 0 auto 0;flex-direction:column;align-items:flex-start;background:var(--bg);padding:20px 24px 26px;gap:6px;border-bottom:1px solid var(--line);box-shadow:0 20px 40px -20px rgba(0,0,0,.25);transform:translateY(-130%);transition:transform .35s ease;z-index:40}
   .nav-links.open{transform:none}
+  .nav-links a{padding:11px 0;font-size:17px;width:100%}
+  .nav-cta{margin-top:8px;padding:12px 22px}
   .burger{display:flex}
-  .cat-grid,.grid{grid-template-columns:1fr}
-  .form-row.two{grid-template-columns:1fr}
-  .hero{min-height:70vh}
-  .about-meaning{gap:14px;flex-direction:column}
+  .cat-grid,.grid{grid-template-columns:1fr;gap:18px}
+  .form-row.two{grid-template-columns:1fr;gap:0}
+  .hero{min-height:auto}
+  .hero .container{padding-top:34px;padding-bottom:90px}
+  .about-meaning{gap:10px;flex-direction:column;font-size:17px}
+  .section{padding:56px 0}
+  .page-hero{padding:44px 0 24px}
+  .footer{padding:44px 0 26px}
+  .foot-grid{flex-direction:column;gap:26px}
+  .foot-bottom{flex-direction:column;align-items:flex-start;text-align:left}
+  .filters{padding:18px;gap:18px}
+  .about-block{padding:40px 0}
+  .form-wrap{padding:24px 20px}
+  .hero-actions .btn,.hero-actions{width:100%}
+  .hero-actions{flex-direction:column}
+}
+@media(max-width:480px){
+  .container{padding:0 18px}
+  .nav-inner{padding:0 18px}
+  .card-body{padding:18px 16px 20px}
+  .section-head h2{font-size:28px}
+  .cat-card{min-height:340px}
 }
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.cat-card .ph{transition:none}}
 `;
@@ -260,13 +287,25 @@ function imgStyle(image, seed) {
   return `background-image:${gradientFor(seed || "v")}`;
 }
 
-function nav(active) {
+function brandMark(c, variant) {
+  c = c || {};
+  if (c.logo_image) {
+    const cls = variant === "foot" ? "brand-logo foot-logo" : "brand-logo";
+    return `<a class="brand brand-has-logo" href="/"><img class="${cls}" src="${esc(
+      c.logo_image
+    )}" alt="VALUERO"></a>`;
+  }
+  const accent = variant === "foot" ? "" : "accent";
+  return `<a class="brand" href="/"><span class="${accent}">${MTN}</span>VALUERO</a>`;
+}
+
+function nav(active, c) {
   const link = (href, label) =>
     `<a href="${href}" class="${active === href ? "active" : ""}">${label}</a>`;
   return `
   <header class="nav">
     <div class="nav-inner">
-      <a class="brand" href="/"><span class="accent">${MTN}</span>VALUERO</a>
+      ${brandMark(c)}
       <nav class="nav-links" id="navlinks">
         ${link("/", "Home")}
         ${link("/unterkuenfte", "Unterkünfte")}
@@ -287,7 +326,7 @@ function footer(c) {
     <div class="container">
       <div class="foot-grid">
         <div class="foot-col">
-          <a class="brand" href="/"><span>${MTN}</span>VALUERO</a>
+          ${brandMark(c, "foot")}
           <p style="color:#9aa79d;font-size:14px;margin-top:12px;max-width:34ch">${esc(
             c.site_tagline
           )} im Hochmontafon.</p>
@@ -350,7 +389,7 @@ function layout({ title, active, body, content, extraScript }) {
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>${publicCSS}</style>
 </head><body>
-${nav(active)}
+${nav(active, content)}
 ${body}
 ${footer(content)}
 ${SCRIPT}
@@ -382,6 +421,7 @@ function homePage(c) {
       <path d="M0 220 L300 120 L520 180 L760 90 L980 170 L1200 110 L1440 180 L1440 220 Z" fill="#b7c6b8" opacity=".55"/>
     </svg>
     <div class="container">
+      ${c.logo_image ? `<img class="hero-logo" src="${esc(c.logo_image)}" alt="VALUERO">` : ""}
       <div class="eyebrow">${esc(c.site_tagline)} · Hochmontafon</div>
       <h1>${esc(c.home_hero_title)}</h1>
       <p class="lead">${esc(c.home_hero_sub)}</p>
@@ -986,6 +1026,8 @@ function webdesignPage(c, pendingCount, saved) {
     <div class="wd-group"><h3>Allgemein</h3>
       ${txt("site_tagline", "Slogan (Untertitel)")}
       ${txt("contact_email", "Kontakt-E-Mail")}
+      ${imgField("logo_image", "Logo (Kopfzeile, Fußzeile & groß im Hero)")}
+      <span class="hint">Am besten ein transparentes PNG. Leer lassen = Standard-Schriftzug „VALUERO“. Tipp: helles/weißes Logo wirkt am besten, da es auch in der dunklen Fußzeile angezeigt wird.</span>
     </div>
     <div class="wd-group"><h3>Startseite</h3>
       ${txt("home_hero_title", "Hero-Titel")}
@@ -1252,6 +1294,7 @@ async function seed() {
   // ---- Content defaults (editable via Webdesign admin) ----
   const defaults = {
     site_tagline: "Urlaub im Montafon",
+    logo_image: "",
     home_hero_title: "Dein Urlaubsplatz im Hochmontafon finden.",
     home_hero_sub:
       "Sorgfältig ausgewählte Unterkünfte, Gastronomie und Veranstaltungen – mitten im Hochmontafon.",
