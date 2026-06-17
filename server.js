@@ -35,9 +35,9 @@ img{max-width:100%;display:block}
 .nav-links a{font-size:15px;font-weight:500;color:#b6c2ba;position:relative;padding:4px 0;transition:color .2s}
 .nav-links a:hover,.nav-links a.active{color:#fff}
 .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--accent);border-radius:2px}
-.nav-cta{display:inline-flex;align-items:center;line-height:1;white-space:nowrap;background:var(--accent);color:#fff!important;padding:11px 20px;border-radius:999px;font-size:14px;font-weight:600;letter-spacing:.01em;box-shadow:0 6px 18px -8px rgba(47,110,82,.9);transition:background .2s,transform .2s,box-shadow .2s}
-.nav-cta:hover{background:#3a8763;transform:translateY(-1px);box-shadow:0 10px 22px -8px rgba(47,110,82,1)}
-.nav-cta::after{display:none!important}
+.nav-links a.nav-cta{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;line-height:1;white-space:nowrap;background:var(--accent);color:#fff!important;padding:11px 22px;border-radius:999px;font-size:14px;font-weight:600;letter-spacing:.01em;box-shadow:0 6px 18px -8px rgba(47,110,82,.9);transition:background .2s,transform .2s,box-shadow .2s}
+.nav-links a.nav-cta:hover{background:#3a8763;transform:translateY(-1px);box-shadow:0 10px 22px -8px rgba(47,110,82,1)}
+.nav-links a.nav-cta::after{display:none!important}
 .burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
 .burger span{width:24px;height:2px;background:#fff;border-radius:2px;transition:.3s}
 .brand-logo{height:36px;width:auto;display:block}
@@ -164,7 +164,7 @@ textarea{resize:vertical;min-height:90px}
   .nav-links{position:fixed;inset:62px 0 auto 0;flex-direction:column;align-items:flex-start;background:rgba(16,23,19,.97);padding:20px 24px 26px;gap:6px;border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 20px 40px -20px rgba(0,0,0,.5);transform:translateY(-130%);transition:transform .35s ease;z-index:40}
   .nav-links.open{transform:none}
   .nav-links a{padding:11px 0;font-size:17px;width:100%}
-  .nav-cta{margin-top:8px;padding:12px 22px}
+  .nav-links a.nav-cta{margin-top:8px;padding:12px 22px;align-self:flex-start}
   .burger{display:flex}
   .cat-grid,.grid{grid-template-columns:1fr;gap:18px}
   .form-row.two{grid-template-columns:1fr;gap:0}
