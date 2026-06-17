@@ -135,7 +135,9 @@ textarea{resize:vertical;min-height:90px}
 .foot-col h4{color:#fff;font-family:"Fraunces",serif;font-size:18px;margin-bottom:12px}
 .foot-col a{display:block;color:#aab6ad;font-size:14px;padding:3px 0}
 .foot-col a:hover{color:#fff}
-.foot-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px;color:#8b988e}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px;color:#8b988e}
+.foot-admin{border:1px solid rgba(255,255,255,.18);color:#aab6ad;padding:5px 13px;border-radius:999px;font-size:12px;font-weight:600;transition:.2s}
+.foot-admin:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 
 /* LEGAL / RICH TEXT */
 .rich{max-width:760px}
@@ -312,6 +314,7 @@ function footer(c) {
       <div class="foot-bottom">
         <span>© ${y} by FS Creative</span>
         <span>VALUERO – ${esc(c.site_tagline)}</span>
+        <a href="/admin" class="foot-admin">Admin</a>
       </div>
     </div>
   </footer>`;
