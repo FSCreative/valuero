@@ -43,7 +43,7 @@ img{max-width:100%;display:block}
 .burger span{width:24px;height:2px;background:var(--ink);border-radius:2px;transition:.3s}
 .brand-logo{height:36px;width:auto;display:block}
 .brand-has-logo{gap:0}
-.foot-logo{height:46px}
+.foot-logo{height:46px;filter:brightness(0) invert(1)}
 .hero-logo{height:clamp(74px,15vw,168px);width:auto;display:block;margin:0 0 22px;filter:drop-shadow(0 10px 26px rgba(0,0,0,.14))}
 
 /* HERO */
@@ -828,7 +828,9 @@ const UPLOAD_SCRIPT = `
           if(w>max){h=h*max/w;w=max;}
           var cv=document.createElement('canvas');cv.width=w;cv.height=h;
           cv.getContext('2d').drawImage(img,0,0,w,h);
-          var data=cv.toDataURL('image/jpeg',0.82);
+          // Keep transparency for PNG/SVG/WebP (e.g. logos); use JPEG only for opaque photos.
+          var keepAlpha=/png|svg|webp/i.test(file.type);
+          var data=keepAlpha?cv.toDataURL('image/png'):cv.toDataURL('image/jpeg',0.82);
           target.value=data;
           if(prev)prev.style.backgroundImage="url('"+data+"')";
         };
