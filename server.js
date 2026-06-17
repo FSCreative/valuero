@@ -322,8 +322,18 @@ const SCRIPT = `
 (function(){
   var b=document.getElementById('burger'),n=document.getElementById('navlinks');
   if(b)b.addEventListener('click',function(){n.classList.toggle('open')});
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+  // Reveal anything already within (or near) the viewport on load.
+  function revealVisible(){
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    document.querySelectorAll('.reveal:not(.in)').forEach(function(el){
+      if(el.getBoundingClientRect().top < vh*0.92) el.classList.add('in');
+    });
+  }
+  revealVisible();
+  window.addEventListener('load',revealVisible);
+  setTimeout(revealVisible,400);
 })();
 </script>`;
 
