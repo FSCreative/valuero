@@ -1181,6 +1181,60 @@ async function init() {
     );
   `);
   await seed();
+  await enrich();
+}
+
+// Normalize a Wix media URL to a light, consistently-sized card image.
+function normWix(u) {
+  if (!u) return "";
+  const m = u.match(/^(https:\/\/static\.wixstatic\.com\/media\/[^/]+)/);
+  if (!m) return u;
+  return m[1] + "/v1/fill/w_1200,h_800,al_c,q_82,enc_auto/photo.jpg";
+}
+
+// Fill in real links + photos (migrated from valuero.at and the partner sites).
+// Idempotent: only sets a field if it is currently empty, so admin edits are kept.
+async function enrich() {
+  const W = normWix;
+  const acc = [
+    ["Haus Felder – Garfrescha", "https://www.hausfelder-garfrescha.com/", W("https://static.wixstatic.com/media/dc121b_b5f5eacfd817468b8ff7b1e46138b61a~mv2.jpg/v1/crop/img.jpg")],
+    ["Alt Montafon", "https://www.alt-montafon.com/", ""],
+    ["Landhaus Angelika", "https://www.landhausangelika.at/", W("https://static.wixstatic.com/media/d2f3ea_14eec665631c449c8ca60c85f365d56d~mv2.jpg/v1/fit/img.jpg")],
+    ["Haus Lerch", "https://www.ferienhaus-lerch.com/", W("https://static.wixstatic.com/media/3dcb39_0c84c369268c4bc2801e1aa830463d12~mv2_d_3072_2304_s_2.jpg/v1/fill/img.jpg")],
+    ["Chalet Antonhaus", "https://www.antonhaus.at/", W("https://static.wixstatic.com/media/d2f3ea_cc69fcc08a514d63ad2fc3512685b1aa~mv2.jpeg/v1/fill/img.jpeg")],
+    ["Haus zur Kapelle", "https://www.alphuette.at/", W("https://static.wixstatic.com/media/d2f3ea_4b74363394a1453ba82ba17c142448b1~mv2.png/v1/fit/img.png")],
+  ];
+  const gas = [
+    ["La Torteria", "https://www.la-torteria.at/", W("https://static.wixstatic.com/media/d2f3ea_d045d75d0c0c4447b7dd3b16a5ecf785~mv2.jpeg/v1/fill/img.jpeg")],
+    ["Blauer Anton", "https://www.antonhaus.at/blaueranton", W("https://static.wixstatic.com/media/d2f3ea_f299e7c05a5948caaec520f7a00f04e8~mv2.jpg/v1/fill/img.jpg")],
+    ["La Taverna", "https://www.la-taverna-pizzeria.at/", W("https://static.wixstatic.com/media/11062b_b6f3a9bdc88b4195b4af6792d79e28ac~mv2.jpg")],
+    ["Alt Montafon", "https://www.alt-montafon.com/alt-montafon-gaschurn", ""],
+  ];
+  for (const [name, link, image] of acc) {
+    await query(
+      `UPDATE accommodations
+         SET link = COALESCE(NULLIF(link,''), $2),
+             image = CASE WHEN $3 <> '' AND COALESCE(image,'')='' THEN $3 ELSE image END
+       WHERE name = $1`,
+      [name, link, image]
+    );
+  }
+  for (const [name, link, image] of gas) {
+    await query(
+      `UPDATE gastro
+         SET link = COALESCE(NULLIF(link,''), $2),
+             image = CASE WHEN $3 <> '' AND COALESCE(image,'')='' THEN $3 ELSE image END
+       WHERE name = $1`,
+      [name, link, image]
+    );
+  }
+  await query(
+    `UPDATE events
+       SET website = COALESCE(NULLIF(website,''), $2),
+           image = CASE WHEN $3 <> '' AND COALESCE(image,'')='' THEN $3 ELSE image END
+     WHERE name = $1`,
+    ["Musikfest Gaschurn", "https://musikfest26.at/", normWix("https://static.wixstatic.com/media/d2f3ea_817c6e0ac86e444ca10a73d0f6ea3544~mv2.jpg/v1/fill/img.jpg")]
+  );
 }
 
 async function seedContent(key, value) {
