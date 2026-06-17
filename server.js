@@ -31,7 +31,6 @@ img{max-width:100%;display:block}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;height:74px;max-width:var(--maxw);margin:0 auto;padding:0 24px}
 .brand{display:flex;align-items:center;gap:10px;font-family:"Fraunces",serif;font-weight:600;font-size:24px;letter-spacing:.04em;color:#fff}
 .brand svg{width:34px;height:24px}
-.nav .brand-logo{filter:brightness(0) invert(1)}
 .nav-links{display:flex;align-items:center;gap:28px}
 .nav-links a{font-size:15px;font-weight:500;color:#b6c2ba;position:relative;padding:4px 0;transition:color .2s}
 .nav-links a:hover,.nav-links a.active{color:#fff}
@@ -43,7 +42,7 @@ img{max-width:100%;display:block}
 .burger span{width:24px;height:2px;background:#fff;border-radius:2px;transition:.3s}
 .brand-logo{height:36px;width:auto;display:block}
 .brand-has-logo{gap:0}
-.foot-logo{height:46px;filter:brightness(0) invert(1)}
+.foot-logo{height:46px}
 .hero-logo{height:clamp(74px,15vw,168px);width:auto;display:block;margin:0 0 22px;filter:drop-shadow(0 10px 26px rgba(0,0,0,.14))}
 
 /* HERO */
