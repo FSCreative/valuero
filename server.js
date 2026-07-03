@@ -263,6 +263,41 @@ textarea{resize:vertical;min-height:90px}
 .msg{padding:13px 15px;border-radius:10px;font-size:14px;line-height:1.5}
 .msg.err{background:#fbe8e4;color:#a23b26;border:1px solid #f0c4b9}
 .msg.ok{background:#e6f1ea;color:var(--accent-d);border:1px solid #bfdcc9}
+.bk-card .body{cursor:pointer}
+.card-open{font-size:13px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-top:2px}
+/* room picker */
+.rooms-pick{display:flex;flex-direction:column;gap:8px;margin:2px 0 4px}
+.room-opt{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;transition:.15s}
+.room-opt:hover{border-color:var(--accent)}
+.room-opt.sel{border-color:var(--accent);background:rgba(31,106,73,.06)}
+.room-opt input{accent-color:var(--accent);width:17px;height:17px;flex:0 0 auto}
+.room-opt .rn{font-weight:600;font-size:14.5px}
+.room-opt .rg{font-size:12.5px;color:var(--muted)}
+.room-opt .rp{margin-left:auto;text-align:right;font-size:13px;color:var(--muted);white-space:nowrap}
+.room-opt .rp b{font-family:"Fraunces",serif;font-size:18px;color:var(--ink);display:block}
+.room-opt.soldout{opacity:.55}
+.room-opt.soldout .rp{color:#b4553f}
+/* detail modal */
+.dt-modal{max-width:760px;padding:0;position:relative}
+.dt-close{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.92);border-radius:999px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;z-index:3;box-shadow:0 4px 14px -6px rgba(0,0,0,.4)}
+.dt-gallery .main{width:100%;height:360px;background-size:cover;background-position:center;background-color:#dfe5de}
+.dt-gallery .main.noimg{background:linear-gradient(150deg,#3a6b54,#1f3a2c)}
+.dt-thumbs{display:flex;gap:8px;padding:10px 20px 0;overflow-x:auto}
+.dt-thumbs .th{width:88px;height:62px;border-radius:9px;background-size:cover;background-position:center;cursor:pointer;flex:0 0 auto;border:2px solid transparent}
+.dt-thumbs .th.active{border-color:var(--accent)}
+.dt-body{padding:18px 24px 24px}
+.dt-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.dt-head h3{font-size:26px}
+.dt-rating{color:var(--gold);font-weight:600;white-space:nowrap}
+.dt-meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 12px}
+.dt-meta .chip{background:var(--surface-2);border-radius:999px;padding:4px 11px;font-size:13px}
+.dt-desc{color:var(--muted);margin:2px 0 16px;line-height:1.65}
+.dt-feats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.dt-feats .fi{background:var(--surface-2);border-radius:999px;padding:6px 12px;font-size:13px}
+.dt-sec-title{font-family:"Fraunces",serif;font-size:18px;margin:4px 0 10px}
+.dt-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.dt-actions .btn{flex:0 0 auto}
+.dt-web{color:var(--accent);font-weight:600;display:inline-flex;align-items:center;gap:6px}
 @media(max-width:900px){.booking-layout{grid-template-columns:1fr}.filters-panel{position:static}.booking-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.booking-grid{grid-template-columns:1fr}.bk-form{grid-template-columns:1fr}.searchbar{gap:2px}.searchbar .sf{flex:1 1 100%}.searchbar .sf+.sf::before{display:none}.searchbar .sf.go{padding-top:6px}.searchbar .btn-search{width:100%;justify-content:center}}
 `;
@@ -335,6 +370,12 @@ a{color:var(--accent);text-decoration:none}
 .beds-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--line)}
 .beds-badge.on{background:rgba(72,168,122,.16);color:var(--accent);border-color:rgba(72,168,122,.4)}
 .beds-badge.off{background:var(--surface-2);color:var(--muted)}
+.room-row{display:flex;gap:10px;align-items:flex-end;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.room-row .fr{margin:0}
+.room-row label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.btn-remove{flex:0 0 auto;width:38px;height:42px;border:1px solid var(--line);background:var(--surface-2);color:var(--danger);border-radius:10px;font-size:20px;line-height:1;cursor:pointer;transition:.15s}
+.btn-remove:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+@media(max-width:760px){.room-row{flex-wrap:wrap}.room-row .fr{flex:1 1 100%!important}.btn-remove{width:100%}}
 @media(max-width:760px){.sidebar{display:none}.main{padding:20px}.fr.two,.stat-grid,.feature-grid{grid-template-columns:1fr 1fr}}
 `;
 
@@ -382,6 +423,14 @@ function parseFeatures(str) {
     .split(/[,|]/)
     .map((s) => s.trim())
     .filter((k) => FEATURE_LABEL[k]);
+}
+
+// Parse a gallery field (URLs separated by newlines or "|") into a URL list.
+function parseGallery(str) {
+  return String(str || "")
+    .split(/[\n|]/)
+    .map((s) => s.trim())
+    .filter((u) => /^https?:\/\//.test(u));
 }
 
 const MTN = `<svg viewBox="0 0 34 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 22 L12 5 L17 13 L21 7 L32 22 Z" fill="currentColor"/><path d="M12 5 L15 10 L13.5 12 L10.5 9 Z" fill="#fff" opacity=".85"/></svg>`;
@@ -700,6 +749,7 @@ function bookingOverlayHTML() {
         <button class="bk-close" id="bk-close" aria-label="Schließen">×</button>
       </div>
       <div class="mb">
+        <div id="bk-rooms"></div>
         <div class="summary" id="bk-summary"></div>
         <div id="bk-msg"></div>
         <form class="bk-form" id="bk-form" onsubmit="return false">
@@ -719,6 +769,25 @@ function bookingOverlayHTML() {
           <button class="btn btn-ghost" id="bk-cancel" type="button">Abbrechen</button>
           <button class="btn btn-primary" id="bk-submit" type="button">Jetzt verbindlich buchen</button>
         </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Detail window (gallery + description + rooms + website link), filled by JS.
+function detailOverlayHTML() {
+  return `
+  <div class="bk-overlay" id="dtOverlay" aria-hidden="true">
+    <div class="bk-modal dt-modal" role="dialog" aria-modal="true" aria-labelledby="dt-title">
+      <button class="bk-close dt-close" id="dt-close" aria-label="Schließen">×</button>
+      <div class="dt-gallery"><div class="main" id="dt-main"></div><div class="dt-thumbs" id="dt-thumbs"></div></div>
+      <div class="dt-body">
+        <div class="dt-head"><h3 id="dt-title"></h3><div class="dt-rating" id="dt-rating"></div></div>
+        <div class="dt-meta" id="dt-meta"></div>
+        <p class="dt-desc" id="dt-desc"></p>
+        <div class="dt-feats" id="dt-feats"></div>
+        <div id="dt-rooms"></div>
+        <div class="dt-actions" id="dt-actions"></div>
       </div>
     </div>
   </div>`;
@@ -779,7 +848,8 @@ function bookingToolPage(c, items) {
       </div>
     </div>
   </section>
-  ${bookingOverlayHTML()}`;
+  ${bookingOverlayHTML()}
+  ${detailOverlayHTML()}`;
   return layout({
     title: "Unterkünfte | VALUERO",
     active: "/unterkuenfte",
@@ -837,10 +907,18 @@ const BOOKING_SCRIPT = `
     fetch('/api/search?'+params()).then(function(r){return r.json()}).then(function(d){last=d;renderList(d)})
     .catch(function(){results.innerHTML='<div class="empty">Fehler beim Laden. Bitte erneut versuchen.</div>'});}
 
-  function price1(x){return (x.offer&&x.offer.available&&x.offer.perNight)?x.offer.perNight:9e9}
+  function conn(x){return x.connected?0:1}
+  function avail(x){return (x.offer&&x.offer.available)?0:1}
+  function pn(x){return (x.offer&&x.offer.available&&x.offer.perNight)?x.offer.perNight:null}
   function sortResults(list){var a=list.slice();
-    if(state.sort==='price-asc')a.sort(function(x,y){return price1(x)-price1(y)});
-    else if(state.sort==='price-desc')a.sort(function(x,y){return (price1(y)===9e9?-1:price1(y))-(price1(x)===9e9?-1:price1(x))});
+    a.sort(function(x,y){
+      if(conn(x)!==conn(y))return conn(x)-conn(y);      // Beds24-Unterkünfte immer zuerst
+      if(avail(x)!==avail(y))return avail(x)-avail(y);
+      var px=pn(x),py=pn(y);
+      if(state.sort==='price-asc'){if(px==null&&py==null)return 0;if(px==null)return 1;if(py==null)return -1;return px-py;}
+      if(state.sort==='price-desc'){if(px==null&&py==null)return 0;if(px==null)return 1;if(py==null)return -1;return py-px;}
+      return 0;
+    });
     return a;}
 
   function renderList(d){var list=sortResults(d.results||[]);var cnt=$('#resCount');
@@ -854,12 +932,14 @@ const BOOKING_SCRIPT = `
     var img=acc.image?('style="background-image:url(\\''+esc(acc.image)+'\\')"'):'class="img noimg"';
     var imgTag=acc.image?('<div class="img" '+img+'>'):'<div '+img+'>';
     var badge=acc.badge?'<span class="badge">'+esc(acc.badge)+'</span>':'';
-    return '<article class="bk-card">'+imgTag+badge+'</div><div class="body">'
+    var rooms=(acc.roomCount>1)?'<span class="fi">\\ud83d\\udecf '+acc.roomCount+' Zimmer</span>':'';
+    return '<article class="bk-card" data-detail="'+acc.id+'">'+imgTag+badge+'</div><div class="body">'
       +'<h3>'+esc(acc.name)+'</h3>'
       +(acc.rating?'<div class="rating" style="color:#bfa06a;font-weight:600;font-size:14px">\\u2605 '+esc(acc.rating)+'</div>':'')
-      +'<div class="feat-row">'+(acc.location?'<span class="fi">\\ud83d\\udccd '+esc(acc.location)+'</span>':'')+(acc.type?'<span class="fi">'+esc(acc.type)+'</span>':'')+'</div>'
+      +'<div class="feat-row">'+(acc.location?'<span class="fi">\\ud83d\\udccd '+esc(acc.location)+'</span>':'')+(acc.type?'<span class="fi">'+esc(acc.type)+'</span>':'')+rooms+'</div>'
       +'<p class="desc">'+esc(acc.description)+'</p>'
       +'<div class="feat-row">'+feats(acc)+'</div>'
+      +'<span class="card-open">Details &amp; Bilder ansehen \\u2192</span>'
       +priceBox(acc)+'</div></article>';}
 
   function priceBox(acc){
@@ -874,26 +954,51 @@ const BOOKING_SCRIPT = `
       +'<button class="btn-book" data-book="'+acc.id+'">Jetzt buchen</button></div>';}
 
   function bindCards(){
-    $$('[data-book]').forEach(function(b){b.addEventListener('click',function(){openBooking(findAcc(b.getAttribute('data-book')))})});
-    $$('[data-pick]').forEach(function(b){b.addEventListener('click',function(){if(form&&form.checkin){form.checkin.focus();}window.scrollTo({top:0,behavior:'smooth'})})});}
+    $$('.bk-card').forEach(function(c){c.addEventListener('click',function(e){
+      if(e.target.closest('button,a'))return;
+      openDetail(findAcc(c.getAttribute('data-detail')));});});
+    $$('[data-book]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();openBooking(findAcc(b.getAttribute('data-book')))})});
+    $$('[data-pick]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();if(form&&form.checkin){form.checkin.focus();}window.scrollTo({top:0,behavior:'smooth'})})});}
   function findAcc(id){var m=(last.results||[]).filter(function(x){return String(x.id)===String(id)});return m[0]}
 
-  // ---- overlay ----
-  var ov=$('#bkOverlay');
-  function openBooking(acc){if(!acc)return;
-    if(!state.checkin||!state.checkout){alert('Bitte zuerst An- und Abreise wählen.');if(form&&form.checkin)form.checkin.focus();return;}
-    var o=acc.offer||{};
-    $('#bk-title').textContent=acc.name;
+  // ---- booking overlay (with room picker) ----
+  var ov=$('#bkOverlay'), bkAcc=null, bkRoom=null;
+  function roomsWithOffers(acc){return (acc.rooms||[]).filter(function(r){return r.offer&&r.offer.available})}
+  function renderBkSummary(){
+    var o=(bkRoom&&bkRoom.offer)||{};
     var s='<div class="row"><span>An-/Abreise</span><span>'+fmt(state.checkin)+' \\u2192 '+fmt(state.checkout)+'</span></div>'
       +'<div class="row"><span>Nächte</span><span>'+(o.nights||'')+'</span></div>'
-      +'<div class="row"><span>Gäste</span><span>'+(state.guests||2)+'</span></div>';
+      +'<div class="row"><span>Gäste</span><span>'+(state.guests||2)+'</span></div>'
+      +((bkRoom&&bkRoom.name&&bkAcc&&bkAcc.roomCount>1)?'<div class="row"><span>Zimmer</span><span>'+esc(bkRoom.name)+'</span></div>':'');
     if(o.roomTotal)s+='<div class="row"><span>Unterkunft</span><span>'+euro(o.roomTotal,o.currency)+'</span></div>';
     if(o.extraFees)s+='<div class="row"><span>Endreinigung / Gebühren</span><span>'+euro(o.extraFees,o.currency)+'</span></div>';
     if(o.total)s+='<div class="row total"><span>Gesamt</span><span>'+euro(o.total,o.currency)+'</span></div>';
     $('#bk-summary').innerHTML=s;
-    $('#bk-accId').value=acc.id;$('#bk-msg').innerHTML='';
+  }
+  function openBooking(acc){
+    if(!acc)return;
+    if(!acc.connected){if(acc.link)window.open(acc.link,'_blank','noopener');return;}
+    if(!state.checkin||!state.checkout){alert('Bitte zuerst An- und Abreise wählen.');if(form&&form.checkin)form.checkin.focus();return;}
+    var avail=roomsWithOffers(acc);
+    if(!avail.length){alert('Für diese Daten leider nicht verfügbar.');return;}
+    bkAcc=acc;bkRoom=avail[0];
+    $('#bk-title').textContent=acc.name;$('#bk-accId').value=acc.id;$('#bk-msg').innerHTML='';
+    var rp=$('#bk-rooms');
+    if(avail.length>1){
+      rp.innerHTML='<div class="dt-sec-title" style="font-size:15px;margin-top:0">Zimmer wählen</div><div class="rooms-pick">'+avail.map(function(r,i){
+        return '<label class="room-opt'+(i===0?' sel':'')+'"><input type="radio" name="bkroom" value="'+esc(r.roomId)+'"'+(i===0?' checked':'')+'>'
+          +'<span><span class="rn">'+esc(r.name||'Zimmer')+'</span>'+(r.maxGuests?'<span class="rg"> · bis '+r.maxGuests+' Gäste</span>':'')+'</span>'
+          +'<span class="rp"><b>'+euro(r.offer.total,r.offer.currency)+'</b>gesamt</span></label>';
+      }).join('')+'</div>';
+      $$('#bk-rooms input[name=bkroom]').forEach(function(inp){inp.addEventListener('change',function(){
+        bkRoom=avail.filter(function(r){return String(r.roomId)===String(inp.value)})[0];
+        $$('#bk-rooms .room-opt').forEach(function(o){o.classList.remove('sel')});inp.closest('.room-opt').classList.add('sel');
+        renderBkSummary();});});
+    } else rp.innerHTML='';
+    renderBkSummary();
     $('#bk-form').style.display='';$('#bk-actions').style.display='';
-    ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+    ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+  }
   function closeBooking(){ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.body.style.overflow=''}
   function msg(t,html){$('#bk-msg').innerHTML='<div class="msg '+t+'">'+html+'</div>'}
   if(ov){
@@ -902,7 +1007,7 @@ const BOOKING_SCRIPT = `
     ov.addEventListener('click',function(e){if(e.target===ov)closeBooking()});
     $('#bk-submit').addEventListener('click',function(){
       var f=$('#bk-form');
-      var data={accId:$('#bk-accId').value,checkin:state.checkin,checkout:state.checkout,guests:state.guests||2,
+      var data={accId:$('#bk-accId').value,roomId:(bkRoom&&bkRoom.roomId)||'',checkin:state.checkin,checkout:state.checkout,guests:state.guests||2,
         title:f.title.value,firstName:f.firstName.value.trim(),lastName:f.lastName.value.trim(),
         email:f.email.value.trim(),phone:f.phone.value.trim(),notes:f.notes.value.trim()};
       if(!data.firstName||!data.lastName||!data.email){msg('err','Bitte Vorname, Nachname und E-Mail ausfüllen.');return;}
@@ -911,12 +1016,46 @@ const BOOKING_SCRIPT = `
       fetch('/api/book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)})
         .then(function(r){return r.json()}).then(function(res){
           btn.disabled=false;btn.textContent='Jetzt verbindlich buchen';
-          if(res.ok){$('#bk-form').style.display='none';$('#bk-actions').style.display='none';
+          if(res.ok){$('#bk-form').style.display='none';$('#bk-actions').style.display='none';$('#bk-rooms').innerHTML='';
             msg('ok','<b>Buchung bestätigt!</b><br>Buchungsnummer: <b>'+(res.bookingId||'\\u2014')+'</b><br>Du erhältst in Kürze eine Bestätigung per E-Mail.'+(res.demo?'<br><em>(Demo-Modus \\u2013 keine echte Buchung erstellt)</em>':''));
           }else{msg('err',res.error||'Buchung fehlgeschlagen.')}
         }).catch(function(){btn.disabled=false;btn.textContent='Jetzt verbindlich buchen';msg('err','Netzwerkfehler. Bitte erneut versuchen.')});
     });
   }
+  // ---- detail window (gallery + info + website link) ----
+  var dt=$('#dtOverlay');
+  function openDetail(acc){
+    if(!acc)return;
+    var imgs=(acc.images&&acc.images.length)?acc.images:(acc.image?[acc.image]:[]);
+    var main=$('#dt-main');
+    if(imgs.length){main.className='main';main.style.backgroundImage="url('"+imgs[0]+"')";}else{main.className='main noimg';main.style.backgroundImage='';}
+    var th=$('#dt-thumbs');
+    if(imgs.length>1){th.style.display='';th.innerHTML=imgs.map(function(u,i){return '<div class="th'+(i===0?' active':'')+'" data-i="'+i+'" style="background-image:url(\\''+u+'\\')"></div>';}).join('');
+      $$('#dt-thumbs .th').forEach(function(t){t.addEventListener('click',function(){main.style.backgroundImage="url('"+imgs[+t.getAttribute('data-i')]+"')";$$('#dt-thumbs .th').forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});
+    }else{th.style.display='none';th.innerHTML='';}
+    $('#dt-title').textContent=acc.name;
+    $('#dt-rating').innerHTML=acc.rating?('\\u2605 '+esc(acc.rating)):'';
+    $('#dt-meta').innerHTML=(acc.location?'<span class="chip">\\ud83d\\udccd '+esc(acc.location)+'</span>':'')+(acc.type?'<span class="chip">'+esc(acc.type)+'</span>':'')+(acc.maxGuests?'<span class="chip">bis '+acc.maxGuests+' Gäste</span>':'')+(acc.roomCount>1?'<span class="chip">'+acc.roomCount+' Zimmer</span>':'');
+    $('#dt-desc').textContent=acc.description||'';
+    $('#dt-feats').innerHTML=(acc.featureLabels||[]).map(function(f){return '<span class="fi">'+f.icon+' '+esc(f.label)+'</span>';}).join('');
+    var rhtml='';
+    if(acc.connected){
+      var avail=roomsWithOffers(acc);
+      if(state.checkin&&state.checkout){
+        if(avail.length)rhtml='<div class="dt-sec-title">Verfügbare Zimmer</div><div class="rooms-pick">'+avail.map(function(r){return '<div class="room-opt"><span><span class="rn">'+esc(r.name||'Zimmer')+'</span>'+(r.maxGuests?'<span class="rg"> · bis '+r.maxGuests+' Gäste</span>':'')+'</span><span class="rp"><b>'+euro(r.offer.total,r.offer.currency)+'</b>gesamt</span></div>';}).join('')+'</div>';
+        else rhtml='<p class="note-web">Für diese Daten leider nicht verfügbar – bitte andere Daten wählen.</p>';
+      }else rhtml='<p class="note-web">Wähle oben Anreise &amp; Abreise für Live-Preise.</p>';
+    }else rhtml='<p class="note-web">Preise &amp; Buchung direkt über die Website der Unterkunft.</p>';
+    $('#dt-rooms').innerHTML=rhtml;
+    var a='';
+    if(acc.connected){var canBook=state.checkin&&state.checkout&&roomsWithOffers(acc).length;a+='<button class="btn btn-primary" id="dt-book"'+(canBook?'':' disabled style="opacity:.5;cursor:default"')+'>Jetzt buchen</button>';}
+    if(acc.link)a+='<a class="dt-web" href="'+esc(acc.link)+'" target="_blank" rel="noopener">Zur Website \\u2192</a>';
+    $('#dt-actions').innerHTML=a;
+    var b=$('#dt-book');if(b)b.addEventListener('click',function(){closeDetail();openBooking(acc);});
+    dt.classList.add('open');dt.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+  }
+  function closeDetail(){dt.classList.remove('open');dt.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+  if(dt){$('#dt-close').addEventListener('click',closeDetail);dt.addEventListener('click',function(e){if(e.target===dt)closeDetail();});}
   run();
 })();
 </script>`;
@@ -1306,13 +1445,38 @@ function fieldImage(value) {
     <span class="hint">Bild auswählen – wird automatisch verkleinert. Leer lassen für Platzhalter.</span>`;
 }
 
-// Beds24 connection + booking-tool filters — only for accommodations.
+// One editable room row in the admin form.
+function roomRow(r) {
+  r = r || {};
+  return `
+  <div class="room-row">
+    <input type="hidden" name="room_row_id" value="${esc(r.id || "")}">
+    <div class="fr" style="margin:0;flex:2"><label>Zimmername</label><input name="room_name" value="${esc(
+      r.name || ""
+    )}" placeholder="z. B. Doppelzimmer Bergblick"></div>
+    <div class="fr" style="margin:0;flex:1.2"><label>Beds24 Zimmer-ID</label><input name="room_beds24_id" value="${esc(
+      r.beds24_room_id || ""
+    )}" placeholder="z. B. 678901" inputmode="numeric"></div>
+    <div class="fr" style="margin:0;flex:.7"><label>Max. Gäste</label><input type="number" min="0" name="room_max_guests" value="${esc(
+      r.max_guests ? r.max_guests : ""
+    )}"></div>
+    <button type="button" class="btn-remove" title="Zimmer entfernen" aria-label="Zimmer entfernen">×</button>
+  </div>`;
+}
+
+// Beds24 connection + rooms + booking-tool filters — only for accommodations.
 function accBookingFields(it) {
   const sel = parseFeatures(it.features);
-  const connected = String(it.beds24_property_id || "").trim() && String(it.beds24_room_id || "").trim();
+  let rooms = it.__rooms && it.__rooms.length ? it.__rooms : [];
+  if (!rooms.length && String(it.beds24_room_id || "").trim()) {
+    rooms = [{ id: "", name: it.type || "Zimmer", beds24_room_id: it.beds24_room_id, max_guests: it.max_guests }];
+  }
+  const connected =
+    String(it.beds24_property_id || "").trim() && rooms.some((r) => String(r.beds24_room_id || "").trim());
   const badge = connected
     ? `<span class="beds-badge on">● Beds24 verbunden – Live-Buchung aktiv</span>`
     : `<span class="beds-badge off">○ Keine API – zeigt „Preise siehe Website"</span>`;
+  const roomRows = (rooms.length ? rooms : [{}]).map(roomRow).join("");
   const featBoxes = FEATURES.map((f) => {
     const on = sel.includes(f.key);
     return `<label class="feat"><input type="checkbox" name="features" value="${f.key}" ${
@@ -1321,28 +1485,46 @@ function accBookingFields(it) {
   }).join("");
   return `
     <div class="section-sep">Buchungstool &amp; Beds24 ${badge}</div>
-    <p class="hint" style="margin:-6px 0 14px">Property- und Zimmer-ID eintragen, damit VALUERO Live-Preise, Verfügbarkeit und die komplette Buchungsstrecke anzeigt. Bleiben die Felder leer, erscheint die Unterkunft ohne Preis mit dem Hinweis „Preise siehe Website" und einem Button zur oben eingetragenen Website.</p>
+    <p class="hint" style="margin:-6px 0 14px">Property-ID eintragen und pro Zimmer eine Beds24 Zimmer-ID. Dann zeigt VALUERO Live-Preise, Verfügbarkeit und die komplette Buchungsstrecke (bei mehreren Zimmern wählt der Gast das Zimmer). Ohne Zimmer-ID erscheint die Unterkunft ohne Preis mit „Preise siehe Website" und einem Button zur oben eingetragenen Website.</p>
     <div class="fr two">
       <div class="fr" style="margin:0"><label>Beds24 Property-ID</label><input name="beds24_property_id" value="${esc(
         it.beds24_property_id
       )}" placeholder="z. B. 123456" inputmode="numeric"></div>
-      <div class="fr" style="margin:0"><label>Beds24 Zimmer-ID (Room-ID)</label><input name="beds24_room_id" value="${esc(
-        it.beds24_room_id
-      )}" placeholder="z. B. 678901" inputmode="numeric"></div>
-    </div>
-    <div class="fr two">
-      <div class="fr" style="margin:0"><label>Max. Gäste</label><input type="number" min="0" name="max_guests" value="${esc(
-        it.max_guests ? it.max_guests : ""
-      )}" placeholder="z. B. 4"></div>
       <div class="fr" style="margin:0"><label>Eigener API-Token (optional)</label><input name="beds24_token" value="${esc(
         it.beds24_token
       )}" placeholder="nur falls eigenes Beds24-Konto"></div>
+    </div>
+    <div class="fr" style="margin-bottom:6px"><label>Zimmer</label>
+      <div id="roomsList">${roomRows}</div>
+      <button type="button" class="btn btn-ghost btn-sm" id="addRoom" style="align-self:flex-start;margin-top:2px">+ Zimmer hinzufügen</button>
+    </div>
+    <div class="fr two">
+      <div class="fr" style="margin:0"><label>Max. Gäste gesamt (Filter, optional)</label><input type="number" min="0" name="max_guests" value="${esc(
+        it.max_guests ? it.max_guests : ""
+      )}" placeholder="z. B. 6"></div>
+      <div></div>
     </div>
     <div class="fr">
       <label>Ausstattung &amp; Filter (Booking-Tool)</label>
       <div class="feature-grid">${featBoxes}</div>
       <span class="hint">Ausgewählte Merkmale erscheinen als Filter im Buchungstool und als Icons auf der Unterkunft.</span>
-    </div>`;
+    </div>
+    <script>
+    (function(){
+      var list=document.getElementById('roomsList'),add=document.getElementById('addRoom');
+      if(!list||!add)return;
+      function bind(){Array.prototype.forEach.call(list.querySelectorAll('.btn-remove'),function(b){b.onclick=function(){if(list.querySelectorAll('.room-row').length>1)b.closest('.room-row').remove();else{b.closest('.room-row').querySelectorAll('input').forEach(function(i){i.value=''});}};});}
+      add.onclick=function(){
+        var t='<div class="room-row"><input type="hidden" name="room_row_id" value="">'
+          +'<div class="fr" style="margin:0;flex:2"><label>Zimmername</label><input name="room_name" placeholder="z. B. Doppelzimmer Bergblick"></div>'
+          +'<div class="fr" style="margin:0;flex:1.2"><label>Beds24 Zimmer-ID</label><input name="room_beds24_id" placeholder="z. B. 678901" inputmode="numeric"></div>'
+          +'<div class="fr" style="margin:0;flex:.7"><label>Max. Gäste</label><input type="number" min="0" name="room_max_guests"></div>'
+          +'<button type="button" class="btn-remove" title="Zimmer entfernen">\\u00d7</button></div>';
+        list.insertAdjacentHTML('beforeend',t);bind();
+      };
+      bind();
+    })();
+    </script>`;
 }
 
 function entryForm(kind, label, it, pendingCount) {
@@ -1415,6 +1597,13 @@ function entryForm(kind, label, it, pendingCount) {
         it.link
       )}" placeholder="https://"></div>
       <div class="fr">${fieldImage(it.image)}</div>
+      ${
+        kind === "unterkuenfte"
+          ? `<div class="fr"><label>Galerie-Bilder (eine Bild-URL pro Zeile)</label><textarea name="gallery" rows="3" placeholder="https://…&#10;https://…">${esc(
+              it.gallery
+            )}</textarea><span class="hint">Erscheinen im Detail-Fenster der Unterkunft. Das Hauptbild oben ist das erste Bild.</span></div>`
+          : ""
+      }
       ${kind === "unterkuenfte" ? accBookingFields(it) : ""}`;
   }
   const body = `
@@ -1654,6 +1843,19 @@ async function init() {
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS beds24_token TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS features TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS max_guests INTEGER DEFAULT 0`);
+  await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS gallery TEXT DEFAULT ''`);
+  // ---- Rooms per accommodation (each maps to one Beds24 room id) ----
+  await query(`
+    CREATE TABLE IF NOT EXISTS rooms (
+      id SERIAL PRIMARY KEY,
+      accommodation_id INTEGER REFERENCES accommodations(id) ON DELETE CASCADE,
+      name TEXT DEFAULT '',
+      beds24_room_id TEXT DEFAULT '',
+      max_guests INTEGER DEFAULT 0,
+      sort INTEGER DEFAULT 0,
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+  `);
   // ---- Bookings placed through VALUERO (audit trail / fallback record) ----
   await query(`
     CREATE TABLE IF NOT EXISTS bookings (
@@ -1749,6 +1951,55 @@ async function enrich() {
      WHERE name = $1`,
     ["Musikfest Gaschurn", "https://musikfest26.at/", normWix("https://static.wixstatic.com/media/d2f3ea_817c6e0ac86e444ca10a73d0f6ea3544~mv2.jpg/v1/fill/img.jpg")]
   );
+
+  // ---- Booking-tool intro text (replace the old "book on their website" copy) ----
+  const newIntro =
+    "Wähle deine Reisedaten und finde sofort verfügbare Unterkünfte mit tagesaktuellen Preisen – viele direkt hier buchbar. Unsere Partner bieten alle einen Mindeststandard: Parkplatz, WLAN, Nichtraucher im Haus und TV. Ein Klick auf eine Unterkunft öffnet Details und Bilder; Unterkünfte ohne Online-Buchung erkennst du am Website-Button. Die Bewertungen basieren auf dem Durchschnitt mehrerer Online-Portale.";
+  await query(
+    `UPDATE content SET value=$1 WHERE key='unterkuenfte_intro' AND value LIKE '%direkt auf der jeweiligen Website%'`,
+    [newIntro]
+  );
+
+  // ---- Images (license-free Unsplash + partner-site photos). Only fill empties. ----
+  const US = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1600&q=80`;
+  const WX = (idext) =>
+    `https://static.wixstatic.com/media/${idext}/v1/fill/w_1280,h_853,al_c,q_82,enc_auto/photo.jpg`;
+
+  const contentImgs = {
+    unterkuenfte_hero_image: US("1566475955255-404134a79aeb"),
+    gastronomie_hero_image: US("1598022186152-1b66e6c38245"),
+    veranstaltungen_hero_image: US("1760822398930-3c874f786597"),
+    about_hero_image: US("1638658978541-17a4532e99ed"),
+    home_hero_image: US("1525638248862-171adada295c"),
+  };
+  for (const [k, v] of Object.entries(contentImgs)) {
+    await query(`UPDATE content SET value=$2 WHERE key=$1 AND COALESCE(value,'')=''`, [k, v]);
+  }
+
+  // Accommodation card image (only if empty) + gallery (real partner photos where available)
+  const accImgs = [
+    ["Haus Felder – Garfrescha", "", [WX("dc121b_3e1052d59351461d8388b67bde691cf1~mv2.jpg"), US("1610803523148-a0052fa341bb"), US("1631630259742-c0f0b17c6c10")]],
+    ["Alt Montafon", US("1631941150945-837cb81fc7e2"), [US("1551927411-95e412943b58"), US("1664369058082-ee8e36028106"), US("1566475955255-404134a79aeb")]],
+    ["Landhaus Angelika", "", [WX("d2f3ea_165e82a9460c488ebed6c0f8c621cef2~mv2.jpg"), WX("d2f3ea_dbb61fc69afc4f6fbc253bf16c8c5da6~mv2.jpg"), US("1668105334079-9e78b4105c51")]],
+    ["Haus Lerch", "", [WX("3dcb39_2e8278a8ae7d4a4b9698c9d405fb432a~mv2.jpg"), US("1697807713040-b5fb60d6f012"), US("1684670158497-053b54633632")]],
+    ["Chalet Antonhaus", "", [WX("d2f3ea_b3872a8dd8c3455087ce1522e9135e7c~mv2.jpg"), WX("d2f3ea_0f17479d8ae34df995bb0198b5756fd1~mv2.jpg"), WX("d2f3ea_7260c08c0cf0449d93ed120e3410363c~mv2.jpg"), WX("d2f3ea_34b915914cfc430cb436f8a816bc0abb~mv2.jpg")]],
+    ["Haus zur Kapelle", "", [WX("d2f3ea_022496001a774d348ec6dea8f2525abf~mv2.jpg"), WX("d2f3ea_1ee736c6355546979d861be6cfcc8fcc~mv2.jpg"), WX("d2f3ea_f61466e8fc754018b0cca5042162ae98~mv2.jpg"), US("1684670158497-053b54633632")]],
+  ];
+  for (const [name, card, gal] of accImgs) {
+    await query(
+      `UPDATE accommodations
+         SET image = CASE WHEN COALESCE(image,'')='' AND $2 <> '' THEN $2 ELSE image END,
+             gallery = CASE WHEN COALESCE(gallery,'')='' THEN $3 ELSE gallery END
+       WHERE name=$1`,
+      [name, card, gal.join("\n")]
+    );
+  }
+
+  // Gastro card image (only if empty)
+  const gasImgs = [["Alt Montafon", US("1697807713040-b5fb60d6f012")]];
+  for (const [name, img] of gasImgs) {
+    await query(`UPDATE gastro SET image=CASE WHEN COALESCE(image,'')='' THEN $2 ELSE image END WHERE name=$1`, [name, img]);
+  }
 }
 
 async function seedContent(key, value) {
@@ -1908,7 +2159,7 @@ const KIND = {
     table: "accommodations",
     label: "Unterkünfte",
     cols: [
-      "name", "description", "location", "type", "rating", "badge", "amenities", "link", "image",
+      "name", "description", "location", "type", "rating", "badge", "amenities", "link", "image", "gallery",
       "beds24_property_id", "beds24_room_id", "beds24_token", "features", "max_guests",
     ],
   },
@@ -2046,9 +2297,39 @@ app.get("/agb", async (req, res, next) => {
 function validDate(s) {
   return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(new Date(s + "T00:00:00Z"));
 }
+// Effective rooms for an accommodation. Falls back to a single implicit room
+// built from the legacy accommodation-level beds24_room_id when the rooms table
+// has no entries yet, so older single-room setups keep working.
+async function getRooms(db, acc) {
+  const rows = (
+    await db.query("SELECT * FROM rooms WHERE accommodation_id=$1 ORDER BY sort, id", [acc.id])
+  ).rows;
+  if (rows.length) {
+    return rows.map((r) => ({
+      id: r.id,
+      name: r.name || "Zimmer",
+      beds24_room_id: r.beds24_room_id || "",
+      max_guests: r.max_guests || 0,
+    }));
+  }
+  if (String(acc.beds24_room_id || "").trim()) {
+    return [{ id: 0, name: acc.type || "Zimmer", beds24_room_id: acc.beds24_room_id, max_guests: acc.max_guests || 0 }];
+  }
+  return [];
+}
+
+// Is this accommodation bookable online? (demo, or a property id + ≥1 room id)
+function accConnected(acc, rooms) {
+  if (beds24.DEMO) return true;
+  return !!(String(acc.beds24_property_id || "").trim() && rooms.some((r) => String(r.beds24_room_id || "").trim()));
+}
+
 // Map a DB accommodation row to the public shape used by the booking tool.
-function publicAcc(row) {
+function publicAcc(row, connected, rooms) {
   const featureKeys = parseFeatures(row.features);
+  const capacity = Math.max(row.max_guests || 0, ...(rooms || []).map((r) => r.max_guests || 0), 0);
+  const gallery = parseGallery(row.gallery);
+  const images = [row.image, ...gallery].filter((u) => u && u.length > 5).filter((v, i, a) => a.indexOf(v) === i);
   return {
     id: row.id,
     name: row.name,
@@ -2058,11 +2339,13 @@ function publicAcc(row) {
     rating: row.rating || "",
     badge: row.badge || "",
     image: row.image || "",
+    images,
     link: row.link || "",
     features: featureKeys,
     featureLabels: featureKeys.map((k) => ({ key: k, label: FEATURE_LABEL[k], icon: FEATURE_ICON[k] })),
-    maxGuests: row.max_guests || 0,
-    connected: beds24.isConnected(row),
+    maxGuests: capacity,
+    roomCount: (rooms || []).length,
+    connected: !!connected,
   };
 }
 
@@ -2083,29 +2366,46 @@ app.get("/api/search", async (req, res, next) => {
     const rows = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
     const results = [];
     for (const row of rows) {
-      const acc = publicAcc(row);
+      const rooms = await getRooms(db, row);
+      const connected = accConnected(row, rooms);
+      const acc = publicAcc(row, connected, rooms);
       if (type && acc.type.toLowerCase() !== type) continue;
       if (loc && acc.location.toLowerCase() !== loc) continue;
       if (wantFeatures.length && !wantFeatures.every((f) => acc.features.includes(f))) continue;
       if (guests && acc.maxGuests && guests > acc.maxGuests) continue;
 
-      let offer = null;
-      if (datesValid && acc.connected) {
-        try {
-          offer = await beds24.getStayOffer(db, row, checkin, checkout, guests || 2);
-        } catch (e) {
-          console.error("Beds24 offer error", acc.name, e.message);
-          offer = { error: true, available: false };
+      // Price each room for the stay; headline = cheapest available room.
+      const roomOffers = [];
+      let best = null;
+      if (datesValid && connected) {
+        for (const room of rooms) {
+          if (guests && room.max_guests && guests > room.max_guests) continue;
+          let offer = null;
+          try {
+            offer = await beds24.getStayOffer(db, row, room, checkin, checkout, guests || 2);
+          } catch (e) {
+            console.error("Beds24 offer error", acc.name, room.name, e.message);
+            offer = { error: true, available: false };
+          }
+          const ro = { roomId: room.beds24_room_id || String(room.id), name: room.name, maxGuests: room.max_guests, offer };
+          roomOffers.push(ro);
+          if (offer && offer.available && (!best || offer.total < best.offer.total)) best = ro;
         }
       }
-      if (priceMax && offer && offer.available && offer.perNight && offer.perNight > priceMax) continue;
-      results.push({ ...acc, offer });
+      const topOffer = best
+        ? best.offer
+        : (roomOffers.find((r) => r.offer && r.offer.available) || {}).offer ||
+          (roomOffers[0] && roomOffers[0].offer) ||
+          null;
+      if (priceMax && topOffer && topOffer.available && topOffer.perNight && topOffer.perNight > priceMax) continue;
+      results.push({ ...acc, offer: topOffer, rooms: roomOffers });
     }
-    // Available first, then connected, then original order.
+    // Beds24-connected accommodations always rank first (a small advantage),
+    // then available, then original order.
     results.sort((a, b) => {
-      const av = (x) => (x.offer && x.offer.available ? 0 : 1);
       const cn = (x) => (x.connected ? 0 : 1);
-      return av(a) - av(b) || cn(a) - cn(b);
+      const av = (x) => (x.offer && x.offer.available ? 0 : 1);
+      return cn(a) - cn(b) || av(a) - av(b);
     });
     res.json({
       checkin: datesValid ? checkin : null,
@@ -2129,10 +2429,22 @@ app.get("/api/quote/:id", async (req, res, next) => {
     const guests = Math.max(1, parseInt(req.query.guests, 10) || 2);
     if (!validDate(checkin) || !validDate(checkout) || beds24.nights(checkin, checkout) < 1)
       return res.status(400).json({ ok: false, error: "Bitte gültige An- und Abreise wählen." });
-    if (!beds24.isConnected(row))
-      return res.json({ ok: true, connected: false, acc: publicAcc(row), offer: null });
-    const offer = await beds24.getStayOffer(db, row, checkin, checkout, guests);
-    res.json({ ok: true, connected: true, acc: publicAcc(row), offer });
+    const rooms = await getRooms(db, row);
+    const connected = accConnected(row, rooms);
+    const acc = publicAcc(row, connected, rooms);
+    if (!connected) return res.json({ ok: true, connected: false, acc, offer: null, rooms: [] });
+    const roomOffers = [];
+    for (const room of rooms) {
+      let offer = null;
+      try {
+        offer = await beds24.getStayOffer(db, row, room, checkin, checkout, guests);
+      } catch (e) {
+        offer = { error: true, available: false };
+      }
+      roomOffers.push({ roomId: room.beds24_room_id || String(room.id), name: room.name, maxGuests: room.max_guests, offer });
+    }
+    const best = roomOffers.filter((r) => r.offer && r.offer.available).sort((a, b) => a.offer.total - b.offer.total)[0];
+    res.json({ ok: true, connected: true, acc, offer: best ? best.offer : null, rooms: roomOffers });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message || "Preis konnte nicht geladen werden." });
   }
@@ -2147,8 +2459,10 @@ app.get("/api/calendar/:id", async (req, res, next) => {
     const to = validDate(req.query.to)
       ? req.query.to
       : new Date(Date.now() + 180 * 86400000).toISOString().slice(0, 10);
-    const cal = await beds24.getCalendar(db, row, from, to);
-    res.json({ ok: true, connected: beds24.isConnected(row), calendar: cal });
+    const rooms = await getRooms(db, row);
+    const room = rooms.find((r) => String(r.beds24_room_id || r.id) === String(req.query.roomId)) || rooms[0];
+    const cal = room ? await beds24.getCalendar(db, row, room, from, to) : [];
+    res.json({ ok: true, connected: accConnected(row, rooms), calendar: cal });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message || "Kalender konnte nicht geladen werden." });
   }
@@ -2161,8 +2475,14 @@ app.post("/api/book", async (req, res, next) => {
     const id = parseInt(b.accId, 10) || 0;
     const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [id])).rows[0];
     if (!row) return res.status(404).json({ ok: false, error: "Unterkunft nicht gefunden." });
-    if (!beds24.isConnected(row))
+    const rooms = await getRooms(db, row);
+    if (!accConnected(row, rooms))
       return res.status(400).json({ ok: false, error: "Diese Unterkunft bietet keine Online-Buchung." });
+    // Which room? Match by Beds24 room id / internal id; fall back to the only/first room.
+    const room =
+      rooms.find((r) => String(r.beds24_room_id || r.id) === String(b.roomId)) ||
+      (rooms.length === 1 ? rooms[0] : null);
+    if (!room) return res.status(400).json({ ok: false, error: "Bitte ein Zimmer auswählen." });
     if (!validDate(b.checkin) || !validDate(b.checkout) || beds24.nights(b.checkin, b.checkout) < 1)
       return res.status(400).json({ ok: false, error: "Bitte gültige An- und Abreise wählen." });
     if (!b.firstName || !b.lastName || !b.email)
@@ -2174,14 +2494,14 @@ app.post("/api/book", async (req, res, next) => {
     // Re-price server-side; never trust a client-supplied total.
     let offer = null;
     try {
-      offer = await beds24.getStayOffer(db, row, b.checkin, b.checkout, guests);
+      offer = await beds24.getStayOffer(db, row, room, b.checkin, b.checkout, guests);
     } catch (e) {
       console.error("Re-quote failed", e.message);
     }
     if (offer && offer.available === false)
       return res.status(409).json({ ok: false, error: "Für diese Daten leider nicht mehr verfügbar." });
 
-    const result = await beds24.createBooking(db, row, {
+    const result = await beds24.createBooking(db, row, room, {
       checkin: b.checkin,
       checkout: b.checkout,
       guests,
@@ -2200,7 +2520,8 @@ app.post("/api/book", async (req, res, next) => {
          first_name, last_name, email, phone, notes, total, currency, status)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
       [
-        id, row.name, String(result.bookingId || ""), b.checkin, b.checkout, guests,
+        id, row.name + (room.name && rooms.length > 1 ? " – " + room.name : ""), String(result.bookingId || ""),
+        b.checkin, b.checkout, guests,
         String(b.firstName).slice(0, 80), String(b.lastName).slice(0, 80), String(b.email).slice(0, 160),
         String(b.phone || "").slice(0, 60), String(b.notes || "").slice(0, 1000),
         offer ? offer.total || 0 : 0, offer ? offer.currency || "EUR" : "EUR", result.status || "new",
@@ -2253,6 +2574,42 @@ app.get("/admin", async (req, res, next) => {
 });
 
 // ---- generic entry CRUD ----
+// Persist the room rows submitted with an accommodation form (parallel arrays).
+async function syncRooms(accId, body) {
+  const arr = (v) => (v == null ? [] : Array.isArray(v) ? v : [v]);
+  const names = arr(body.room_name);
+  const rids = arr(body.room_beds24_id);
+  const maxg = arr(body.room_max_guests);
+  const rowIds = arr(body.room_row_id);
+  const n = Math.max(names.length, rids.length, maxg.length, rowIds.length);
+  const keep = [];
+  for (let i = 0; i < n; i++) {
+    const name = String(names[i] || "").trim();
+    const rid = String(rids[i] || "").trim();
+    const mg = parseInt(maxg[i], 10) || 0;
+    const rowId = parseInt(rowIds[i], 10) || 0;
+    if (!name && !rid) continue; // skip empty rows
+    if (rowId) {
+      await db.query(
+        "UPDATE rooms SET name=$1, beds24_room_id=$2, max_guests=$3, sort=$4 WHERE id=$5 AND accommodation_id=$6",
+        [name || "Zimmer", rid, mg, i, rowId, accId]
+      );
+      keep.push(rowId);
+    } else {
+      const r = await db.query(
+        "INSERT INTO rooms (accommodation_id, name, beds24_room_id, max_guests, sort) VALUES ($1,$2,$3,$4,$5) RETURNING id",
+        [accId, name || "Zimmer", rid, mg, i]
+      );
+      keep.push(r.rows[0].id);
+    }
+  }
+  if (keep.length) {
+    await db.query(`DELETE FROM rooms WHERE accommodation_id=$1 AND id <> ALL($2::int[])`, [accId, keep]);
+  } else {
+    await db.query("DELETE FROM rooms WHERE accommodation_id=$1", [accId]);
+  }
+}
+
 function registerEntry(kind) {
   const cfg = KIND[kind];
   const base = "/admin/" + kind;
@@ -2283,10 +2640,11 @@ function registerEntry(kind) {
       const cols = cfg.cols;
       const vals = valuesFor(cols, req.body);
       const ph = cols.map((_, i) => "$" + (i + 1)).join(",");
-      await db.query(
-        `INSERT INTO ${cfg.table} (${cols.join(",")}) VALUES (${ph})`,
+      const r = await db.query(
+        `INSERT INTO ${cfg.table} (${cols.join(",")}) VALUES (${ph}) RETURNING id`,
         vals
       );
+      if (kind === "unterkuenfte") await syncRooms(r.rows[0].id, req.body);
       res.redirect(base);
     } catch (e) {
       next(e);
@@ -2297,7 +2655,13 @@ function registerEntry(kind) {
     try {
       const r = await db.query(`SELECT * FROM ${cfg.table} WHERE id=$1`, [req.params.id]);
       if (!r.rows[0]) return res.redirect(base);
-      res.send(A.entryForm(kind, cfg.label, r.rows[0], await pendingCount()));
+      const row = r.rows[0];
+      if (kind === "unterkuenfte") {
+        row.__rooms = (
+          await db.query("SELECT * FROM rooms WHERE accommodation_id=$1 ORDER BY sort, id", [row.id])
+        ).rows;
+      }
+      res.send(A.entryForm(kind, cfg.label, row, await pendingCount()));
     } catch (e) {
       next(e);
     }
@@ -2310,6 +2674,7 @@ function registerEntry(kind) {
       const set = cols.map((c, i) => `${c}=$${i + 1}`).join(",");
       vals.push(req.params.id);
       await db.query(`UPDATE ${cfg.table} SET ${set} WHERE id=$${vals.length}`, vals);
+      if (kind === "unterkuenfte") await syncRooms(req.params.id, req.body);
       res.redirect(base);
     } catch (e) {
       next(e);
