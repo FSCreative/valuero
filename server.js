@@ -5,11 +5,12 @@
 
 const publicCSS = `
 :root{
-  --bg:#f5f2ec; --surface:#ffffff; --surface-2:#efe9df;
-  --ink:#16201b; --muted:#5e6a61; --line:#e4ddd0;
-  --accent:#2f6e52; --accent-d:#234f3c; --gold:#bfa06a;
-  --radius:18px; --shadow:0 18px 50px -24px rgba(22,32,27,.35);
-  --maxw:1180px;
+  --bg:#f4f1ea; --surface:#ffffff; --surface-2:#efeae0;
+  --ink:#141b16; --muted:#5f6b64; --line:#e7e1d5;
+  --accent:#1f6a49; --accent-2:#2c8760; --accent-d:#154a34; --gold:#c2a05c;
+  --radius:22px; --radius-sm:14px;
+  --shadow:0 34px 64px -34px rgba(20,27,22,.42); --shadow-sm:0 12px 32px -18px rgba(20,27,22,.30);
+  --maxw:1200px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -46,23 +47,23 @@ img{max-width:100%;display:block}
 .hero-logo{height:clamp(74px,15vw,168px);width:auto;display:block;margin:0 0 22px;filter:drop-shadow(0 10px 26px rgba(0,0,0,.14))}
 
 /* HERO */
-.hero{position:relative;min-height:78vh;display:flex;align-items:center;overflow:hidden;
-  background:linear-gradient(160deg,#dfe7e0 0%,#eef0e8 40%,#f5f2ec 100%)}
+.hero{position:relative;min-height:82vh;display:flex;align-items:center;overflow:hidden;
+  background:radial-gradient(120% 90% at 15% 0%,#e6eee6 0%,#eef0e8 42%,#f4f1ea 100%)}
 .hero-mtn{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:auto;z-index:1}
 .hero-bg-img{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0}
 .hero-bg-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(245,242,236,.35),rgba(245,242,236,.85))}
 .hero .container{position:relative;z-index:2;padding-top:40px;padding-bottom:120px}
-.hero .eyebrow{text-transform:uppercase;letter-spacing:.28em;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:18px}
-.hero h1{font-size:clamp(40px,7vw,84px);max-width:14ch}
-.hero p.lead{font-size:clamp(17px,2.2vw,22px);color:var(--muted);max-width:52ch;margin-top:22px}
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+.hero .eyebrow{display:inline-flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.2em;font-size:12px;font-weight:700;color:var(--accent-d);margin-bottom:20px;background:rgba(31,106,73,.09);padding:7px 14px;border-radius:999px}
+.hero h1{font-size:clamp(44px,7.4vw,90px);max-width:15ch;letter-spacing:-.025em;line-height:1.02}
+.hero p.lead{font-size:clamp(17px,2.2vw,23px);color:var(--muted);max-width:54ch;margin-top:22px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
 
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:13px 26px;font-weight:600;font-size:15px;cursor:pointer;border:1px solid transparent;transition:.2s;font-family:inherit}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:var(--accent-d);transform:translateY(-2px)}
-.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
-.btn-ghost:hover{background:var(--surface);border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:14px 28px;font-weight:600;font-size:15px;cursor:pointer;border:1px solid transparent;transition:transform .2s,background .2s,box-shadow .2s;font-family:inherit}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 10px 24px -12px rgba(31,106,73,.9)}
+.btn-primary:hover{background:var(--accent-2);transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(31,106,73,1)}
+.btn-ghost{background:rgba(255,255,255,.6);border-color:var(--line);color:var(--ink);backdrop-filter:blur(6px)}
+.btn-ghost:hover{background:var(--surface);border-color:var(--accent);transform:translateY(-2px)}
 
 /* SECTIONS */
 section{position:relative}
@@ -97,7 +98,8 @@ section{position:relative}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:.25s;box-shadow:0 10px 30px -22px rgba(22,32,27,.5)}
 .card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
-.card-img{aspect-ratio:4/3;background-size:cover;background-position:center;position:relative;background-color:#dfe5de}
+.card-img{aspect-ratio:4/3;background-size:cover;background-position:center;position:relative;background-color:#dfe5de;transition:transform .6s ease}
+.card:hover .card-img{transform:scale(1.05)}
 .card-badge{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.92);color:var(--accent-d);font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px}
 .card-body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px;flex:1}
 .card-body h3{font-size:21px}
@@ -110,7 +112,7 @@ section{position:relative}
 .no-results{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px}
 
 /* PAGE HERO (subpages) */
-.page-hero{padding:64px 0 30px;background:linear-gradient(160deg,#e3ebe3,#f5f2ec)}
+.page-hero{padding:66px 0 32px;background:radial-gradient(110% 100% at 12% 0%,#e6eee6,#f4f1ea 70%)}
 .page-hero .eyebrow{text-transform:uppercase;letter-spacing:.24em;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:12px}
 .page-hero h1{font-size:clamp(32px,5.5vw,58px)}
 .page-hero p{color:var(--muted);font-size:18px;margin-top:14px;max-width:60ch}
@@ -190,6 +192,79 @@ textarea{resize:vertical;min-height:90px}
   .cat-card{min-height:340px}
 }
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.cat-card .ph{transition:none}}
+
+/* ===== BOOKING TOOL ===== */
+.searchbar{display:flex;flex-wrap:wrap;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:7px;box-shadow:var(--shadow);align-items:stretch}
+.searchbar .sf{display:flex;flex-direction:column;justify-content:center;gap:2px;flex:1 1 150px;padding:11px 18px;border-radius:14px;transition:background .15s;position:relative;cursor:text}
+.searchbar .sf:hover{background:var(--surface-2)}
+.searchbar .sf+.sf::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:1px;background:var(--line)}
+.searchbar .sf label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.searchbar .sf input,.searchbar .sf select{border:0;background:transparent;padding:2px 0;font-size:15.5px;font-weight:600;color:var(--ink);font-family:inherit;width:100%;cursor:pointer}
+.searchbar .sf input:focus,.searchbar .sf select:focus{outline:none}
+.searchbar .sf.go{flex:0 0 auto;padding:5px;align-items:stretch;justify-content:stretch}
+.searchbar .sf.go::before{display:none}
+.searchbar .btn-search{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:0;border-radius:15px;padding:0 30px;font-weight:600;font-size:15.5px;cursor:pointer;white-space:nowrap;min-height:56px;font-family:inherit;transition:background .2s,transform .2s;box-shadow:0 10px 22px -12px rgba(31,106,73,.9)}
+.searchbar .btn-search::before{content:"\\1F50D";font-size:15px}
+.searchbar .btn-search:hover{background:var(--accent-2);transform:translateY(-1px)}
+.hero .searchbar{margin-top:28px;max-width:820px}
+.booking-hero{padding-bottom:26px}
+.booking-layout{display:grid;grid-template-columns:262px 1fr;gap:28px;align-items:start}
+.filters-panel{position:sticky;top:92px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:18px}
+.filters-panel h4{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);margin-bottom:10px}
+.fp-group{border-top:1px solid var(--line);padding-top:16px}
+.fp-group:first-child{border-top:0;padding-top:0}
+.chk{display:flex;align-items:center;gap:9px;font-size:14px;padding:5px 0;cursor:pointer;color:var(--ink)}
+.chk input{accent-color:var(--accent);width:16px;height:16px}
+.price-range{display:flex;flex-direction:column;gap:8px}
+.price-range input[type=range]{width:100%;accent-color:var(--accent)}
+.price-range .lbl{font-size:14px;font-weight:600;color:var(--accent-d)}
+.results-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.results-head .rc{font-weight:600;font-size:15px}
+.results-head select{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;background:var(--surface);color:var(--ink);font-family:inherit}
+.booking-grid{grid-template-columns:repeat(2,1fr)}
+.bk-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);transition:transform .25s,box-shadow .25s}
+.bk-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+.bk-card .img{aspect-ratio:16/10;background-size:cover;background-position:center;position:relative;background-color:#dfe5de;transition:transform .6s ease}
+.bk-card:hover .img{transform:scale(1.06)}
+.bk-card .img.noimg{background:linear-gradient(150deg,#3a6b54,#1f3a2c)}
+.bk-card .badge{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.94);color:var(--accent-d);font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px}
+.bk-card .body{padding:18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.bk-card h3{font-size:20px}
+.bk-card .desc{color:var(--muted);font-size:14px}
+.bk-card .feat-row{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--muted)}
+.bk-card .feat-row .fi{background:var(--surface-2);border-radius:999px;padding:3px 9px}
+.price-box{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.price-box .pn{font-size:13px;color:var(--muted);line-height:1.35}
+.price-box .pn b{font-family:"Fraunces",serif;font-size:23px;color:var(--ink)}
+.price-box .pn .tot{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.btn-book{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:12px 20px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .2s,transform .2s;box-shadow:0 8px 18px -10px rgba(31,106,73,.9)}
+.btn-book:hover{background:var(--accent-2);transform:translateY(-1px)}
+.btn-web{display:inline-block;background:transparent;border:1px solid var(--line);color:var(--accent-d);border-radius:10px;padding:10px 16px;font-weight:600;font-size:14px;transition:.2s}
+.btn-web:hover{border-color:var(--accent);background:var(--surface-2)}
+.note-web{font-size:13px;color:var(--muted)}
+.soldout{color:#b4553f;font-weight:600;font-size:14px}
+.loading,.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:46px}
+.bk-overlay{position:fixed;inset:0;background:rgba(16,23,19,.55);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:38px 16px;overflow:auto}
+.bk-overlay.open{display:flex}
+.bk-modal{background:var(--surface);border-radius:20px;max-width:560px;width:100%;box-shadow:var(--shadow);overflow:hidden;animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.bk-modal .mh{padding:22px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.bk-modal .mh h3{font-size:22px}
+.bk-modal .mh .es{font-size:13px;color:var(--muted);margin-top:2px}
+.bk-modal .mb{padding:22px 24px;display:flex;flex-direction:column;gap:16px}
+.bk-close{background:none;border:0;font-size:26px;cursor:pointer;color:var(--muted);line-height:1;padding:0}
+.summary{background:var(--surface-2);border-radius:12px;padding:14px 16px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+.summary .row{display:flex;justify-content:space-between;gap:12px}
+.summary .total{border-top:1px solid var(--line);padding-top:8px;margin-top:2px;font-weight:700;font-size:16px}
+.bk-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bk-form .full{grid-column:1/-1}
+.bk-form label{font-size:12px;font-weight:600;display:block;margin-bottom:4px;color:var(--ink)}
+.bk-form .chk{font-size:13px}
+.msg{padding:13px 15px;border-radius:10px;font-size:14px;line-height:1.5}
+.msg.err{background:#fbe8e4;color:#a23b26;border:1px solid #f0c4b9}
+.msg.ok{background:#e6f1ea;color:var(--accent-d);border:1px solid #bfdcc9}
+@media(max-width:900px){.booking-layout{grid-template-columns:1fr}.filters-panel{position:static}.booking-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.booking-grid{grid-template-columns:1fr}.bk-form{grid-template-columns:1fr}.searchbar{gap:2px}.searchbar .sf{flex:1 1 100%}.searchbar .sf+.sf::before{display:none}.searchbar .sf.go{padding-top:6px}.searchbar .btn-search{width:100%;justify-content:center}}
 `;
 
 const adminCSS = `
@@ -250,7 +325,17 @@ a{color:var(--accent);text-decoration:none}
 .section-divider{border:0;border-top:1px solid var(--line);margin:26px 0}
 .wd-group{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px}
 .wd-group h3{font-family:"Fraunces",serif;font-size:18px;color:#fff;margin-bottom:14px}
-@media(max-width:760px){.sidebar{display:none}.main{padding:20px}.fr.two,.stat-grid{grid-template-columns:1fr 1fr}}
+.section-sep{display:flex;align-items:center;gap:10px;margin:26px 0 14px;font-family:"Fraunces",serif;font-size:17px;color:#fff}
+.section-sep::after{content:"";flex:1;height:1px;background:var(--line)}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 14px;margin-top:4px}
+.feat{display:flex;align-items:center;gap:8px;font-weight:500;font-size:13.5px;color:var(--ink);cursor:pointer;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;transition:.15s}
+.feat:hover{border-color:var(--accent)}
+.feat input{width:auto!important;accent-color:var(--accent);flex:0 0 auto}
+.feat span{user-select:none}
+.beds-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--line)}
+.beds-badge.on{background:rgba(72,168,122,.16);color:var(--accent);border-color:rgba(72,168,122,.4)}
+.beds-badge.off{background:var(--surface-2);color:var(--muted)}
+@media(max-width:760px){.sidebar{display:none}.main{padding:20px}.fr.two,.stat-grid,.feature-grid{grid-template-columns:1fr 1fr}}
 `;
 
 
@@ -263,6 +348,40 @@ function esc(s) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+// Booking-tool feature set (booking.com-style filters). The admin picks which
+// apply to each accommodation; guests filter by them on the Unterkünfte page.
+const FEATURES = [
+  { key: "wifi", label: "WLAN", icon: "📶" },
+  { key: "parking", label: "Parkplatz", icon: "🅿️" },
+  { key: "garage", label: "Tiefgarage", icon: "🚗" },
+  { key: "ski", label: "Ski In & Out", icon: "🎿" },
+  { key: "sauna", label: "Sauna", icon: "🧖" },
+  { key: "steam", label: "Dampfbad", icon: "💨" },
+  { key: "wellness", label: "Wellness / Spa", icon: "💆" },
+  { key: "pool", label: "Pool", icon: "🏊" },
+  { key: "breakfast", label: "Frühstück", icon: "🥐" },
+  { key: "kitchen", label: "Küche", icon: "🍳" },
+  { key: "pets", label: "Haustiere erlaubt", icon: "🐾" },
+  { key: "family", label: "Familienfreundlich", icon: "👨‍👩‍👧" },
+  { key: "balcony", label: "Balkon / Terrasse", icon: "🌄" },
+  { key: "mountainview", label: "Bergblick", icon: "⛰️" },
+  { key: "tv", label: "TV", icon: "📺" },
+  { key: "washer", label: "Waschmaschine", icon: "🧺" },
+  { key: "evcharge", label: "E-Ladestation", icon: "🔌" },
+  { key: "nonsmoking", label: "Nichtraucher", icon: "🚭" },
+  { key: "crib", label: "Kinderbett", icon: "🍼" },
+];
+const FEATURE_LABEL = Object.fromEntries(FEATURES.map((f) => [f.key, f.label]));
+const FEATURE_ICON = Object.fromEntries(FEATURES.map((f) => [f.key, f.icon]));
+
+// Parse a stored feature string ("wifi,sauna" or "wifi|sauna") into keys.
+function parseFeatures(str) {
+  return String(str || "")
+    .split(/[,|]/)
+    .map((s) => s.trim())
+    .filter((k) => FEATURE_LABEL[k]);
 }
 
 const MTN = `<svg viewBox="0 0 34 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 22 L12 5 L17 13 L21 7 L32 22 Z" fill="currentColor"/><path d="M12 5 L15 10 L13.5 12 L10.5 9 Z" fill="#fff" opacity=".85"/></svg>`;
@@ -375,6 +494,15 @@ const SCRIPT = `
   revealVisible();
   window.addEventListener('load',revealVisible);
   setTimeout(revealVisible,400);
+  // Date inputs: min = today; departure must be after arrival.
+  var today=new Date().toISOString().slice(0,10);
+  document.querySelectorAll('input[type=date]').forEach(function(d){if(!d.min)d.min=today});
+  document.querySelectorAll('.searchbar').forEach(function(sb){
+    var ci=sb.querySelector('input[name=checkin]'),co=sb.querySelector('input[name=checkout]');
+    if(ci&&co){ci.addEventListener('change',function(){
+      var d=new Date(ci.value);d.setDate(d.getDate()+1);var min=d.toISOString().slice(0,10);
+      co.min=min;if(!co.value||co.value<=ci.value)co.value=min;});}
+  });
 })();
 </script>`;
 
@@ -424,8 +552,9 @@ function homePage(c) {
       <div class="eyebrow">${esc(c.site_tagline)} · Hochmontafon</div>
       <h1>${esc(c.home_hero_title)}</h1>
       <p class="lead">${esc(c.home_hero_sub)}</p>
+      ${searchBar({})}
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/unterkuenfte">Unterkünfte finden</a>
+        <a class="btn btn-ghost" href="/unterkuenfte">Alle Unterkünfte ansehen</a>
         <a class="btn btn-ghost" href="/veranstaltungen">Veranstaltungen</a>
       </div>
     </div>
@@ -542,8 +671,259 @@ const FILTER_SCRIPT = `
 })();
 </script>`;
 
+/* ---------------- BOOKING TOOL (Unterkünfte) ---------------- */
+// Search bar used on the home hero and on top of the Unterkünfte tool.
+function searchBar(prefill) {
+  prefill = prefill || {};
+  const ci = esc(prefill.checkin || "");
+  const co = esc(prefill.checkout || "");
+  const g = parseInt(prefill.guests, 10) || 2;
+  const guestOpts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    .map((n) => `<option value="${n}" ${n === g ? "selected" : ""}>${n} ${n === 1 ? "Gast" : "Gäste"}</option>`)
+    .join("");
+  return `
+  <form class="searchbar" id="searchForm" action="/unterkuenfte" method="get">
+    <div class="sf"><label>Anreise</label><input type="date" name="checkin" value="${ci}" required></div>
+    <div class="sf"><label>Abreise</label><input type="date" name="checkout" value="${co}" required></div>
+    <div class="sf" style="flex:0 1 150px"><label>Gäste</label><select name="guests">${guestOpts}</select></div>
+    <div class="sf go"><button class="btn-search" type="submit">Verfügbarkeit finden</button></div>
+  </form>`;
+}
+
+// The booking overlay (guest details + confirmation), populated by JS.
+function bookingOverlayHTML() {
+  return `
+  <div class="bk-overlay" id="bkOverlay" aria-hidden="true">
+    <div class="bk-modal" role="dialog" aria-modal="true" aria-labelledby="bk-title">
+      <div class="mh">
+        <div><h3 id="bk-title">Buchung</h3><div class="es">Sichere Buchung über VALUERO</div></div>
+        <button class="bk-close" id="bk-close" aria-label="Schließen">×</button>
+      </div>
+      <div class="mb">
+        <div class="summary" id="bk-summary"></div>
+        <div id="bk-msg"></div>
+        <form class="bk-form" id="bk-form" onsubmit="return false">
+          <input type="hidden" id="bk-accId">
+          <div>
+            <label>Anrede</label>
+            <select name="title"><option value="">–</option><option>Herr</option><option>Frau</option><option>Divers</option></select>
+          </div>
+          <div><label>Vorname *</label><input name="firstName" required></div>
+          <div><label>Nachname *</label><input name="lastName" required></div>
+          <div><label>E-Mail *</label><input name="email" type="email" required></div>
+          <div class="full"><label>Telefon</label><input name="phone" type="tel"></div>
+          <div class="full"><label>Anmerkungen (optional)</label><textarea name="notes" rows="2" placeholder="z. B. späte Anreise, Kinderbett …"></textarea></div>
+          <div class="full"><label class="chk"><input type="checkbox" name="agb"> Ich akzeptiere die <a href="/agb" target="_blank">AGB</a> &amp; <a href="/datenschutz" target="_blank">Datenschutz</a>.</label></div>
+        </form>
+        <div class="form-actions" id="bk-actions" style="display:flex;gap:10px;justify-content:flex-end">
+          <button class="btn btn-ghost" id="bk-cancel" type="button">Abbrechen</button>
+          <button class="btn btn-primary" id="bk-submit" type="button">Jetzt verbindlich buchen</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function bookingToolPage(c, items) {
+  const prefill = c.__prefill || {};
+  const types = uniq(items.map((i) => i.type));
+  const locs = uniq(items.map((i) => i.location));
+  const featFilter = FEATURES.filter((f) => items.some((i) => parseFeatures(i.features).includes(f.key)));
+  const pillRow = (group, values) => `
+    <div class="pills" data-group="${group}">
+      <button type="button" class="pill active" data-val="">Alle</button>
+      ${values
+        .map((v) => `<button type="button" class="pill" data-val="${esc(String(v).toLowerCase())}">${esc(v)}</button>`)
+        .join("")}
+    </div>`;
+  const featChecks = featFilter
+    .map(
+      (f) =>
+        `<label class="chk"><input type="checkbox" class="f-feat" value="${f.key}"> ${f.icon} ${esc(f.label)}</label>`
+    )
+    .join("");
+  const body = `
+  <section class="page-hero booking-hero">
+    <div class="container">
+      <div class="eyebrow">${esc(c.site_tagline)}</div>
+      <h1>${esc(c.unterkuenfte_title)}</h1>
+      <p>${esc(c.unterkuenfte_sub)}</p>
+      ${searchBar(prefill)}
+    </div>
+  </section>
+  <section class="section" style="padding-top:34px">
+    <div class="container">
+      <p class="muted reveal" style="max-width:72ch;margin-bottom:24px">${esc(c.unterkuenfte_intro)}</p>
+      <div class="booking-layout">
+        <aside class="filters-panel">
+          <div class="fp-group"><h4>Unterkunftstyp</h4>${pillRow("type", types)}</div>
+          <div class="fp-group"><h4>Ort</h4>${pillRow("loc", locs)}</div>
+          <div class="fp-group"><h4>Preis / Nacht</h4>
+            <div class="price-range"><span class="lbl" id="priceLbl">egal</span>
+            <input type="range" id="f-price" min="0" max="400" step="10" value="400"></div>
+          </div>
+          ${featChecks ? `<div class="fp-group"><h4>Ausstattung</h4>${featChecks}</div>` : ""}
+        </aside>
+        <div class="results-col">
+          <div class="results-head">
+            <span class="rc" id="resCount">Lädt…</span>
+            <select id="f-sort">
+              <option value="best">Empfohlen</option>
+              <option value="price-asc">Preis: aufsteigend</option>
+              <option value="price-desc">Preis: absteigend</option>
+            </select>
+          </div>
+          <div id="results" class="grid booking-grid"><div class="loading">Lädt Unterkünfte…</div></div>
+          <noscript><div class="grid">${items.map((i) => listingCard(i, false)).join("")}</div></noscript>
+        </div>
+      </div>
+    </div>
+  </section>
+  ${bookingOverlayHTML()}`;
+  return layout({
+    title: "Unterkünfte | VALUERO",
+    active: "/unterkuenfte",
+    body,
+    content: c,
+    extraScript: BOOKING_SCRIPT,
+  });
+}
+
+const BOOKING_SCRIPT = `
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  function qp(n){var m=new RegExp('[?&]'+n+'=([^&]*)').exec(location.search);return m?decodeURIComponent(m[1].replace(/\\+/g,' ')):''}
+  function euro(n,c){c=c||'EUR';try{return new Intl.NumberFormat('de-AT',{style:'currency',currency:c,maximumFractionDigits:0}).format(n)}catch(e){return '\\u20ac '+Math.round(n)}}
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function fmt(d){if(!d)return '';var p=d.split('-');return p[2]+'.'+p[1]+'.'+p[0]}
+
+  var form=$('#searchForm'), results=$('#results');
+  var fv=function(n){return form&&form[n]?form[n].value:''};
+  var state={checkin:qp('checkin')||fv('checkin'),checkout:qp('checkout')||fv('checkout'),guests:qp('guests')||fv('guests'),type:'',loc:'',features:[],priceMax:0,sort:'best'};
+  var last={results:[]};
+
+  $$('.pills').forEach(function(p){p.addEventListener('click',function(e){
+    var b=e.target.closest('.pill');if(!b)return;
+    $$('.pill',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');
+    state[p.getAttribute('data-group')]=b.getAttribute('data-val');run();});});
+  $$('.f-feat').forEach(function(ch){ch.addEventListener('change',function(){
+    state.features=$$('.f-feat').filter(function(x){return x.checked}).map(function(x){return x.value});run();});});
+  var price=$('#f-price');
+  if(price){
+    price.addEventListener('input',function(){var v=parseInt(price.value,10);state.priceMax=v>=400?0:v;
+      $('#priceLbl').textContent=state.priceMax?('bis '+euro(state.priceMax)+' / Nacht'):'egal';});
+    price.addEventListener('change',run);
+  }
+  var sort=$('#f-sort');if(sort)sort.addEventListener('change',function(){state.sort=sort.value;renderList(last)});
+
+  if(form)form.addEventListener('submit',function(e){e.preventDefault();
+    state.checkin=form.checkin.value;state.checkout=form.checkout.value;state.guests=form.guests?form.guests.value:'';
+    history.replaceState(null,'','/unterkuenfte?checkin='+state.checkin+'&checkout='+state.checkout+'&guests='+(state.guests||''));
+    run();});
+
+  function params(){var p=[];
+    if(state.checkin)p.push('checkin='+state.checkin);
+    if(state.checkout)p.push('checkout='+state.checkout);
+    if(state.guests)p.push('guests='+state.guests);
+    if(state.type)p.push('type='+encodeURIComponent(state.type));
+    if(state.loc)p.push('loc='+encodeURIComponent(state.loc));
+    if(state.features.length)p.push('features='+state.features.join(','));
+    if(state.priceMax)p.push('priceMax='+state.priceMax);
+    return p.join('&');}
+
+  function run(){results.innerHTML='<div class="loading">Suche Unterkünfte…</div>';
+    fetch('/api/search?'+params()).then(function(r){return r.json()}).then(function(d){last=d;renderList(d)})
+    .catch(function(){results.innerHTML='<div class="empty">Fehler beim Laden. Bitte erneut versuchen.</div>'});}
+
+  function price1(x){return (x.offer&&x.offer.available&&x.offer.perNight)?x.offer.perNight:9e9}
+  function sortResults(list){var a=list.slice();
+    if(state.sort==='price-asc')a.sort(function(x,y){return price1(x)-price1(y)});
+    else if(state.sort==='price-desc')a.sort(function(x,y){return (price1(y)===9e9?-1:price1(y))-(price1(x)===9e9?-1:price1(x))});
+    return a;}
+
+  function renderList(d){var list=sortResults(d.results||[]);var cnt=$('#resCount');
+    if(cnt)cnt.textContent=(d.count||list.length)+' Unterkünfte'+(d.nights?(' \\u00b7 '+d.nights+' Nächte'):'');
+    if(!list.length){results.innerHTML='<div class="empty">Keine Unterkünfte für diese Auswahl.</div>';return;}
+    results.innerHTML=list.map(card).join('');bindCards();}
+
+  function feats(acc){return (acc.featureLabels||[]).slice(0,4).map(function(f){return '<span class="fi">'+f.icon+' '+esc(f.label)+'</span>'}).join('')}
+
+  function card(acc){
+    var img=acc.image?('style="background-image:url(\\''+esc(acc.image)+'\\')"'):'class="img noimg"';
+    var imgTag=acc.image?('<div class="img" '+img+'>'):'<div '+img+'>';
+    var badge=acc.badge?'<span class="badge">'+esc(acc.badge)+'</span>':'';
+    return '<article class="bk-card">'+imgTag+badge+'</div><div class="body">'
+      +'<h3>'+esc(acc.name)+'</h3>'
+      +(acc.rating?'<div class="rating" style="color:#bfa06a;font-weight:600;font-size:14px">\\u2605 '+esc(acc.rating)+'</div>':'')
+      +'<div class="feat-row">'+(acc.location?'<span class="fi">\\ud83d\\udccd '+esc(acc.location)+'</span>':'')+(acc.type?'<span class="fi">'+esc(acc.type)+'</span>':'')+'</div>'
+      +'<p class="desc">'+esc(acc.description)+'</p>'
+      +'<div class="feat-row">'+feats(acc)+'</div>'
+      +priceBox(acc)+'</div></article>';}
+
+  function priceBox(acc){
+    if(!acc.connected){
+      var web=acc.link?'<a class="btn-web" href="'+esc(acc.link)+'" target="_blank" rel="noopener">Zur Website \\u2192</a>':'<span class="note-web">Auf Anfrage</span>';
+      return '<div class="price-box"><span class="pn note-web">Preise siehe Website</span>'+web+'</div>';}
+    var o=acc.offer;
+    if(!o)return '<div class="price-box"><span class="pn note-web">Termine wählen für Live-Preis</span><button class="btn-book" data-pick="1">Verfügbarkeit</button></div>';
+    if(o.error)return '<div class="price-box"><span class="pn note-web">Preis derzeit nicht verfügbar</span></div>';
+    if(o.available===false)return '<div class="price-box"><span class="soldout">Für diese Daten belegt</span><button class="btn-web" data-pick="1">Andere Daten</button></div>';
+    return '<div class="price-box"><span class="pn">ab <b>'+euro(o.perNight,o.currency)+'</b> / Nacht<span class="tot">'+euro(o.total,o.currency)+' gesamt \\u00b7 '+o.nights+' Nächte</span></span>'
+      +'<button class="btn-book" data-book="'+acc.id+'">Jetzt buchen</button></div>';}
+
+  function bindCards(){
+    $$('[data-book]').forEach(function(b){b.addEventListener('click',function(){openBooking(findAcc(b.getAttribute('data-book')))})});
+    $$('[data-pick]').forEach(function(b){b.addEventListener('click',function(){if(form&&form.checkin){form.checkin.focus();}window.scrollTo({top:0,behavior:'smooth'})})});}
+  function findAcc(id){var m=(last.results||[]).filter(function(x){return String(x.id)===String(id)});return m[0]}
+
+  // ---- overlay ----
+  var ov=$('#bkOverlay');
+  function openBooking(acc){if(!acc)return;
+    if(!state.checkin||!state.checkout){alert('Bitte zuerst An- und Abreise wählen.');if(form&&form.checkin)form.checkin.focus();return;}
+    var o=acc.offer||{};
+    $('#bk-title').textContent=acc.name;
+    var s='<div class="row"><span>An-/Abreise</span><span>'+fmt(state.checkin)+' \\u2192 '+fmt(state.checkout)+'</span></div>'
+      +'<div class="row"><span>Nächte</span><span>'+(o.nights||'')+'</span></div>'
+      +'<div class="row"><span>Gäste</span><span>'+(state.guests||2)+'</span></div>';
+    if(o.roomTotal)s+='<div class="row"><span>Unterkunft</span><span>'+euro(o.roomTotal,o.currency)+'</span></div>';
+    if(o.extraFees)s+='<div class="row"><span>Endreinigung / Gebühren</span><span>'+euro(o.extraFees,o.currency)+'</span></div>';
+    if(o.total)s+='<div class="row total"><span>Gesamt</span><span>'+euro(o.total,o.currency)+'</span></div>';
+    $('#bk-summary').innerHTML=s;
+    $('#bk-accId').value=acc.id;$('#bk-msg').innerHTML='';
+    $('#bk-form').style.display='';$('#bk-actions').style.display='';
+    ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+  function closeBooking(){ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+  function msg(t,html){$('#bk-msg').innerHTML='<div class="msg '+t+'">'+html+'</div>'}
+  if(ov){
+    $('#bk-close').addEventListener('click',closeBooking);
+    $('#bk-cancel').addEventListener('click',closeBooking);
+    ov.addEventListener('click',function(e){if(e.target===ov)closeBooking()});
+    $('#bk-submit').addEventListener('click',function(){
+      var f=$('#bk-form');
+      var data={accId:$('#bk-accId').value,checkin:state.checkin,checkout:state.checkout,guests:state.guests||2,
+        title:f.title.value,firstName:f.firstName.value.trim(),lastName:f.lastName.value.trim(),
+        email:f.email.value.trim(),phone:f.phone.value.trim(),notes:f.notes.value.trim()};
+      if(!data.firstName||!data.lastName||!data.email){msg('err','Bitte Vorname, Nachname und E-Mail ausfüllen.');return;}
+      if(!f.agb.checked){msg('err','Bitte AGB &amp; Datenschutz akzeptieren.');return;}
+      var btn=$('#bk-submit');btn.disabled=true;btn.textContent='Wird gebucht…';
+      fetch('/api/book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)})
+        .then(function(r){return r.json()}).then(function(res){
+          btn.disabled=false;btn.textContent='Jetzt verbindlich buchen';
+          if(res.ok){$('#bk-form').style.display='none';$('#bk-actions').style.display='none';
+            msg('ok','<b>Buchung bestätigt!</b><br>Buchungsnummer: <b>'+(res.bookingId||'\\u2014')+'</b><br>Du erhältst in Kürze eine Bestätigung per E-Mail.'+(res.demo?'<br><em>(Demo-Modus \\u2013 keine echte Buchung erstellt)</em>':''));
+          }else{msg('err',res.error||'Buchung fehlgeschlagen.')}
+        }).catch(function(){btn.disabled=false;btn.textContent='Jetzt verbindlich buchen';msg('err','Netzwerkfehler. Bitte erneut versuchen.')});
+    });
+  }
+  run();
+})();
+</script>`;
+
 function listingPage(c, items, kind) {
   const isGastro = kind === "gastro";
+  if (!isGastro) return bookingToolPage(c, items);
   const title = isGastro ? c.gastronomie_title : c.unterkuenfte_title;
   const sub = isGastro ? c.gastronomie_sub : c.unterkuenfte_sub;
   const intro = isGastro ? c.gastronomie_intro : c.unterkuenfte_intro;
@@ -926,6 +1306,45 @@ function fieldImage(value) {
     <span class="hint">Bild auswählen – wird automatisch verkleinert. Leer lassen für Platzhalter.</span>`;
 }
 
+// Beds24 connection + booking-tool filters — only for accommodations.
+function accBookingFields(it) {
+  const sel = parseFeatures(it.features);
+  const connected = String(it.beds24_property_id || "").trim() && String(it.beds24_room_id || "").trim();
+  const badge = connected
+    ? `<span class="beds-badge on">● Beds24 verbunden – Live-Buchung aktiv</span>`
+    : `<span class="beds-badge off">○ Keine API – zeigt „Preise siehe Website"</span>`;
+  const featBoxes = FEATURES.map((f) => {
+    const on = sel.includes(f.key);
+    return `<label class="feat"><input type="checkbox" name="features" value="${f.key}" ${
+      on ? "checked" : ""
+    }><span>${f.icon} ${esc(f.label)}</span></label>`;
+  }).join("");
+  return `
+    <div class="section-sep">Buchungstool &amp; Beds24 ${badge}</div>
+    <p class="hint" style="margin:-6px 0 14px">Property- und Zimmer-ID eintragen, damit VALUERO Live-Preise, Verfügbarkeit und die komplette Buchungsstrecke anzeigt. Bleiben die Felder leer, erscheint die Unterkunft ohne Preis mit dem Hinweis „Preise siehe Website" und einem Button zur oben eingetragenen Website.</p>
+    <div class="fr two">
+      <div class="fr" style="margin:0"><label>Beds24 Property-ID</label><input name="beds24_property_id" value="${esc(
+        it.beds24_property_id
+      )}" placeholder="z. B. 123456" inputmode="numeric"></div>
+      <div class="fr" style="margin:0"><label>Beds24 Zimmer-ID (Room-ID)</label><input name="beds24_room_id" value="${esc(
+        it.beds24_room_id
+      )}" placeholder="z. B. 678901" inputmode="numeric"></div>
+    </div>
+    <div class="fr two">
+      <div class="fr" style="margin:0"><label>Max. Gäste</label><input type="number" min="0" name="max_guests" value="${esc(
+        it.max_guests ? it.max_guests : ""
+      )}" placeholder="z. B. 4"></div>
+      <div class="fr" style="margin:0"><label>Eigener API-Token (optional)</label><input name="beds24_token" value="${esc(
+        it.beds24_token
+      )}" placeholder="nur falls eigenes Beds24-Konto"></div>
+    </div>
+    <div class="fr">
+      <label>Ausstattung &amp; Filter (Booking-Tool)</label>
+      <div class="feature-grid">${featBoxes}</div>
+      <span class="hint">Ausgewählte Merkmale erscheinen als Filter im Buchungstool und als Icons auf der Unterkunft.</span>
+    </div>`;
+}
+
 function entryForm(kind, label, it, pendingCount) {
   it = it || {};
   const base = "/admin/" + kind;
@@ -990,10 +1409,13 @@ function entryForm(kind, label, it, pendingCount) {
       <div class="fr"><label>${tagLabel}</label><input name="${tagName}" value="${esc(
       tagVal
     )}"></div>
-      <div class="fr"><label>Link (Buchung/Website)</label><input name="link" value="${esc(
+      <div class="fr"><label>${
+        isGastro ? "Link (Website)" : "Website / externer Buchungslink"
+      }</label><input name="link" value="${esc(
         it.link
       )}" placeholder="https://"></div>
-      <div class="fr">${fieldImage(it.image)}</div>`;
+      <div class="fr">${fieldImage(it.image)}</div>
+      ${kind === "unterkuenfte" ? accBookingFields(it) : ""}`;
   }
   const body = `
   <div class="page-title"><h1>${isNew ? "Neu" : "Bearbeiten"} · ${label}</h1>
@@ -1226,6 +1648,33 @@ async function init() {
       value TEXT DEFAULT ''
     );
   `);
+  // ---- Beds24 / booking-tool columns on accommodations (idempotent) ----
+  await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS beds24_property_id TEXT DEFAULT ''`);
+  await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS beds24_room_id TEXT DEFAULT ''`);
+  await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS beds24_token TEXT DEFAULT ''`);
+  await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS features TEXT DEFAULT ''`);
+  await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS max_guests INTEGER DEFAULT 0`);
+  // ---- Bookings placed through VALUERO (audit trail / fallback record) ----
+  await query(`
+    CREATE TABLE IF NOT EXISTS bookings (
+      id SERIAL PRIMARY KEY,
+      accommodation_id INTEGER,
+      accommodation_name TEXT DEFAULT '',
+      beds24_booking_id TEXT DEFAULT '',
+      checkin DATE,
+      checkout DATE,
+      guests INTEGER DEFAULT 2,
+      first_name TEXT DEFAULT '',
+      last_name TEXT DEFAULT '',
+      email TEXT DEFAULT '',
+      phone TEXT DEFAULT '',
+      notes TEXT DEFAULT '',
+      total NUMERIC DEFAULT 0,
+      currency TEXT DEFAULT 'EUR',
+      status TEXT DEFAULT 'new',
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+  `);
   await seed();
   await enrich();
 }
@@ -1263,6 +1712,25 @@ async function enrich() {
              image = CASE WHEN $3 <> '' AND COALESCE(image,'')='' THEN $3 ELSE image END
        WHERE name = $1`,
       [name, link, image]
+    );
+  }
+  // Feature keys + capacity for the booking-tool filters. Only fills empty
+  // values, so admin edits are preserved.
+  const accMeta = [
+    ["Haus Felder – Garfrescha", "ski,parking,wifi,mountainview,nonsmoking,tv", 6],
+    ["Alt Montafon", "steam,parking,wifi,kitchen,nonsmoking,tv", 4],
+    ["Landhaus Angelika", "breakfast,pets,parking,family,wifi,mountainview", 5],
+    ["Haus Lerch", "parking,wifi,garage,kitchen,nonsmoking,tv", 4],
+    ["Chalet Antonhaus", "sauna,steam,wellness,breakfast,parking,wifi", 6],
+    ["Haus zur Kapelle", "ski,sauna,parking,wifi,mountainview,nonsmoking", 5],
+  ];
+  for (const [name, features, maxGuests] of accMeta) {
+    await query(
+      `UPDATE accommodations
+         SET features = CASE WHEN COALESCE(features,'')='' THEN $2 ELSE features END,
+             max_guests = CASE WHEN COALESCE(max_guests,0)=0 THEN $3 ELSE max_guests END
+       WHERE name = $1`,
+      [name, features, maxGuests]
     );
   }
   for (const [name, link, image] of gas) {
@@ -1422,6 +1890,7 @@ const db = { pool, query, init, getAllContent, setContent };
 /* ===== server ===== */
 // VALUERO — public website + admin CMS.
 const express = require("express");
+const beds24 = require("./beds24");
 
 const app = express();
 app.disable("x-powered-by");
@@ -1438,7 +1907,10 @@ const KIND = {
   unterkuenfte: {
     table: "accommodations",
     label: "Unterkünfte",
-    cols: ["name", "description", "location", "type", "rating", "badge", "amenities", "link", "image"],
+    cols: [
+      "name", "description", "location", "type", "rating", "badge", "amenities", "link", "image",
+      "beds24_property_id", "beds24_room_id", "beds24_token", "features", "max_guests",
+    ],
   },
   gastronomie: {
     table: "gastro",
@@ -1455,7 +1927,9 @@ const KIND = {
 function valuesFor(cols, body) {
   return cols.map((c) => {
     let v = body[c];
+    if (Array.isArray(v)) v = v.join(","); // multi-value checkboxes (features)
     if (v == null) v = "";
+    if (c === "max_guests") return String(parseInt(v, 10) || 0); // INTEGER column
     return String(v);
   });
 }
@@ -1477,6 +1951,11 @@ app.get("/", async (req, res, next) => {
 app.get("/unterkuenfte", async (req, res, next) => {
   try {
     const c = await db.getAllContent();
+    c.__prefill = {
+      checkin: req.query.checkin || "",
+      checkout: req.query.checkout || "",
+      guests: req.query.guests || "",
+    };
     const items = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
     res.send(V.listingPage(c, items, "acc"));
   } catch (e) {
@@ -1560,6 +2039,184 @@ app.get("/agb", async (req, res, next) => {
     res.send(V.legalPage(c, "AGB", c.agb_html, ""));
   } catch (e) {
     next(e);
+  }
+});
+
+// =================== BOOKING API (Beds24) ===================
+function validDate(s) {
+  return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(new Date(s + "T00:00:00Z"));
+}
+// Map a DB accommodation row to the public shape used by the booking tool.
+function publicAcc(row) {
+  const featureKeys = parseFeatures(row.features);
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description || "",
+    location: row.location || "",
+    type: row.type || "",
+    rating: row.rating || "",
+    badge: row.badge || "",
+    image: row.image || "",
+    link: row.link || "",
+    features: featureKeys,
+    featureLabels: featureKeys.map((k) => ({ key: k, label: FEATURE_LABEL[k], icon: FEATURE_ICON[k] })),
+    maxGuests: row.max_guests || 0,
+    connected: beds24.isConnected(row),
+  };
+}
+
+// GET /api/search — accommodations + live price/availability for dates & filters.
+app.get("/api/search", async (req, res, next) => {
+  try {
+    const { checkin, checkout } = req.query;
+    const guests = Math.max(0, parseInt(req.query.guests, 10) || 0);
+    const wantFeatures = String(req.query.features || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const type = String(req.query.type || "").toLowerCase();
+    const loc = String(req.query.loc || "").toLowerCase();
+    const priceMax = parseInt(req.query.priceMax, 10) || 0;
+    const datesValid = validDate(checkin) && validDate(checkout) && beds24.nights(checkin, checkout) > 0;
+
+    const rows = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
+    const results = [];
+    for (const row of rows) {
+      const acc = publicAcc(row);
+      if (type && acc.type.toLowerCase() !== type) continue;
+      if (loc && acc.location.toLowerCase() !== loc) continue;
+      if (wantFeatures.length && !wantFeatures.every((f) => acc.features.includes(f))) continue;
+      if (guests && acc.maxGuests && guests > acc.maxGuests) continue;
+
+      let offer = null;
+      if (datesValid && acc.connected) {
+        try {
+          offer = await beds24.getStayOffer(db, row, checkin, checkout, guests || 2);
+        } catch (e) {
+          console.error("Beds24 offer error", acc.name, e.message);
+          offer = { error: true, available: false };
+        }
+      }
+      if (priceMax && offer && offer.available && offer.perNight && offer.perNight > priceMax) continue;
+      results.push({ ...acc, offer });
+    }
+    // Available first, then connected, then original order.
+    results.sort((a, b) => {
+      const av = (x) => (x.offer && x.offer.available ? 0 : 1);
+      const cn = (x) => (x.connected ? 0 : 1);
+      return av(a) - av(b) || cn(a) - cn(b);
+    });
+    res.json({
+      checkin: datesValid ? checkin : null,
+      checkout: datesValid ? checkout : null,
+      nights: datesValid ? beds24.nights(checkin, checkout) : 0,
+      guests: guests || null,
+      count: results.length,
+      results,
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// GET /api/quote/:id — fresh price for one accommodation + stay.
+app.get("/api/quote/:id", async (req, res, next) => {
+  try {
+    const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [req.params.id])).rows[0];
+    if (!row) return res.status(404).json({ ok: false, error: "Unterkunft nicht gefunden." });
+    const { checkin, checkout } = req.query;
+    const guests = Math.max(1, parseInt(req.query.guests, 10) || 2);
+    if (!validDate(checkin) || !validDate(checkout) || beds24.nights(checkin, checkout) < 1)
+      return res.status(400).json({ ok: false, error: "Bitte gültige An- und Abreise wählen." });
+    if (!beds24.isConnected(row))
+      return res.json({ ok: true, connected: false, acc: publicAcc(row), offer: null });
+    const offer = await beds24.getStayOffer(db, row, checkin, checkout, guests);
+    res.json({ ok: true, connected: true, acc: publicAcc(row), offer });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message || "Preis konnte nicht geladen werden." });
+  }
+});
+
+// GET /api/calendar/:id — per-day availability & price for the date picker.
+app.get("/api/calendar/:id", async (req, res, next) => {
+  try {
+    const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [req.params.id])).rows[0];
+    if (!row) return res.status(404).json({ ok: false, error: "Unterkunft nicht gefunden." });
+    const from = validDate(req.query.from) ? req.query.from : new Date().toISOString().slice(0, 10);
+    const to = validDate(req.query.to)
+      ? req.query.to
+      : new Date(Date.now() + 180 * 86400000).toISOString().slice(0, 10);
+    const cal = await beds24.getCalendar(db, row, from, to);
+    res.json({ ok: true, connected: beds24.isConnected(row), calendar: cal });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message || "Kalender konnte nicht geladen werden." });
+  }
+});
+
+// POST /api/book — create a booking through Beds24 (full funnel).
+app.post("/api/book", async (req, res, next) => {
+  try {
+    const b = req.body || {};
+    const id = parseInt(b.accId, 10) || 0;
+    const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [id])).rows[0];
+    if (!row) return res.status(404).json({ ok: false, error: "Unterkunft nicht gefunden." });
+    if (!beds24.isConnected(row))
+      return res.status(400).json({ ok: false, error: "Diese Unterkunft bietet keine Online-Buchung." });
+    if (!validDate(b.checkin) || !validDate(b.checkout) || beds24.nights(b.checkin, b.checkout) < 1)
+      return res.status(400).json({ ok: false, error: "Bitte gültige An- und Abreise wählen." });
+    if (!b.firstName || !b.lastName || !b.email)
+      return res.status(400).json({ ok: false, error: "Bitte Vorname, Nachname und E-Mail angeben." });
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(b.email)))
+      return res.status(400).json({ ok: false, error: "Bitte eine gültige E-Mail-Adresse angeben." });
+
+    const guests = Math.max(1, parseInt(b.guests, 10) || 2);
+    // Re-price server-side; never trust a client-supplied total.
+    let offer = null;
+    try {
+      offer = await beds24.getStayOffer(db, row, b.checkin, b.checkout, guests);
+    } catch (e) {
+      console.error("Re-quote failed", e.message);
+    }
+    if (offer && offer.available === false)
+      return res.status(409).json({ ok: false, error: "Für diese Daten leider nicht mehr verfügbar." });
+
+    const result = await beds24.createBooking(db, row, {
+      checkin: b.checkin,
+      checkout: b.checkout,
+      guests,
+      adults: Math.max(1, parseInt(b.adults, 10) || guests),
+      children: Math.max(0, parseInt(b.children, 10) || 0),
+      title: b.title || "",
+      firstName: String(b.firstName).slice(0, 80),
+      lastName: String(b.lastName).slice(0, 80),
+      email: String(b.email).slice(0, 160),
+      phone: String(b.phone || "").slice(0, 60),
+      notes: String(b.notes || "").slice(0, 1000),
+    });
+
+    await db.query(
+      `INSERT INTO bookings (accommodation_id, accommodation_name, beds24_booking_id, checkin, checkout, guests,
+         first_name, last_name, email, phone, notes, total, currency, status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+      [
+        id, row.name, String(result.bookingId || ""), b.checkin, b.checkout, guests,
+        String(b.firstName).slice(0, 80), String(b.lastName).slice(0, 80), String(b.email).slice(0, 160),
+        String(b.phone || "").slice(0, 60), String(b.notes || "").slice(0, 1000),
+        offer ? offer.total || 0 : 0, offer ? offer.currency || "EUR" : "EUR", result.status || "new",
+      ]
+    );
+    res.json({
+      ok: true,
+      bookingId: result.bookingId,
+      demo: !!result.demo,
+      status: result.status,
+      total: offer ? offer.total : null,
+      currency: offer ? offer.currency : "EUR",
+    });
+  } catch (e) {
+    console.error("Booking failed", e);
+    res.status(500).json({ ok: false, error: e.message || "Buchung fehlgeschlagen. Bitte später erneut versuchen." });
   }
 });
 
