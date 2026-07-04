@@ -364,6 +364,25 @@ textarea{resize:vertical;min-height:90px}
   .detail-mobilecta .btn{flex:1;justify-content:center}
   body.has-mobilecta{padding-bottom:76px}
 }
+/* ===== kochdu.at ad banner ===== */
+.kochdu{position:relative;display:flex;align-items:center;gap:26px;overflow:hidden;border-radius:22px;padding:34px 38px;color:#fff;background:linear-gradient(120deg,#6645ef 0%,#8a5cff 46%,#5a38d6 100%);box-shadow:0 24px 50px -24px rgba(102,69,239,.65);text-decoration:none;transition:transform .25s,box-shadow .25s}
+.kochdu:hover{transform:translateY(-3px);box-shadow:0 32px 62px -22px rgba(102,69,239,.85)}
+.kochdu-glow{position:absolute;inset:-45%;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.28),transparent 42%);animation:kochduShimmer 6s ease-in-out infinite;pointer-events:none}
+@keyframes kochduShimmer{0%,100%{transform:translate(0,0)}50%{transform:translate(12%,10%)}}
+.kochdu-txt{position:relative;z-index:2;flex:1}
+.kochdu-eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:11px;font-weight:700;opacity:.85}
+.kochdu h2{color:#fff;font-size:clamp(26px,3.4vw,38px);margin:8px 0 6px}
+.kochdu p{color:rgba(255,255,255,.92);font-size:16px;max-width:54ch}
+.kochdu-rot{display:inline-block;font-weight:700;transition:opacity .2s;min-width:118px}
+.kochdu-chips{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 18px}
+.kochdu-chips span{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:500}
+.kochdu-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#5a38d6;font-weight:700;font-size:15px;padding:13px 24px;border-radius:999px;box-shadow:0 8px 20px -8px rgba(0,0,0,.35);transition:transform .2s}
+.kochdu:hover .kochdu-btn{transform:translateX(4px)}
+.kochdu-art{position:relative;z-index:2;flex:0 0 auto}
+.kochdu-scooter{font-size:96px;display:block;filter:drop-shadow(0 10px 18px rgba(0,0,0,.3));animation:kochduBob 2.4s ease-in-out infinite}
+@keyframes kochduBob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
+@media(max-width:680px){.kochdu{flex-direction:column-reverse;text-align:center;padding:26px 22px}.kochdu p{max-width:none}.kochdu-chips{justify-content:center}.kochdu-scooter{font-size:70px}}
+@media(prefers-reduced-motion:reduce){.kochdu-glow,.kochdu-scooter{animation:none}}
 @media(max-width:900px){.booking-layout{grid-template-columns:1fr}.filters-panel{position:static}.booking-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.booking-grid{grid-template-columns:1fr}.bk-form{grid-template-columns:1fr}.searchbar{gap:2px}.searchbar .sf{flex:1 1 100%}.searchbar .sf+.sf::before{display:none}.searchbar .sf.go{padding-top:6px}.searchbar .btn-search{width:100%;justify-content:center}}
 `;
@@ -1293,6 +1312,23 @@ const BOOKING_SCRIPT = `
 })();
 </script>`;
 
+// Interactive ad banner for the delivery partner kochdu.at (Gastronomie page).
+function kochduBanner() {
+  return `
+  <a class="kochdu reveal" href="https://www.kochdu.at" target="_blank" rel="noopener sponsored" aria-label="Zu kochdu.at – Essen bestellen im Montafon">
+    <div class="kochdu-glow"></div>
+    <div class="kochdu-txt">
+      <span class="kochdu-eyebrow">Anzeige · Liefer-Partner</span>
+      <h2>Lieber liefern lassen?</h2>
+      <p>Bestell dein Essen online im Montafon – <b>Lieferung oder Abholung</b> bei lokalen Restaurants. <span class="kochdu-rot" id="kochduRot">Pizza 🍕</span></p>
+      <div class="kochdu-chips"><span>Gaschurn</span><span>St. Gallenkirch</span><span>Partenen</span><span>Schruns</span></div>
+      <span class="kochdu-btn">Jetzt bei kochdu.at bestellen →</span>
+    </div>
+    <div class="kochdu-art"><span class="kochdu-scooter">🛵</span></div>
+  </a>
+  <script>(function(){var el=document.getElementById('kochduRot');if(!el)return;var w=['Pizza 🍕','Burger 🍔','Döner 🌯','Sushi 🍣','Pasta 🍝','Griechisch 🥙'];var i=0;setInterval(function(){i=(i+1)%w.length;el.style.opacity='0';setTimeout(function(){el.textContent=w[i];el.style.opacity='1';},200);},2200);})();</script>`;
+}
+
 function listingPage(c, items, kind) {
   const isGastro = kind === "gastro";
   if (!isGastro) return bookingToolPage(c, items);
@@ -1309,7 +1345,8 @@ function listingPage(c, items, kind) {
       <p>${esc(sub)}</p>
     </div>
   </section>
-  <section class="section" style="padding-top:46px">
+  <section class="section" style="padding-top:34px;padding-bottom:0"><div class="container">${kochduBanner()}</div></section>
+  <section class="section" style="padding-top:20px">
     <div class="container">
       <p class="muted reveal" style="max-width:70ch;margin-bottom:30px">${esc(intro)}</p>
       ${filterBar(items, isGastro)}
