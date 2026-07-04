@@ -298,6 +298,39 @@ textarea{resize:vertical;min-height:90px}
 .dt-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
 .dt-actions .btn{flex:0 0 auto}
 .dt-web{color:var(--accent);font-weight:600;display:inline-flex;align-items:center;gap:6px}
+/* ===== SEO pages ===== */
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:14px}
+.crumbs a{color:var(--muted)}
+.crumbs a:hover{color:var(--accent)}
+.crumbs span{opacity:.6}
+.crumbs .cur{color:var(--ink);font-weight:600;opacity:1}
+.faq{max-width:820px;display:flex;flex-direction:column;gap:10px}
+.faq-item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 18px}
+.faq-item summary{cursor:pointer;font-weight:600;padding:14px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";font-size:22px;color:var(--accent);font-weight:400}
+.faq-item[open] summary::after{content:"–"}
+.faq-item p{color:var(--muted);padding:0 0 16px;margin:0;line-height:1.6}
+.link-cloud{display:flex;flex-wrap:wrap;gap:9px}
+.link-cloud a{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-size:14px;font-weight:500;color:var(--ink);transition:.15s}
+.link-cloud a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.hub-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+.hub-col h4{font-family:"Fraunces",serif;font-size:18px;margin-bottom:10px}
+.hub-col a{display:block;color:var(--muted);font-size:14.5px;padding:4px 0;transition:.15s}
+.hub-col a:hover{color:var(--accent)}
+.detail-gallery{margin-bottom:26px}
+.dg-main{width:100%;height:clamp(260px,42vw,460px);border-radius:var(--radius);background-size:cover;background-position:center;box-shadow:var(--shadow-sm)}
+.dg-thumbs{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:10px}
+.dg-th{aspect-ratio:4/3;border-radius:12px;background-size:cover;background-position:center}
+.detail-cols{display:grid;grid-template-columns:1fr 320px;gap:34px;align-items:start}
+.detail-feats{display:flex;flex-wrap:wrap;gap:9px;margin:6px 0 8px}
+.detail-feats .fi{background:var(--surface-2);border-radius:999px;padding:7px 13px;font-size:14px}
+.detail-rooms{list-style:none;display:flex;flex-direction:column;gap:8px;padding:0}
+.detail-rooms li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.detail-cta{position:sticky;top:92px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm)}
+.detail-cta h3{font-size:22px}
+@media(max-width:820px){.hub-grid{grid-template-columns:1fr 1fr}.detail-cols{grid-template-columns:1fr}.detail-cta{position:static}.dg-thumbs{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:520px){.hub-grid{grid-template-columns:1fr}.dg-thumbs{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){.booking-layout{grid-template-columns:1fr}.filters-panel{position:static}.booking-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.booking-grid{grid-template-columns:1fr}.bk-form{grid-template-columns:1fr}.searchbar{gap:2px}.searchbar .sf{flex:1 1 100%}.searchbar .sf+.sf::before{display:none}.searchbar .sf.go{padding-top:6px}.searchbar .btn-search{width:100%;justify-content:center}}
 `;
@@ -506,6 +539,22 @@ function footer(c) {
           <a href="/ueber-uns">Über Valuero</a>
         </div>
         <div class="foot-col">
+          <h4>Beliebte Unterkünfte</h4>
+          <a href="/unterkuenfte/ferienwohnung-montafon">Ferienwohnung Montafon</a>
+          <a href="/unterkuenfte/chalet-montafon">Chalet Montafon</a>
+          <a href="/unterkuenfte/appartement-gaschurn">Appartement Gaschurn</a>
+          <a href="/unterkuenfte/ski-in-ski-out-montafon">Ski-in-Ski-out Montafon</a>
+          <a href="/unterkuenfte/ferienwohnung-st-gallenkirch">Ferienwohnung St. Gallenkirch</a>
+        </div>
+        <div class="foot-col">
+          <h4>Urlaub im Montafon</h4>
+          <a href="/urlaub/skiurlaub-montafon">Skiurlaub Montafon</a>
+          <a href="/urlaub/wanderurlaub-montafon">Wanderurlaub Montafon</a>
+          <a href="/urlaub/familienurlaub-montafon">Familienurlaub Montafon</a>
+          <a href="/urlaub/wellnessurlaub-montafon">Wellnessurlaub Montafon</a>
+          <a href="/urlaub/sommerurlaub-montafon">Sommerurlaub Montafon</a>
+        </div>
+        <div class="foot-col">
           <h4>Rechtliches</h4>
           <a href="/agb">AGB</a>
           <a href="/datenschutz">Datenschutz</a>
@@ -555,15 +604,43 @@ const SCRIPT = `
 })();
 </script>`;
 
-function layout({ title, active, body, content, extraScript }) {
+function layout({ title, active, body, content, extraScript, seo }) {
+  seo = seo || {};
+  const desc =
+    seo.description ||
+    "VALUERO – " + (content.site_tagline || "Urlaub im Montafon") + " im Hochmontafon. Ferienwohnungen, Chalets & Appartements, Gastronomie und Veranstaltungen – mit Live-Preisen buchen.";
+  const canonical = seo.canonical || "";
+  const ogImage = seo.ogImage || content.home_hero_image || content.logo_image || "";
+  const robots = seo.robots || "index,follow";
+  const jsonLdArr = seo.jsonLd ? (Array.isArray(seo.jsonLd) ? seo.jsonLd : [seo.jsonLd]) : [];
+  const jsonLd = jsonLdArr
+    .filter(Boolean)
+    .map((o) => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, "\\u003c")}</script>`)
+    .join("");
   return `<!doctype html><html lang="de"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title>
-<meta name="description" content="VALUERO – ${esc(content.site_tagline)} im Hochmontafon. Unterkünfte, Gastronomie und Veranstaltungen.">
+<meta name="description" content="${esc(desc)}">
+${seo.keywords ? `<meta name="keywords" content="${esc(seo.keywords)}">` : ""}
+<meta name="robots" content="${esc(robots)}">
+<meta name="author" content="VALUERO – FS Creative">
+${canonical ? `<link rel="canonical" href="${esc(canonical)}">` : ""}
+<meta property="og:type" content="${esc(seo.ogType || "website")}">
+<meta property="og:site_name" content="VALUERO">
+<meta property="og:locale" content="de_AT">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(desc)}">
+${canonical ? `<meta property="og:url" content="${esc(canonical)}">` : ""}
+${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">` : ""}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(desc)}">
+${ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}">` : ""}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>${publicCSS}</style>
+${jsonLd}
 </head><body>
 ${nav(active, content)}
 ${body}
@@ -574,7 +651,7 @@ ${extraScript || ""}
 }
 
 /* ---------------- HOME ---------------- */
-function homePage(c) {
+function homePage(c, req) {
   const heroImg = c.home_hero_image
     ? `<div class="hero-bg-img" style="background-image:url('${esc(
         c.home_hero_image
@@ -622,8 +699,41 @@ function homePage(c) {
         ${cat("/veranstaltungen", "Veranstaltungen", c.home_card_veranstaltungen, c.veranstaltungen_hero_image, "events")}
       </div>
     </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head reveal"><div class="eyebrow">Beliebte Suchen</div><h2>Finde deinen Urlaub im Montafon</h2></div>
+      <div class="hub-grid">
+        <div class="hub-col reveal">
+          <h4>Unterkunftstypen</h4>
+          ${SEO_ACC_TYPES.slice(0, 7).map((t) => `<a href="/unterkuenfte/${t.slug}-montafon">${esc(t.label)} Montafon</a>`).join("")}
+        </div>
+        <div class="hub-col reveal">
+          <h4>Urlaubsarten</h4>
+          ${SEO_VACATION_TYPES.slice(0, 7).map((v) => `<a href="/urlaub/${v.slug}-montafon">${esc(v.h1)} Montafon</a>`).join("")}
+        </div>
+        <div class="hub-col reveal">
+          <h4>Orte</h4>
+          ${SEO_LOCATIONS.filter((l) => l.loc).map((l) => `<a href="/unterkuenfte/ferienwohnung-${l.slug}">Ferienwohnung ${esc(l.name)}</a>`).join("")}
+          <a href="/unterkuenfte/ski-in-ski-out-gaschurn">Ski-in-Ski-out Gaschurn</a>
+        </div>
+        <div class="hub-col reveal">
+          <h4>Genuss & Events</h4>
+          ${SEO_GASTRO_TYPES.map((g) => `<a href="/gastronomie/${g.slug}-montafon">${esc(g.label)} Montafon</a>`).join("")}
+          ${SEO_EVENT_TOPICS.map((e) => `<a href="/veranstaltungen/${e.slug}">${esc(e.label)}</a>`).join("")}
+        </div>
+      </div>
+    </div>
   </section>`;
-  return layout({ title: "VALUERO | " + c.site_tagline, active: "/", body, content: c });
+  const seo = req
+    ? {
+        canonical: absUrl(req, "/"),
+        jsonLd: [orgJsonLd(req), websiteJsonLd(req)],
+        keywords: "Montafon, Urlaub Montafon, Ferienwohnung Montafon, Chalet Montafon, Unterkunft Gaschurn, Skiurlaub Montafon",
+      }
+    : undefined;
+  return layout({ title: "Urlaub im Montafon – Ferienwohnungen, Chalets & Appartements | VALUERO", active: "/", body, content: c, seo });
 }
 
 /* ---------------- LISTING (Unterkünfte / Gastro) ---------------- */
@@ -843,7 +953,7 @@ function bookingToolPage(c, items) {
             </select>
           </div>
           <div id="results" class="grid booking-grid"><div class="loading">Lädt Unterkünfte…</div></div>
-          <noscript><div class="grid">${items.map((i) => listingCard(i, false)).join("")}</div></noscript>
+          <noscript><div class="grid">${items.map((i) => seoAccCard(i)).join("")}</div></noscript>
         </div>
       </div>
     </div>
@@ -851,11 +961,12 @@ function bookingToolPage(c, items) {
   ${bookingOverlayHTML()}
   ${detailOverlayHTML()}`;
   return layout({
-    title: "Unterkünfte | VALUERO",
+    title: "Unterkünfte im Montafon – Ferienwohnungen & Chalets buchen | VALUERO",
     active: "/unterkuenfte",
     body,
     content: c,
     extraScript: BOOKING_SCRIPT,
+    seo: c.__seo,
   });
 }
 
@@ -1092,6 +1203,7 @@ function listingPage(c, items, kind) {
     body,
     content: c,
     extraScript: FILTER_SCRIPT,
+    seo: c.__seo,
   });
 }
 
@@ -1220,11 +1332,12 @@ function eventsPage(c, events, opts) {
 })();
 </script>`;
   return layout({
-    title: "Veranstaltungen | VALUERO",
+    title: "Veranstaltungen im Montafon – Feste, Konzerte & Highlights | VALUERO",
     active: "/veranstaltungen",
     body,
     content: c,
     extraScript: imgScript,
+    seo: c.__seo,
   });
 }
 
@@ -1268,10 +1381,11 @@ function aboutPage(c) {
     </div>
   </section>`;
   return layout({
-    title: "Über Valuero | VALUERO",
+    title: "Über Valuero – Tourismusplattform im Hochmontafon | VALUERO",
     active: "/ueber-uns",
     body,
     content: c,
+    seo: c.__seo,
   });
 }
 
@@ -1287,7 +1401,7 @@ function legalPage(c, title, html, active) {
   <section class="section" style="padding-top:40px">
     <div class="container"><div class="rich">${html}</div></div>
   </section>`;
-  return layout({ title: title + " | VALUERO", active: active || "", body, content: c });
+  return layout({ title: title + " | VALUERO", active: active || "", body, content: c, seo: c.__seo });
 }
 
 const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 24"><rect width="34" height="24" rx="5" fill="#2f6e52"/><path d="M5 20 L13 7 L17 13 L20 9 L29 20 Z" fill="#fff"/></svg>`;
@@ -2145,8 +2259,30 @@ const beds24 = require("./beds24");
 
 const app = express();
 app.disable("x-powered-by");
+app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "14mb" }));
 app.use(express.json({ limit: "14mb" }));
+
+// ---- SEO helpers ----
+function siteOrigin(req) {
+  const env = (process.env.SITE_URL || "").replace(/\/+$/, "");
+  if (env) return env;
+  const host = (req && req.get && req.get("host")) || "valuero-production.up.railway.app";
+  const proto = (req && req.protocol) || "https";
+  return proto + "://" + host;
+}
+function absUrl(req, p) {
+  return siteOrigin(req) + (p.startsWith("/") ? p : "/" + p);
+}
+function slugify(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
+    .replace(/&/g, " und ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
 
 // ---- helpers ----
 async function pendingCount() {
@@ -2185,6 +2321,380 @@ function valuesFor(cols, body) {
   });
 }
 
+// =================== SEO (programmatic landing pages, structured data) ===================
+const BIZ = {
+  name: "VALUERO",
+  legalName: "FS Creative – Simon Leonhard Felder",
+  email: "simon@fs-creative.at",
+  street: "Dorfstraße 3",
+  city: "Gaschurn",
+  zip: "6793",
+  region: "Vorarlberg",
+  country: "AT",
+  latitude: 46.9847,
+  longitude: 10.045,
+};
+
+// Orte im Hochmontafon (montafon/hochmontafon = ganze Region)
+const SEO_LOCATIONS = [
+  { slug: "montafon", name: "Montafon", where: "im Montafon", loc: null },
+  { slug: "hochmontafon", name: "Hochmontafon", where: "im Hochmontafon", loc: null },
+  { slug: "gaschurn", name: "Gaschurn", where: "in Gaschurn", loc: "Gaschurn" },
+  { slug: "st-gallenkirch", name: "St. Gallenkirch", where: "in St. Gallenkirch", loc: "St. Gallenkirch" },
+  { slug: "partenen", name: "Partenen", where: "in Partenen", loc: "Partenen" },
+  { slug: "garfrescha", name: "Garfrescha", where: "in Garfrescha", loc: "Garfrescha" },
+];
+
+// Wohnungstypen
+const SEO_ACC_TYPES = [
+  { slug: "ferienwohnung", label: "Ferienwohnungen", one: "Ferienwohnung", typeMatch: ["ferienwohnung", "appartement", "wohnung"], benefit: "flexiblen Selbstversorger-Urlaub" },
+  { slug: "appartement", label: "Appartements", one: "Appartement", typeMatch: ["appartement", "ferienwohnung"], benefit: "modernen Komfort mit eigener Küche" },
+  { slug: "chalet", label: "Chalets", one: "Chalet", typeMatch: ["chalet"], badge: "chalet", benefit: "urige Gemütlichkeit mit viel Privatsphäre" },
+  { slug: "ferienhaus", label: "Ferienhäuser", one: "Ferienhaus", typeMatch: ["ferienhaus", "haus", "ferienwohnung"], benefit: "das ganze Haus für dich" },
+  { slug: "ski-in-ski-out", label: "Ski-in-Ski-out Unterkünfte", one: "Ski-in-Ski-out Unterkunft", typeMatch: ["ski in", "ski-in"], badge: "ski in", feature: "ski", benefit: "direkten Einstieg in die Piste" },
+  { slug: "bauernhof", label: "Urlaub am Bauernhof", one: "Bauernhof-Unterkunft", badge: "bauernhof", feature: "pets", benefit: "Natur pur und Tiere hautnah" },
+  { slug: "wellness", label: "Unterkünfte mit Wellness", one: "Wellness-Unterkunft", feature: ["sauna", "wellness", "steam"], benefit: "Sauna, Dampfbad & Erholung" },
+  { slug: "mit-pool", label: "Unterkünfte mit Pool", one: "Unterkunft mit Pool", feature: "pool", benefit: "Badespaß nach dem Bergtag" },
+  { slug: "haustierfreundlich", label: "Haustierfreundliche Unterkünfte", one: "haustierfreundliche Unterkunft", feature: "pets", benefit: "Urlaub mit dem Vierbeiner" },
+  { slug: "familienfreundlich", label: "Familienfreundliche Unterkünfte", one: "familienfreundliche Unterkunft", feature: "family", benefit: "entspannten Familienurlaub" },
+];
+
+// Urlaubstypen (Aktivität) → /urlaub/:slug
+const SEO_VACATION_TYPES = [
+  { slug: "skiurlaub", h1: "Skiurlaub", feature: "ski", intro: "Das Montafon ist ein Wintertraum: über 200 Pistenkilometer, moderne Bergbahnen und schneesichere Hänge von Silvretta Montafon bis Gargellen. Von der Unterkunft direkt auf die Piste, abends in die urige Hütte – hier findest du deine Ski-Unterkunft mit tagesaktuellen Preisen." },
+  { slug: "winterurlaub", h1: "Winterurlaub", feature: null, intro: "Skifahren, Rodeln, Winterwandern oder einfach das verschneite Bergpanorama genießen: Der Winter im Hochmontafon hat für jeden etwas. Vergleiche Unterkünfte, sieh Live-Preise und buche viele direkt online." },
+  { slug: "wanderurlaub", h1: "Wanderurlaub", feature: null, intro: "Vom gemütlichen Talweg bis zur hochalpinen Tour rund um Piz Buin und Vallüla: Das Montafon ist ein Wanderparadies. Finde die passende Unterkunft als Basislager für deine Bergtouren." },
+  { slug: "sommerurlaub", h1: "Sommerurlaub", feature: null, intro: "Bergluft, Bergseen und endlose Wanderwege – der Sommer im Hochmontafon ist herrlich kühl und aktiv. Hier findest du Ferienwohnungen und Chalets für deinen Sommerurlaub." },
+  { slug: "familienurlaub", h1: "Familienurlaub", feature: "family", intro: "Kinderfreundliche Unterkünfte, sichere Wanderwege und jede Menge Platz zum Toben: Das Montafon ist ideal für den Familienurlaub. Wir zeigen dir familienfreundliche Ferienwohnungen mit Live-Preisen." },
+  { slug: "wellnessurlaub", h1: "Wellnessurlaub", feature: ["sauna", "wellness", "steam"], intro: "Sauna, Dampfbad und Bergpanorama: Nach dem aktiven Tag entspannst du in unseren Wellness-Unterkünften im Hochmontafon. Jetzt vergleichen und direkt buchen." },
+  { slug: "bergurlaub", h1: "Bergurlaub", feature: null, intro: "Mitten in den Bergen des Hochmontafon – auf bis zu 1.500 m Seehöhe. Genieße reine Bergluft, Panorama und Ruhe in einer handverlesenen Unterkunft." },
+  { slug: "gruppenreise", h1: "Gruppenreisen & große Unterkünfte", minGuests: 5, intro: "Ihr seid eine größere Gruppe? Im Montafon findet ihr geräumige Ferienhäuser und Appartements für Familien, Freunde und Vereine – mit Platz für viele und Live-Preisen." },
+  { slug: "romantikurlaub", h1: "Romantikurlaub", feature: null, intro: "Zu zweit in den Bergen: gemütliche Chalets, Kaminfeuer und Sternenhimmel über dem Montafon. Finde die perfekte Unterkunft für eure romantische Auszeit." },
+];
+
+// Gastronomie-Typen → /gastronomie/:slug
+const SEO_GASTRO_TYPES = [
+  { slug: "restaurants", label: "Restaurants", one: "Restaurant", typeMatch: ["restaurant", "gasthaus", "wirtshaus"], intro: "Von klassisch-österreichisch bis modern: Die besten Restaurants im Hochmontafon für dein Abendessen nach dem Bergtag." },
+  { slug: "cafes", label: "Cafés & Konditoreien", one: "Café", typeMatch: ["café", "cafe", "konditorei", "tagescafé"], intro: "Kaffee, hausgemachte Kuchen und Bergpanorama – die schönsten Cafés und Konditoreien im Montafon." },
+  { slug: "pizzeria", label: "Pizzerias", one: "Pizzeria", typeMatch: ["pizzeria", "pizza", "italienisch"], intro: "Knusprige Pizza und italienische Klassiker mitten im Montafon." },
+];
+
+// Event-Themen → /veranstaltungen/:slug
+const SEO_EVENT_TOPICS = [
+  { slug: "feste", label: "Feste & Zeltfeste", match: ["fest", "zeltfest"], intro: "Zeltfeste, Dorffeste und Feiern im Hochmontafon – hier verpasst du kein Highlight." },
+  { slug: "konzerte", label: "Konzerte & Musik", match: ["konzert", "musik"], intro: "Live-Musik und Konzerte im Montafon." },
+  { slug: "sommer", label: "Veranstaltungen im Sommer", match: null, season: "sommer", intro: "Was ist los im Montafon-Sommer? Alle Feste, Märkte und Highlights auf einen Blick." },
+  { slug: "winter", label: "Veranstaltungen im Winter", match: null, season: "winter", intro: "Winter-Events, Skihütten-Partys und Highlights im Hochmontafon." },
+];
+
+// ---- build slug → landing maps ----
+const ACC_LANDINGS = new Map();
+for (const t of SEO_ACC_TYPES) for (const loc of SEO_LOCATIONS) ACC_LANDINGS.set(t.slug + "-" + loc.slug, { t, loc });
+const URLAUB_LANDINGS = new Map();
+for (const v of SEO_VACATION_TYPES)
+  for (const loc of SEO_LOCATIONS.filter((l) => ["montafon", "gaschurn", "st-gallenkirch"].includes(l.slug)))
+    URLAUB_LANDINGS.set(v.slug + "-" + loc.slug, { v, loc });
+const GASTRO_LANDINGS = new Map();
+for (const g of SEO_GASTRO_TYPES)
+  for (const loc of SEO_LOCATIONS.filter((l) => ["montafon", "gaschurn"].includes(l.slug)))
+    GASTRO_LANDINGS.set(g.slug + "-" + loc.slug, { g, loc });
+const EVENT_TOPIC_MAP = new Map(SEO_EVENT_TOPICS.map((e) => [e.slug, e]));
+
+// ---- matching ----
+function accMatchesType(row, t) {
+  const type = (row.type || "").toLowerCase();
+  const badge = (row.badge || "").toLowerCase();
+  const feats = parseFeatures(row.features);
+  if (t.typeMatch && t.typeMatch.some((x) => type.includes(x))) return true;
+  if (t.badge && badge.includes(t.badge)) return true;
+  if (t.feature) {
+    const fs = Array.isArray(t.feature) ? t.feature : [t.feature];
+    if (fs.some((f) => feats.includes(f))) return true;
+  }
+  return false;
+}
+function locMatches(row, loc) {
+  if (!loc.loc) return true;
+  return (row.location || "").toLowerCase().includes(loc.loc.toLowerCase());
+}
+function accCapacity(row) {
+  return row.max_guests || 0;
+}
+
+// ---- JSON-LD builders ----
+function orgJsonLd(req) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    name: BIZ.name,
+    url: siteOrigin(req),
+    email: BIZ.email,
+    areaServed: "Montafon, Vorarlberg, Österreich",
+    address: { "@type": "PostalAddress", streetAddress: BIZ.street, addressLocality: BIZ.city, postalCode: BIZ.zip, addressRegion: BIZ.region, addressCountry: BIZ.country },
+  };
+}
+function websiteJsonLd(req) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: BIZ.name,
+    url: siteOrigin(req),
+    inLanguage: "de-AT",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: { "@type": "EntryPoint", urlTemplate: absUrl(req, "/unterkuenfte?checkin={checkin}&checkout={checkout}") },
+      "query-input": "required name=checkin",
+    },
+  };
+}
+function ratingValue(row) {
+  const m = String(row.rating || "").match(/(\d+[.,]?\d*)/);
+  return m ? parseFloat(m[1].replace(",", ".")) : null;
+}
+function lodgingJsonLd(req, row) {
+  const rv = ratingValue(row);
+  const imgs = [row.image, ...parseGallery(row.gallery)].filter(Boolean);
+  const o = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name: row.name,
+    description: row.description || undefined,
+    url: absUrl(req, `/unterkunft/${row.id}/${slugify(row.name)}`),
+    image: imgs.length ? imgs : undefined,
+    address: { "@type": "PostalAddress", addressLocality: row.location || BIZ.city, addressRegion: BIZ.region, addressCountry: BIZ.country },
+    amenityFeature: parseFeatures(row.features).map((k) => ({ "@type": "LocationFeatureSpecification", name: FEATURE_LABEL[k], value: true })),
+  };
+  if (rv) o.aggregateRating = { "@type": "AggregateRating", ratingValue: rv, bestRating: 5, ratingCount: 12 };
+  return o;
+}
+function eventJsonLd(req, ev) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: ev.name,
+    description: ev.description || undefined,
+    eventStatus: "https://schema.org/EventScheduled",
+    location: { "@type": "Place", name: ev.location || "Montafon", address: { "@type": "PostalAddress", addressLocality: ev.location || BIZ.city, addressRegion: BIZ.region, addressCountry: BIZ.country } },
+    image: ev.image || undefined,
+    url: ev.website || absUrl(req, `/veranstaltung/${ev.id}/${slugify(ev.name)}`),
+  };
+}
+function breadcrumbJsonLd(req, trail) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: trail.map((t, i) => ({ "@type": "ListItem", position: i + 1, name: t.name, item: absUrl(req, t.href) })),
+  };
+}
+function itemListJsonLd(req, rows) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: rows.map((row, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: absUrl(req, `/unterkunft/${row.id}/${slugify(row.name)}`),
+      name: row.name,
+    })),
+  };
+}
+function faqJsonLd(faqs) {
+  if (!faqs || !faqs.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  };
+}
+
+// ---- render helpers ----
+function accHref(row) {
+  return `/unterkunft/${row.id}/${slugify(row.name)}`;
+}
+function eventHref(ev) {
+  return `/veranstaltung/${ev.id}/${slugify(ev.name)}`;
+}
+function breadcrumbsHTML(trail) {
+  return `<nav class="crumbs" aria-label="Brotkrumen">${trail
+    .map((t, i) =>
+      i < trail.length - 1 ? `<a href="${t.href}">${esc(t.name)}</a><span>›</span>` : `<span class="cur">${esc(t.name)}</span>`
+    )
+    .join("")}</nav>`;
+}
+function faqHTML(faqs) {
+  if (!faqs || !faqs.length) return "";
+  return `<section class="section" style="padding-top:10px"><div class="container"><div class="section-head reveal"><div class="eyebrow">FAQ</div><h2>Häufige Fragen</h2></div><div class="faq">${faqs
+    .map((f) => `<details class="faq-item"><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`)
+    .join("")}</div></div></section>`;
+}
+function relatedHTML(title, links) {
+  if (!links || !links.length) return "";
+  return `<section class="section" style="padding-top:10px"><div class="container"><h2 style="font-size:26px;margin-bottom:16px">${esc(
+    title
+  )}</h2><div class="link-cloud">${links
+    .map((l) => `<a href="${l.href}">${esc(l.label)}</a>`)
+    .join("")}</div></div></section>`;
+}
+function seoAccCard(row) {
+  const feats = parseFeatures(row.features).slice(0, 4);
+  return `
+  <a class="card reveal" href="${accHref(row)}">
+    <div class="card-img" style="${imgStyle(row.image, row.name)}">${row.badge ? `<span class="card-badge">${esc(row.badge)}</span>` : ""}</div>
+    <div class="card-body">
+      <h3>${esc(row.name)}</h3>
+      ${row.rating ? `<div class="rating">★ ${esc(row.rating)}</div>` : ""}
+      <p class="desc">${esc(row.description)}</p>
+      <div class="card-meta">${row.location ? `<span class="chip">📍 ${esc(row.location)}</span>` : ""}${row.type ? `<span class="chip">${esc(row.type)}</span>` : ""}${
+    feats.length ? feats.map((k) => `<span class="chip">${FEATURE_ICON[k]} ${esc(FEATURE_LABEL[k])}</span>`).join("") : ""
+  }</div>
+      <span class="card-link">Details &amp; buchen →</span>
+    </div>
+  </a>`;
+}
+
+// Generic SEO landing page (accommodations or gastro).
+function seoLandingPage(c, opts) {
+  const { title, h1, eyebrow, intro, items, kind, faqs, related, trail, canonical, description, keywords, jsonLd, req } = opts;
+  const cards =
+    kind === "gastro"
+      ? items.map((i) => listingCard(i, true)).join("")
+      : items.map((i) => seoAccCard(i)).join("");
+  const emptyNote =
+    items.length === 0
+      ? `<div class="no-results">Aktuell keine passenden Einträge – sieh dir alle <a href="/unterkuenfte" class="accent">Unterkünfte</a> an.</div>`
+      : "";
+  const body = `
+  <section class="page-hero">
+    <div class="container">
+      ${breadcrumbsHTML(trail)}
+      <div class="eyebrow">${esc(eyebrow || c.site_tagline)}</div>
+      <h1>${esc(h1)}</h1>
+      <p>${esc(intro)}</p>
+      ${kind !== "gastro" ? `<div style="margin-top:20px"><a class="btn btn-primary" href="/unterkuenfte">Verfügbarkeit &amp; Preise prüfen</a></div>` : ""}
+    </div>
+  </section>
+  <section class="section" style="padding-top:40px">
+    <div class="container">
+      <div class="grid">${cards}${emptyNote}</div>
+    </div>
+  </section>
+  ${faqHTML(faqs)}
+  ${relatedHTML("Ebenfalls beliebt", related)}`;
+  return layout({
+    title,
+    active: kind === "gastro" ? "/gastronomie" : "/unterkuenfte",
+    body,
+    content: c,
+    seo: { canonical, description, keywords, jsonLd, robots: items.length ? "index,follow" : "noindex,follow" },
+  });
+}
+
+// Full, crawlable accommodation detail page.
+function accDetailPage(c, row, rooms, req) {
+  const imgs = [row.image, ...parseGallery(row.gallery)].filter((u) => u && u.length > 5).filter((v, i, a) => a.indexOf(v) === i);
+  const main = imgs[0] || "";
+  const gallery = imgs.length
+    ? `<div class="detail-gallery">
+        <div class="dg-main" style="${imgStyle(main, row.name)}"></div>
+        ${imgs.length > 1 ? `<div class="dg-thumbs">${imgs.slice(0, 6).map((u) => `<div class="dg-th" style="background-image:url('${esc(u)}')"></div>`).join("")}</div>` : ""}
+      </div>`
+    : "";
+  const feats = parseFeatures(row.features);
+  const featHTML = feats.length
+    ? `<div class="detail-feats">${feats.map((k) => `<span class="fi">${FEATURE_ICON[k]} ${esc(FEATURE_LABEL[k])}</span>`).join("")}</div>`
+    : "";
+  const roomHTML = rooms.length
+    ? `<h2 style="font-size:24px;margin:26px 0 12px">Zimmer</h2><ul class="detail-rooms">${rooms
+        .map((r) => `<li><strong>${esc(r.name || "Zimmer")}</strong>${r.max_guests ? ` · bis ${r.max_guests} Gäste` : ""}</li>`)
+        .join("")}</ul>`
+    : "";
+  const web = row.link ? `<a class="btn btn-ghost" href="${esc(row.link)}" target="_blank" rel="noopener">Zur Website ↗</a>` : "";
+  const trail = [
+    { name: "Home", href: "/" },
+    { name: "Unterkünfte", href: "/unterkuenfte" },
+    { name: row.name, href: accHref(row) },
+  ];
+  const title = `${row.name}${row.location ? " – " + row.location : ""} | VALUERO`;
+  const desc = (row.description || `${row.name} im Montafon`).slice(0, 300);
+  const body = `
+  <section class="page-hero">
+    <div class="container">
+      ${breadcrumbsHTML(trail)}
+      <div class="eyebrow">${esc(row.type || "Unterkunft")}${row.location ? " · " + esc(row.location) : ""}</div>
+      <h1>${esc(row.name)}</h1>
+      ${row.rating ? `<p class="rating" style="color:var(--gold);font-weight:600">★ ${esc(row.rating)}</p>` : ""}
+    </div>
+  </section>
+  <section class="section" style="padding-top:30px"><div class="container">
+    ${gallery}
+    <div class="detail-cols">
+      <div class="detail-main">
+        <p class="lead" style="font-size:19px;color:var(--muted);margin-bottom:18px">${esc(row.description)}</p>
+        ${featHTML}
+        ${roomHTML}
+      </div>
+      <aside class="detail-cta">
+        <h3>Jetzt buchen</h3>
+        <p class="muted" style="font-size:14px;margin:6px 0 14px">Reisedaten wählen und ${row.beds24_property_id ? "direkt online buchen" : "Verfügbarkeit prüfen"}.</p>
+        <a class="btn btn-primary" href="/unterkuenfte?ort=${encodeURIComponent(row.location || "")}" style="width:100%;justify-content:center">Verfügbarkeit &amp; Preise</a>
+        <div style="margin-top:10px">${web}</div>
+      </aside>
+    </div>
+  </div></section>
+  ${relatedHTML("Weitere Unterkünfte", (c.__related || []).map((r) => ({ href: accHref(r), label: r.name })))}`;
+  return layout({
+    title,
+    active: "/unterkuenfte",
+    body,
+    content: c,
+    seo: {
+      canonical: absUrl(req, accHref(row)),
+      description: desc,
+      ogType: "website",
+      ogImage: main,
+      keywords: [row.type, row.location, "Montafon", "Ferienwohnung", "buchen"].filter(Boolean).join(", "),
+      jsonLd: [lodgingJsonLd(req, row), breadcrumbJsonLd(req, trail)],
+    },
+  });
+}
+
+function eventDetailPage(c, ev, req) {
+  const trail = [
+    { name: "Home", href: "/" },
+    { name: "Veranstaltungen", href: "/veranstaltungen" },
+    { name: ev.name, href: eventHref(ev) },
+  ];
+  const web = ev.website ? `<a class="btn btn-primary" href="${esc(ev.website)}" target="_blank" rel="noopener">Zur Veranstaltung ↗</a>` : "";
+  const body = `
+  <section class="page-hero">
+    <div class="container">
+      ${breadcrumbsHTML(trail)}
+      <div class="eyebrow">${esc(ev.type || "Veranstaltung")}${ev.date_text ? " · " + esc(ev.date_text) : ""}</div>
+      <h1>${esc(ev.name)}</h1>
+      ${ev.location ? `<p>📍 ${esc(ev.location)}</p>` : ""}
+    </div>
+  </section>
+  <section class="section" style="padding-top:26px"><div class="container">
+    ${ev.image ? `<div class="dg-main" style="${imgStyle(ev.image, ev.name)};max-width:820px;margin-bottom:22px"></div>` : ""}
+    <div class="rich"><p style="font-size:19px">${esc(ev.description)}</p>${ev.date_text ? `<p><strong>Termin:</strong> ${esc(ev.date_text)}</p>` : ""}${ev.location ? `<p><strong>Ort:</strong> ${esc(ev.location)}</p>` : ""}</div>
+    <div style="margin-top:20px">${web}</div>
+  </div></section>`;
+  return layout({
+    title: `${ev.name}${ev.date_text ? " – " + ev.date_text : ""} | Veranstaltung Montafon | VALUERO`,
+    active: "/veranstaltungen",
+    body,
+    content: c,
+    seo: {
+      canonical: absUrl(req, eventHref(ev)),
+      description: (ev.description || ev.name).slice(0, 300),
+      ogType: "article",
+      ogImage: ev.image || "",
+      keywords: [ev.type, ev.location, "Montafon", "Veranstaltung", "Event"].filter(Boolean).join(", "),
+      jsonLd: [eventJsonLd(req, ev), breadcrumbJsonLd(req, trail)],
+    },
+  });
+}
+
 // =================== PUBLIC ===================
 app.get("/favicon.svg", (req, res) => {
   res.type("image/svg+xml").send(V.FAVICON);
@@ -2193,7 +2703,7 @@ app.get("/favicon.svg", (req, res) => {
 app.get("/", async (req, res, next) => {
   try {
     const c = await db.getAllContent();
-    res.send(V.homePage(c));
+    res.send(V.homePage(c, req));
   } catch (e) {
     next(e);
   }
@@ -2208,6 +2718,13 @@ app.get("/unterkuenfte", async (req, res, next) => {
       guests: req.query.guests || "",
     };
     const items = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
+    c.__seo = {
+      canonical: absUrl(req, "/unterkuenfte"),
+      description:
+        "Unterkünfte im Montafon: Ferienwohnungen, Chalets & Appartements mit tagesaktuellen Preisen. Reisedaten wählen, vergleichen und viele direkt online buchen.",
+      keywords: "Unterkünfte Montafon, Ferienwohnung Montafon, Chalet Montafon, Appartement Gaschurn, buchen",
+      jsonLd: [websiteJsonLd(req), itemListJsonLd(req, items)],
+    };
     res.send(V.listingPage(c, items, "acc"));
   } catch (e) {
     next(e);
@@ -2218,6 +2735,11 @@ app.get("/gastronomie", async (req, res, next) => {
   try {
     const c = await db.getAllContent();
     const items = (await db.query("SELECT * FROM gastro ORDER BY sort, id")).rows;
+    c.__seo = {
+      canonical: absUrl(req, "/gastronomie"),
+      description: "Gastronomie im Hochmontafon: Restaurants, Cafés, Konditoreien und Pizzerias in Gaschurn und Umgebung – regionale Partner auf VALUERO.",
+      keywords: "Gastronomie Montafon, Restaurant Gaschurn, Café Montafon, Pizzeria Gaschurn",
+    };
     res.send(V.listingPage(c, items, "gastro"));
   } catch (e) {
     next(e);
@@ -2230,6 +2752,12 @@ app.get("/veranstaltungen", async (req, res, next) => {
     const items = (
       await db.query("SELECT * FROM events WHERE status='approved' ORDER BY id DESC")
     ).rows;
+    c.__seo = {
+      canonical: absUrl(req, "/veranstaltungen"),
+      description: "Veranstaltungen im Montafon: Feste, Zeltfeste, Konzerte und Highlights in Gaschurn und im Hochmontafon – jetzt entdecken.",
+      keywords: "Veranstaltungen Montafon, Events Gaschurn, Feste Montafon, Zeltfest",
+      jsonLd: items.map((ev) => eventJsonLd(req, ev)),
+    };
     res.send(V.eventsPage(c, items, { success: req.query.ok === "1" }));
   } catch (e) {
     next(e);
@@ -2262,7 +2790,9 @@ app.post("/veranstaltungen/einreichen", async (req, res, next) => {
 
 app.get("/ueber-uns", async (req, res, next) => {
   try {
-    res.send(V.aboutPage(await db.getAllContent()));
+    const c = await db.getAllContent();
+    c.__seo = { canonical: absUrl(req, "/ueber-uns"), description: "Was ist VALUERO? Deine Tourismusplattform im Hochmontafon – Website, Buchungsportal und Marketing für Unterkünfte und Gastronomie.", jsonLd: [orgJsonLd(req)] };
+    res.send(V.aboutPage(c));
   } catch (e) {
     next(e);
   }
@@ -2271,6 +2801,7 @@ app.get("/ueber-uns", async (req, res, next) => {
 app.get("/impressum", async (req, res, next) => {
   try {
     const c = await db.getAllContent();
+    c.__seo = { canonical: absUrl(req, "/impressum") };
     res.send(V.legalPage(c, "Impressum", c.impressum_html, ""));
   } catch (e) {
     next(e);
@@ -2279,6 +2810,7 @@ app.get("/impressum", async (req, res, next) => {
 app.get("/datenschutz", async (req, res, next) => {
   try {
     const c = await db.getAllContent();
+    c.__seo = { canonical: absUrl(req, "/datenschutz") };
     res.send(V.legalPage(c, "Datenschutz", c.datenschutz_html, ""));
   } catch (e) {
     next(e);
@@ -2287,6 +2819,7 @@ app.get("/datenschutz", async (req, res, next) => {
 app.get("/agb", async (req, res, next) => {
   try {
     const c = await db.getAllContent();
+    c.__seo = { canonical: absUrl(req, "/agb") };
     res.send(V.legalPage(c, "AGB", c.agb_html, ""));
   } catch (e) {
     next(e);
@@ -2539,6 +3072,188 @@ app.post("/api/book", async (req, res, next) => {
     console.error("Booking failed", e);
     res.status(500).json({ ok: false, error: e.message || "Buchung fehlgeschlagen. Bitte später erneut versuchen." });
   }
+});
+
+// =================== SEO ROUTES ===================
+function seoEventCard(ev) {
+  return `<a class="card reveal" href="${eventHref(ev)}"><div class="card-img" style="${imgStyle(ev.image, ev.name)}">${
+    ev.date_text ? `<span class="card-badge">${esc(ev.date_text)}</span>` : ""
+  }</div><div class="card-body"><h3>${esc(ev.name)}</h3><p class="desc">${esc(ev.description)}</p><div class="card-meta">${
+    ev.location ? `<span class="chip">📍 ${esc(ev.location)}</span>` : ""
+  }${ev.type ? `<span class="chip">${esc(ev.type)}</span>` : ""}</div><span class="card-link">Mehr erfahren →</span></div></a>`;
+}
+const DEFAULT_ACC_FAQS = [
+  { q: "Wie buche ich eine Unterkunft im Montafon?", a: "Wähle auf VALUERO deine Reisedaten, vergleiche verfügbare Unterkünfte mit tagesaktuellen Preisen und buche viele davon direkt online – oder gehe auf die Website der Unterkunft." },
+  { q: "Sind die angezeigten Preise tagesaktuell?", a: "Ja. Bei angebundenen Unterkünften siehst du live die aktuelle Verfügbarkeit und den Preis für deinen gewählten Zeitraum." },
+  { q: "Welche Orte gehören zum Hochmontafon?", a: "Zum Hochmontafon zählen unter anderem Gaschurn, Partenen, St. Gallenkirch und Garfrescha – alle mit direktem Zugang zu den Skigebieten und Wanderregionen." },
+];
+
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain").send(`User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${absUrl(req, "/sitemap.xml")}\n`);
+});
+
+app.get("/sitemap.xml", async (req, res, next) => {
+  try {
+    const urls = [];
+    const add = (loc, priority, cf) => urls.push({ loc: absUrl(req, loc), priority, cf });
+    add("/", "1.0", "daily");
+    add("/unterkuenfte", "0.9", "daily");
+    add("/gastronomie", "0.7", "weekly");
+    add("/veranstaltungen", "0.7", "weekly");
+    add("/ueber-uns", "0.5", "monthly");
+    ["/impressum", "/datenschutz", "/agb"].forEach((p) => add(p, "0.2", "yearly"));
+    const accs = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
+    const gastros = (await db.query("SELECT * FROM gastro ORDER BY sort, id")).rows;
+    const events = (await db.query("SELECT * FROM events WHERE status='approved' ORDER BY id DESC")).rows;
+    accs.forEach((r) => add(accHref(r), "0.8", "weekly"));
+    events.forEach((e) => add(eventHref(e), "0.6", "weekly"));
+    for (const [slug, { t, loc }] of ACC_LANDINGS)
+      if (accs.some((r) => accMatchesType(r, t) && locMatches(r, loc))) add("/unterkuenfte/" + slug, "0.7", "weekly");
+    for (const [slug, { v, loc }] of URLAUB_LANDINGS) {
+      let items = accs.filter((r) => locMatches(r, loc));
+      if (v.feature) { const fs = Array.isArray(v.feature) ? v.feature : [v.feature]; items = items.filter((r) => { const f = parseFeatures(r.features); return fs.some((x) => f.includes(x)); }); }
+      if (v.minGuests) items = items.filter((r) => accCapacity(r) >= v.minGuests);
+      if (items.length) add("/urlaub/" + slug, "0.7", "weekly");
+    }
+    for (const [slug, { g, loc }] of GASTRO_LANDINGS) {
+      const items = gastros.filter((r) => { const type = (r.type || "").toLowerCase(); const tags = (r.tags || "").toLowerCase(); return g.typeMatch.some((x) => type.includes(x) || tags.includes(x)); }).filter((r) => locMatches(r, loc));
+      if (items.length) add("/gastronomie/" + slug, "0.6", "weekly");
+    }
+    for (const e of SEO_EVENT_TOPICS) add("/veranstaltungen/" + e.slug, "0.5", "weekly");
+    const xml =
+      '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+      urls.map((u) => `<url><loc>${u.loc}</loc><changefreq>${u.cf}</changefreq><priority>${u.priority}</priority></url>`).join("\n") +
+      "\n</urlset>";
+    res.type("application/xml").send(xml);
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Accommodation-type × location landing pages
+app.get("/unterkuenfte/:slug", async (req, res, next) => {
+  try {
+    const entry = ACC_LANDINGS.get(req.params.slug);
+    if (!entry) return next();
+    const { t, loc } = entry;
+    const c = await db.getAllContent();
+    const rows = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
+    const items = rows.filter((r) => accMatchesType(r, t) && locMatches(r, loc));
+    const title = `${t.label} ${loc.name} – jetzt buchen | VALUERO`;
+    const h1 = `${t.label} ${loc.where}`;
+    const intro = `${t.label} ${loc.where}: Entdecke handverlesene ${t.label.toLowerCase()} für ${t.benefit}. Auf VALUERO vergleichst du Ausstattung und Lage, siehst tagesaktuelle Preise und buchst viele Unterkünfte direkt online.`;
+    const description = `${t.label} ${loc.where} ✓ handverlesen ✓ tagesaktuelle Preise ✓ direkt online buchen. Jetzt deine ${t.one} im Hochmontafon finden.`;
+    const keywords = `${t.label}, ${t.one} ${loc.name}, Unterkunft ${loc.name}, Montafon, Hochmontafon, buchen`;
+    const trail = [{ name: "Home", href: "/" }, { name: "Unterkünfte", href: "/unterkuenfte" }, { name: `${t.label} ${loc.name}`, href: "/unterkuenfte/" + req.params.slug }];
+    const related = [];
+    SEO_LOCATIONS.filter((l) => l.slug !== loc.slug).forEach((l) => related.push({ href: `/unterkuenfte/${t.slug}-${l.slug}`, label: `${t.label} ${l.name}` }));
+    SEO_ACC_TYPES.filter((x) => x.slug !== t.slug).slice(0, 6).forEach((x) => related.push({ href: `/unterkuenfte/${x.slug}-${loc.slug}`, label: `${x.label} ${loc.name}` }));
+    const faqs = [
+      { q: `Wie finde ich eine ${t.one} ${loc.where}?`, a: `Gib oben deine Reisedaten ein, filtere nach Ausstattung und vergleiche verfügbare ${t.label.toLowerCase()} ${loc.where} mit tagesaktuellen Preisen.` },
+      ...DEFAULT_ACC_FAQS.slice(1),
+    ];
+    const jsonLd = [breadcrumbJsonLd(req, trail), faqJsonLd(faqs)];
+    if (items.length) jsonLd.push(itemListJsonLd(req, items));
+    res.send(seoLandingPage(c, { title, h1, eyebrow: `Unterkünfte · ${loc.name}`, intro, items, kind: "acc", faqs, related, trail, canonical: absUrl(req, "/unterkuenfte/" + req.params.slug), description, keywords, jsonLd, req }));
+  } catch (e) { next(e); }
+});
+
+// Vacation-type landing pages
+app.get("/urlaub/:slug", async (req, res, next) => {
+  try {
+    const entry = URLAUB_LANDINGS.get(req.params.slug);
+    if (!entry) return next();
+    const { v, loc } = entry;
+    const c = await db.getAllContent();
+    const rows = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
+    let items = rows.filter((r) => locMatches(r, loc));
+    if (v.feature) { const fs = Array.isArray(v.feature) ? v.feature : [v.feature]; items = items.filter((r) => { const f = parseFeatures(r.features); return fs.some((x) => f.includes(x)); }); }
+    if (v.minGuests) items = items.filter((r) => accCapacity(r) >= v.minGuests);
+    const title = `${v.h1} ${loc.where} – Unterkünfte & Tipps | VALUERO`;
+    const h1 = `${v.h1} ${loc.where}`;
+    const description = `${v.h1} ${loc.where}: passende Unterkünfte mit tagesaktuellen Preisen, Tipps und Highlights. Jetzt planen und direkt online buchen.`;
+    const keywords = `${v.h1}, ${v.h1} ${loc.name}, Montafon, Unterkunft, buchen`;
+    const trail = [{ name: "Home", href: "/" }, { name: "Urlaub", href: "/unterkuenfte" }, { name: `${v.h1} ${loc.name}`, href: "/urlaub/" + req.params.slug }];
+    const related = [];
+    SEO_VACATION_TYPES.filter((x) => x.slug !== v.slug).slice(0, 6).forEach((x) => related.push({ href: `/urlaub/${x.slug}-${loc.slug}`, label: `${x.h1} ${loc.name}` }));
+    SEO_LOCATIONS.filter((l) => ["montafon", "gaschurn", "st-gallenkirch"].includes(l.slug) && l.slug !== loc.slug).forEach((l) => related.push({ href: `/urlaub/${v.slug}-${l.slug}`, label: `${v.h1} ${l.name}` }));
+    const faqs = [
+      { q: `Wann ist die beste Zeit für ${v.h1} ${loc.where}?`, a: `Das Hochmontafon ist ganzjährig ein tolles Ziel – im Winter für Skifahren, im Sommer für Wandern und Bergtouren. Prüfe die Verfügbarkeit deiner Wunschunterkunft direkt online.` },
+      ...DEFAULT_ACC_FAQS.slice(1),
+    ];
+    const jsonLd = [breadcrumbJsonLd(req, trail), faqJsonLd(faqs)];
+    if (items.length) jsonLd.push(itemListJsonLd(req, items));
+    res.send(seoLandingPage(c, { title, h1, eyebrow: `Urlaub · ${loc.name}`, intro: v.intro, items, kind: "acc", faqs, related, trail, canonical: absUrl(req, "/urlaub/" + req.params.slug), description, keywords, jsonLd, req }));
+  } catch (e) { next(e); }
+});
+
+// Gastronomy landing pages
+app.get("/gastronomie/:slug", async (req, res, next) => {
+  try {
+    const entry = GASTRO_LANDINGS.get(req.params.slug);
+    if (!entry) return next();
+    const { g, loc } = entry;
+    const c = await db.getAllContent();
+    const rows = (await db.query("SELECT * FROM gastro ORDER BY sort, id")).rows;
+    const items = rows.filter((r) => { const type = (r.type || "").toLowerCase(); const tags = (r.tags || "").toLowerCase(); return g.typeMatch.some((x) => type.includes(x) || tags.includes(x)); }).filter((r) => locMatches(r, loc));
+    const title = `${g.label} ${loc.name} – die besten Adressen | VALUERO`;
+    const h1 = `${g.label} ${loc.where}`;
+    const description = `${g.label} ${loc.where}: ${g.intro} Entdecke die besten gastronomischen Adressen im Hochmontafon.`;
+    const keywords = `${g.label}, ${g.one} ${loc.name}, Gastronomie Montafon, essen ${loc.name}`;
+    const trail = [{ name: "Home", href: "/" }, { name: "Gastronomie", href: "/gastronomie" }, { name: `${g.label} ${loc.name}`, href: "/gastronomie/" + req.params.slug }];
+    const related = [];
+    SEO_GASTRO_TYPES.filter((x) => x.slug !== g.slug).forEach((x) => related.push({ href: `/gastronomie/${x.slug}-${loc.slug}`, label: `${x.label} ${loc.name}` }));
+    res.send(seoLandingPage(c, { title, h1, eyebrow: `Gastronomie · ${loc.name}`, intro: g.intro, items, kind: "gastro", faqs: null, related, trail, canonical: absUrl(req, "/gastronomie/" + req.params.slug), description, keywords, jsonLd: [breadcrumbJsonLd(req, trail)], req }));
+  } catch (e) { next(e); }
+});
+
+// Event topic landing pages
+app.get("/veranstaltungen/:slug", async (req, res, next) => {
+  try {
+    if (req.params.slug === "einreichen") return next();
+    const topic = EVENT_TOPIC_MAP.get(req.params.slug);
+    if (!topic) return next();
+    const c = await db.getAllContent();
+    const rows = (await db.query("SELECT * FROM events WHERE status='approved' ORDER BY id DESC")).rows;
+    let items = rows;
+    if (topic.match) items = rows.filter((e) => { const t = ((e.type || "") + " " + (e.name || "") + " " + (e.description || "")).toLowerCase(); return topic.match.some((m) => t.includes(m)); });
+    const title = `${topic.label} im Montafon | VALUERO`;
+    const h1 = `${topic.label} im Hochmontafon`;
+    const description = `${topic.intro} Alle ${topic.label.toLowerCase()} im Montafon auf einen Blick.`;
+    const trail = [{ name: "Home", href: "/" }, { name: "Veranstaltungen", href: "/veranstaltungen" }, { name: topic.label, href: "/veranstaltungen/" + req.params.slug }];
+    const related = SEO_EVENT_TOPICS.filter((x) => x.slug !== topic.slug).map((x) => ({ href: "/veranstaltungen/" + x.slug, label: x.label }));
+    const body = `
+    <section class="page-hero"><div class="container">${breadcrumbsHTML(trail)}<div class="eyebrow">Veranstaltungen</div><h1>${esc(h1)}</h1><p>${esc(topic.intro)}</p></div></section>
+    <section class="section" style="padding-top:40px"><div class="container"><div class="grid">${items.map(seoEventCard).join("") || '<div class="no-results">Aktuell keine Einträge – schau bald wieder vorbei.</div>'}</div></div></section>
+    ${relatedHTML("Weitere Veranstaltungen", related)}`;
+    res.send(layout({ title, active: "/veranstaltungen", body, content: c, seo: { canonical: absUrl(req, "/veranstaltungen/" + req.params.slug), description, keywords: `${topic.label}, Veranstaltungen Montafon, Events Gaschurn`, jsonLd: [breadcrumbJsonLd(req, trail)], robots: items.length ? "index,follow" : "noindex,follow" } }));
+  } catch (e) { next(e); }
+});
+
+// Accommodation detail page (crawlable)
+app.get("/unterkunft/:id/:slug?", async (req, res, next) => {
+  try {
+    const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [parseInt(req.params.id, 10) || 0])).rows[0];
+    if (!row) return next();
+    const correct = slugify(row.name);
+    if (req.params.slug !== correct) return res.redirect(301, `/unterkunft/${row.id}/${correct}`);
+    const c = await db.getAllContent();
+    const rooms = (await db.query("SELECT * FROM rooms WHERE accommodation_id=$1 ORDER BY sort, id", [row.id])).rows;
+    c.__related = (await db.query("SELECT * FROM accommodations WHERE id<>$1 ORDER BY sort, id LIMIT 6", [row.id])).rows;
+    res.send(accDetailPage(c, row, rooms, req));
+  } catch (e) { next(e); }
+});
+
+// Event detail page (crawlable)
+app.get("/veranstaltung/:id/:slug?", async (req, res, next) => {
+  try {
+    const ev = (await db.query("SELECT * FROM events WHERE id=$1 AND status='approved'", [parseInt(req.params.id, 10) || 0])).rows[0];
+    if (!ev) return next();
+    const correct = slugify(ev.name);
+    if (req.params.slug !== correct) return res.redirect(301, `/veranstaltung/${ev.id}/${correct}`);
+    const c = await db.getAllContent();
+    res.send(eventDetailPage(c, ev, req));
+  } catch (e) { next(e); }
 });
 
 // =================== ADMIN AUTH ===================
