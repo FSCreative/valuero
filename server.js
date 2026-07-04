@@ -1321,7 +1321,7 @@ function kochduBanner() {
       <span class="kochdu-eyebrow">Anzeige · Liefer-Partner</span>
       <h2>Lieber liefern lassen?</h2>
       <p>Bestell dein Essen online im Montafon – <b>Lieferung oder Abholung</b> bei lokalen Restaurants. <span class="kochdu-rot" id="kochduRot">Pizza 🍕</span></p>
-      <div class="kochdu-chips"><span>Gaschurn</span><span>St. Gallenkirch</span><span>Partenen</span><span>Schruns</span></div>
+      <div class="kochdu-chips"><span>Gaschurn</span><span>St. Gallenkirch</span><span>Partenen</span><span>Gortipohl</span></div>
       <span class="kochdu-btn">Jetzt bei kochdu.at bestellen →</span>
     </div>
     <div class="kochdu-art"><span class="kochdu-scooter">🛵</span></div>
