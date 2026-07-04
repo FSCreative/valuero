@@ -335,6 +335,32 @@ textarea{resize:vertical;min-height:90px}
 .detail-cta h3{font-size:22px}
 @media(max-width:820px){.hub-grid{grid-template-columns:1fr 1fr}.detail-cols{grid-template-columns:1fr}.detail-cta{position:static}.dg-thumbs{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:520px){.hub-grid{grid-template-columns:1fr}.dg-thumbs{grid-template-columns:repeat(3,1fr)}}
+/* ===== MOBILE + INTERACTIVITY ===== */
+.to-top{position:fixed;right:16px;bottom:16px;width:46px;height:46px;border-radius:50%;background:var(--accent);color:#fff;border:0;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 10px 24px -10px rgba(31,106,73,.9);opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .25s,transform .25s,background .2s;z-index:60}
+.to-top.show{opacity:1;transform:none;pointer-events:auto}
+.to-top:hover{background:var(--accent-2)}
+.btn:active,.btn-search:active,.btn-book:active,.btn-web:active,.pill:active,.nav-cta:active{transform:scale(.96)}
+.bk-card,.card,.cat-card,.hub-col a,.link-cloud a{-webkit-tap-highlight-color:transparent}
+@media(hover:none){.bk-card:active{transform:scale(.99)}}
+.filter-toggle{display:none}
+@media(max-width:900px){
+  .filter-toggle{display:inline-flex;align-items:center;gap:8px;position:sticky;top:74px;z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:11px 20px;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);margin-bottom:14px;font-family:inherit}
+  .filters-panel{position:fixed;inset:0 0 0 auto;width:min(88vw,340px);max-width:340px;z-index:120;transform:translateX(105%);transition:transform .3s ease;border-radius:0;overflow-y:auto;box-shadow:-20px 0 50px -20px rgba(0,0,0,.4);top:0!important}
+  .filters-panel.open{transform:none}
+  .filters-backdrop{position:fixed;inset:0;background:rgba(16,23,19,.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:110}
+  .filters-backdrop.open{opacity:1;pointer-events:auto}
+  .filters-panel .fp-close{display:flex;align-items:center;justify-content:space-between;font-family:"Fraunces",serif;font-size:20px;margin-bottom:6px}
+  .filters-panel .fp-close button{background:none;border:0;font-size:26px;cursor:pointer;color:var(--muted)}
+}
+@media(min-width:901px){.filters-panel .fp-close{display:none}}
+/* sticky mobile CTA on accommodation detail pages */
+.detail-mobilecta{display:none}
+@media(max-width:820px){
+  .detail-cta{display:none}
+  .detail-mobilecta{display:flex;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px;box-shadow:0 -10px 30px -18px rgba(0,0,0,.4)}
+  .detail-mobilecta .btn{flex:1;justify-content:center}
+  body.has-mobilecta{padding-bottom:76px}
+}
 @media(max-width:900px){.booking-layout{grid-template-columns:1fr}.filters-panel{position:static}.booking-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.booking-grid{grid-template-columns:1fr}.bk-form{grid-template-columns:1fr}.searchbar{gap:2px}.searchbar .sf{flex:1 1 100%}.searchbar .sf+.sf::before{display:none}.searchbar .sf.go{padding-top:6px}.searchbar .btn-search{width:100%;justify-content:center}}
 `;
@@ -616,6 +642,16 @@ const SCRIPT = `
     }
     if(childSel)childSel.addEventListener('change',renderAges);
   });
+  var tt=document.getElementById('toTop');
+  if(tt){window.addEventListener('scroll',function(){if(window.scrollY>500)tt.classList.add('show');else tt.classList.remove('show');},{passive:true});
+    tt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});}
+  var ftBtn=document.querySelector('.filter-toggle'),fp=document.querySelector('.filters-panel'),bd=document.querySelector('.filters-backdrop');
+  if(ftBtn&&fp){
+    var openF=function(){fp.classList.add('open');if(bd)bd.classList.add('open');document.body.style.overflow='hidden';};
+    var closeF=function(){fp.classList.remove('open');if(bd)bd.classList.remove('open');document.body.style.overflow='';};
+    ftBtn.addEventListener('click',openF);if(bd)bd.addEventListener('click',closeF);
+    var fc=fp.querySelector('.fp-close button');if(fc)fc.addEventListener('click',closeF);
+  }
 })();
 </script>`;
 
@@ -660,6 +696,7 @@ ${jsonLd}
 ${nav(active, content)}
 ${body}
 ${footer(content)}
+<button class="to-top" id="toTop" aria-label="Nach oben scrollen">↑</button>
 ${SCRIPT}
 ${extraScript || ""}
 </body></html>`;
@@ -955,8 +992,11 @@ function bookingToolPage(c, items) {
   <section class="section" style="padding-top:34px">
     <div class="container">
       <p class="muted reveal" style="max-width:72ch;margin-bottom:24px">${esc(c.unterkuenfte_intro)}</p>
+      <button type="button" class="filter-toggle" id="filterToggle">⚙︎ Filter &amp; Sortierung</button>
+      <div class="filters-backdrop"></div>
       <div class="booking-layout">
         <aside class="filters-panel">
+          <div class="fp-close">Filter<button type="button" aria-label="Schließen">×</button></div>
           <div class="fp-group"><h4>Unterkunftstyp</h4>${pillRow("type", types)}</div>
           <div class="fp-group"><h4>Ort</h4>${pillRow("loc", locs)}</div>
           <div class="fp-group"><h4>Preis / Nacht</h4>
@@ -2689,6 +2729,11 @@ function accDetailPage(c, row, rooms, req) {
       </aside>
     </div>
   </div></section>
+  <div class="detail-mobilecta">
+    <a class="btn btn-primary" href="/unterkuenfte?ort=${encodeURIComponent(row.location || "")}">Verfügbarkeit &amp; Preise</a>
+    ${row.link ? `<a class="btn btn-ghost" href="${esc(row.link)}" target="_blank" rel="noopener">Website</a>` : ""}
+  </div>
+  <script>document.body.classList.add('has-mobilecta');</script>
   ${relatedHTML("Weitere Unterkünfte", (c.__related || []).map((r) => ({ href: accHref(r), label: r.name })))}`;
   return layout({
     title,
