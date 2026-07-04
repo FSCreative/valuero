@@ -215,6 +215,9 @@ textarea{resize:vertical;min-height:90px}
 .booking-layout{display:grid;grid-template-columns:262px 1fr;gap:28px;align-items:start}
 .filters-panel{position:sticky;top:92px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:18px}
 .filters-panel h4{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);margin-bottom:10px}
+.fp-subgroup{margin-bottom:12px}
+.fp-subgroup h5{font-size:12.5px;font-weight:700;color:var(--ink);margin:10px 0 3px}
+.fp-subgroup:first-child h5{margin-top:0}
 .fp-group{border-top:1px solid var(--line);padding-top:16px}
 .fp-group:first-child{border-top:0;padding-top:0}
 .chk{display:flex;align-items:center;gap:9px;font-size:14px;padding:5px 0;cursor:pointer;color:var(--ink)}
@@ -426,6 +429,8 @@ a{color:var(--accent);text-decoration:none}
 .section-sep{display:flex;align-items:center;gap:10px;margin:26px 0 14px;font-family:"Fraunces",serif;font-size:17px;color:#fff}
 .section-sep::after{content:"";flex:1;height:1px;background:var(--line)}
 .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 14px;margin-top:4px}
+.feat-cat{margin-bottom:14px}
+.feat-cat h5{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:0 0 6px}
 .feat{display:flex;align-items:center;gap:8px;font-weight:500;font-size:13.5px;color:var(--ink);cursor:pointer;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;transition:.15s}
 .feat:hover{border-color:var(--accent)}
 .feat input{width:auto!important;accent-color:var(--accent);flex:0 0 auto}
@@ -454,29 +459,72 @@ function esc(s) {
     .replace(/"/g, "&quot;");
 }
 
-// Booking-tool feature set (booking.com-style filters). The admin picks which
-// apply to each accommodation; guests filter by them on the Unterkünfte page.
-const FEATURES = [
-  { key: "wifi", label: "WLAN", icon: "📶" },
-  { key: "parking", label: "Parkplatz", icon: "🅿️" },
-  { key: "garage", label: "Tiefgarage", icon: "🚗" },
-  { key: "ski", label: "Ski In & Out", icon: "🎿" },
-  { key: "sauna", label: "Sauna", icon: "🧖" },
-  { key: "steam", label: "Dampfbad", icon: "💨" },
-  { key: "wellness", label: "Wellness / Spa", icon: "💆" },
-  { key: "pool", label: "Pool", icon: "🏊" },
-  { key: "breakfast", label: "Frühstück", icon: "🥐" },
-  { key: "kitchen", label: "Küche", icon: "🍳" },
-  { key: "pets", label: "Haustiere erlaubt", icon: "🐾" },
-  { key: "family", label: "Familienfreundlich", icon: "👨‍👩‍👧" },
-  { key: "balcony", label: "Balkon / Terrasse", icon: "🌄" },
-  { key: "mountainview", label: "Bergblick", icon: "⛰️" },
-  { key: "tv", label: "TV", icon: "📺" },
-  { key: "washer", label: "Waschmaschine", icon: "🧺" },
-  { key: "evcharge", label: "E-Ladestation", icon: "🔌" },
-  { key: "nonsmoking", label: "Nichtraucher", icon: "🚭" },
-  { key: "crib", label: "Kinderbett", icon: "🍼" },
+// Booking-tool feature set (booking.com-style filters), grouped into logical
+// categories. The admin ticks which apply to each accommodation; guests filter
+// by them on the Unterkünfte page. Keys are stable — never rename existing ones.
+const FEATURE_CATEGORIES = [
+  { cat: "Beliebt", items: [
+    { key: "wifi", label: "WLAN", icon: "📶" },
+    { key: "parking", label: "Parkplatz", icon: "🅿️" },
+    { key: "pets", label: "Haustiere erlaubt", icon: "🐾" },
+    { key: "family", label: "Familienfreundlich", icon: "👨‍👩‍👧" },
+    { key: "nonsmoking", label: "Nichtraucher", icon: "🚭" },
+    { key: "longstay", label: "Langzeit möglich", icon: "🗓️" },
+  ] },
+  { cat: "Küche & Verpflegung", items: [
+    { key: "kitchen", label: "Küche", icon: "🍳" },
+    { key: "dishwasher", label: "Geschirrspüler", icon: "🍽️" },
+    { key: "coffee", label: "Kaffeemaschine", icon: "☕" },
+    { key: "oven", label: "Backofen", icon: "🔥" },
+    { key: "microwave", label: "Mikrowelle", icon: "🍲" },
+    { key: "breakfast", label: "Frühstück", icon: "🥐" },
+  ] },
+  { cat: "Wellness & Freizeit", items: [
+    { key: "sauna", label: "Sauna", icon: "🧖" },
+    { key: "steam", label: "Dampfbad", icon: "💨" },
+    { key: "wellness", label: "Wellness / Spa", icon: "💆" },
+    { key: "pool", label: "Pool", icon: "🏊" },
+    { key: "whirlpool", label: "Whirlpool", icon: "🛁" },
+    { key: "fitness", label: "Fitnessraum", icon: "🏋️" },
+  ] },
+  { cat: "Lage & Aussicht", items: [
+    { key: "ski", label: "Ski In & Out", icon: "🎿" },
+    { key: "skiroom", label: "Skiraum", icon: "⛷️" },
+    { key: "mountainview", label: "Bergblick", icon: "⛰️" },
+    { key: "central", label: "Zentrale Lage", icon: "📍" },
+    { key: "quiet", label: "Ruhige Lage", icon: "🤫" },
+    { key: "garden", label: "Garten", icon: "🌳" },
+  ] },
+  { cat: "Außenbereich", items: [
+    { key: "balcony", label: "Balkon / Terrasse", icon: "🌄" },
+    { key: "bbq", label: "Grillplatz", icon: "🍖" },
+    { key: "sunloungers", label: "Liegestühle", icon: "🌞" },
+  ] },
+  { cat: "Komfort & Technik", items: [
+    { key: "tv", label: "TV", icon: "📺" },
+    { key: "smarttv", label: "Smart-TV", icon: "🖥️" },
+    { key: "aircon", label: "Klimaanlage", icon: "❄️" },
+    { key: "heating", label: "Heizung", icon: "🌡️" },
+    { key: "fireplace", label: "Kamin", icon: "🔥" },
+    { key: "washer", label: "Waschmaschine", icon: "🧺" },
+    { key: "dryer", label: "Trockner", icon: "🌀" },
+    { key: "hairdryer", label: "Föhn", icon: "💇" },
+    { key: "safe", label: "Safe", icon: "🔒" },
+  ] },
+  { cat: "Parken & Anreise", items: [
+    { key: "garage", label: "Tiefgarage", icon: "🚗" },
+    { key: "freeparking", label: "Kostenlose Parkplätze", icon: "🆓" },
+    { key: "evcharge", label: "E-Ladestation", icon: "🔌" },
+  ] },
+  { cat: "Familie & Barrierefreiheit", items: [
+    { key: "crib", label: "Kinderbett", icon: "🍼" },
+    { key: "highchair", label: "Hochstuhl", icon: "🪑" },
+    { key: "playground", label: "Spielplatz", icon: "🛝" },
+    { key: "accessible", label: "Barrierefrei", icon: "♿" },
+    { key: "elevator", label: "Aufzug", icon: "🛗" },
+  ] },
 ];
+const FEATURES = FEATURE_CATEGORIES.flatMap((c) => c.items);
 const FEATURE_LABEL = Object.fromEntries(FEATURES.map((f) => [f.key, f.label]));
 const FEATURE_ICON = Object.fromEntries(FEATURES.map((f) => [f.key, f.icon]));
 
@@ -629,7 +677,8 @@ const SCRIPT = `
     var ci=sb.querySelector('input[name=checkin]'),co=sb.querySelector('input[name=checkout]');
     if(ci&&co){ci.addEventListener('change',function(){
       var d=new Date(ci.value);d.setDate(d.getDate()+1);var min=d.toISOString().slice(0,10);
-      co.min=min;if(!co.value||co.value<=ci.value)co.value=min;});}
+      var d7=new Date(ci.value);d7.setDate(d7.getDate()+7);var sug=d7.toISOString().slice(0,10);
+      co.min=min;if(!co.value||co.value<=ci.value)co.value=sug;});}
     var childSel=sb.querySelector('.sf-children'),wrap=sb.querySelector('.child-ages'),row=sb.querySelector('.ages-row');
     function renderAges(){
       if(!childSel||!row)return;
@@ -966,7 +1015,9 @@ function bookingToolPage(c, items) {
   const prefill = c.__prefill || {};
   const types = uniq(items.map((i) => i.type));
   const locs = uniq(items.map((i) => i.location));
-  const featFilter = FEATURES.filter((f) => items.some((i) => parseFeatures(i.features).includes(f.key)));
+  const presentKeys = new Set(
+    FEATURES.filter((f) => items.some((i) => parseFeatures(i.features).includes(f.key))).map((f) => f.key)
+  );
   const pillRow = (group, values) => `
     <div class="pills" data-group="${group}">
       <button type="button" class="pill active" data-val="">Alle</button>
@@ -974,12 +1025,14 @@ function bookingToolPage(c, items) {
         .map((v) => `<button type="button" class="pill" data-val="${esc(String(v).toLowerCase())}">${esc(v)}</button>`)
         .join("")}
     </div>`;
-  const featChecks = featFilter
-    .map(
-      (f) =>
-        `<label class="chk"><input type="checkbox" class="f-feat" value="${f.key}"> ${f.icon} ${esc(f.label)}</label>`
-    )
-    .join("");
+  // Amenity filters grouped by category — only categories with a present feature show.
+  const featChecks = FEATURE_CATEGORIES.map((c) => {
+    const present = c.items.filter((f) => presentKeys.has(f.key));
+    if (!present.length) return "";
+    return `<div class="fp-subgroup"><h5>${esc(c.cat)}</h5>${present
+      .map((f) => `<label class="chk"><input type="checkbox" class="f-feat" value="${f.key}"> ${f.icon} ${esc(f.label)}</label>`)
+      .join("")}</div>`;
+  }).join("");
   const body = `
   <section class="page-hero booking-hero">
     <div class="container">
@@ -1415,6 +1468,9 @@ function aboutPage(c) {
   const v1 = c.about_hero_image
     ? `style="background-image:url('${esc(c.about_hero_image)}')"`
     : "";
+  const v2 = c.about_block2_image
+    ? `style="background-image:url('${esc(c.about_block2_image)}')"`
+    : `style="background:linear-gradient(150deg,#4a6c7a,#243640)"`;
   const body = `
   <section class="page-hero">
     <div class="container">
@@ -1441,7 +1497,7 @@ function aboutPage(c) {
         <div class="about-visual" ${v1}></div>
       </div>
       <div class="about-block reveal">
-        <div class="about-visual" style="background:linear-gradient(150deg,#4a6c7a,#243640)"></div>
+        <div class="about-visual" ${v2}></div>
         <div>
           <h2>${esc(c.about_block2_title)}</h2>
           <p>${esc(c.about_block2_text)}</p>
@@ -1660,12 +1716,16 @@ function accBookingFields(it) {
     ? `<span class="beds-badge on">● Beds24 verbunden – Live-Buchung aktiv</span>`
     : `<span class="beds-badge off">○ Keine API – zeigt „Preise siehe Website"</span>`;
   const roomRows = (rooms.length ? rooms : [{}]).map(roomRow).join("");
-  const featBoxes = FEATURES.map((f) => {
-    const on = sel.includes(f.key);
-    return `<label class="feat"><input type="checkbox" name="features" value="${f.key}" ${
-      on ? "checked" : ""
-    }><span>${f.icon} ${esc(f.label)}</span></label>`;
-  }).join("");
+  const featBoxes = FEATURE_CATEGORIES.map((c) =>
+    `<div class="feat-cat"><h5>${esc(c.cat)}</h5><div class="feature-grid">${c.items
+      .map((f) => {
+        const on = sel.includes(f.key);
+        return `<label class="feat"><input type="checkbox" name="features" value="${f.key}" ${
+          on ? "checked" : ""
+        }><span>${f.icon} ${esc(f.label)}</span></label>`;
+      })
+      .join("")}</div></div>`
+  ).join("");
   const apiOn = String(it.api_url || "").trim();
   return `
     <div class="section-sep">Externe Buchungs-API ${
@@ -1705,8 +1765,8 @@ function accBookingFields(it) {
     </div>
     <div class="fr">
       <label>Ausstattung &amp; Filter (Booking-Tool)</label>
-      <div class="feature-grid">${featBoxes}</div>
-      <span class="hint">Ausgewählte Merkmale erscheinen als Filter im Buchungstool und als Icons auf der Unterkunft.</span>
+      <div class="feat-cats">${featBoxes}</div>
+      <span class="hint">Ausgewählte Merkmale erscheinen (kategorisiert) als Filter im Buchungstool und als Icons auf der Unterkunft.</span>
     </div>
     <script>
     (function(){
@@ -2201,6 +2261,41 @@ async function enrich() {
   for (const [name, img] of gasImgs) {
     await query(`UPDATE gastro SET image=CASE WHEN COALESCE(image,'')='' THEN $2 ELSE image END WHERE name=$1`, [name, img]);
   }
+
+  // "Marketing. Machen. Wir." – Montafon-Bild (nur wenn leer)
+  await query(
+    `INSERT INTO content (key,value) VALUES ('about_block2_image',$1)
+     ON CONFLICT (key) DO UPDATE SET value=CASE WHEN COALESCE(content.value,'')='' THEN EXCLUDED.value ELSE content.value END`,
+    [US("1566475955255-404134a79aeb")]
+  );
+
+  // ---- One-time curation: Unterkunftstyp + passende Filter je Unterkunft ----
+  const cvr = await query("SELECT value FROM content WHERE key='curate_v'");
+  if (((cvr.rows[0] && cvr.rows[0].value) || "") !== "2") {
+    const curate = [
+      ["Haus Felder – Garfrescha", "Ski In & Out", "ski,skiroom,parking,wifi,mountainview,nonsmoking,tv,kitchen,balcony"],
+      ["Alt Montafon", "Appartements", "steam,parking,wifi,kitchen,tv,nonsmoking,central,balcony"],
+      ["Landhaus Angelika", "Ferienwohnung", "breakfast,pets,parking,family,wifi,mountainview,garden,kitchen,nonsmoking"],
+      ["Haus Lerch", "Ferienwohnung", "parking,garage,wifi,kitchen,tv,nonsmoking,skiroom,balcony,washer"],
+      ["Chalet Antonhaus", "Chalet", "sauna,steam,wellness,breakfast,parking,wifi,tv,kitchen,mountainview,central,balcony,nonsmoking"],
+      ["Haus zur Kapelle", "Ski In & Out", "ski,skiroom,sauna,parking,wifi,mountainview,nonsmoking,kitchen,balcony"],
+      ["Alpinappart Wachter", "Ferienwohnung", "wifi,parking,kitchen,dishwasher,washer,dryer,balcony,mountainview,tv,nonsmoking,family,garden"],
+    ];
+    for (const [name, type, features] of curate) {
+      await query(`UPDATE accommodations SET type=$2, features=$3 WHERE name=$1`, [name, type, features]);
+    }
+    await query(`INSERT INTO content (key,value) VALUES ('curate_v','2') ON CONFLICT (key) DO UPDATE SET value='2'`);
+  }
+
+  // ---- AGB & Datenschutz (Platzhalter ersetzen) ----
+  const AGB = `<h2>Allgemeine Geschäftsbedingungen (AGB)</h2><p>Diese AGB regeln die Nutzung der Plattform VALUERO sowie die Vermittlung und Buchung von Unterkünften und Leistungen im Hochmontafon.</p><h3>1. Betreiber &amp; Vertragspartner</h3><p>Betreiber ist Simon Leonhard Felder – FS Creative, Dorfstraße 3, 6793 Gaschurn („VALUERO"). VALUERO betreibt eine Buchungs- und Werbeplattform. Der Beherbergungs- bzw. Mietvertrag kommt ausschließlich zwischen dem Gast und der jeweiligen Unterkunft zustande; VALUERO tritt als Vermittler auf und wird nicht selbst Vertragspartei, sofern nicht ausdrücklich anders angegeben.</p><h3>2. Buchung &amp; Vertragsabschluss</h3><p>Die Darstellung der Unterkünfte ist kein bindendes Angebot. Mit Absenden der Buchung gibt der Gast ein verbindliches Angebot ab; der Vertrag kommt mit der Bestätigung (E-Mail bzw. Anzeige der Buchungsnummer) zustande. Maßgeblich ist der bei der Buchung angezeigte Gesamtpreis.</p><h3>3. Preise &amp; Leistungen</h3><p>Sofern nicht anders angegeben, gelten die Preise für die gesamte Unterkunft und den gewählten Zeitraum. Kindertarife, Kurzaufenthalts-/Saisonzuschläge sowie eine etwaige Gästetaxe/Kurtaxe werden im Buchungsablauf ausgewiesen; die Gästetaxe ist je nach Unterkunft ggf. vor Ort zu entrichten.</p><h3>4. Zahlung</h3><p>Die Zahlungsmodalitäten (An-/Restzahlung, Überweisung oder Zahlung vor Ort) richten sich nach den Vorgaben der jeweiligen Unterkunft und werden im Buchungsablauf bzw. in der Bestätigung mitgeteilt.</p><h3>5. An- &amp; Abreise, Mindestaufenthalt</h3><p>An-/Abreisezeiten, ein etwaiger fixer Anreisetag (z. B. Samstag) und Mindestaufenthalt (z. B. 7 Nächte in der Hauptsaison) werden bei der jeweiligen Unterkunft angezeigt und sind einzuhalten.</p><h3>6. Stornierung &amp; Rücktritt</h3><p>Es gelten die Stornobedingungen der jeweiligen Unterkunft. Wir empfehlen eine Reiserücktrittsversicherung. Ein gesetzliches Rücktrittsrecht besteht bei Beherbergungsverträgen mit festem Termin gemäß § 18 Abs. 1 Z 10 FAGG grundsätzlich nicht.</p><h3>7. Pflichten des Gastes</h3><p>Die Unterkunft ist pfleglich zu behandeln; die vereinbarte Personenzahl darf nicht überschritten werden. Hausordnungen sind einzuhalten.</p><h3>8. Haftung</h3><p>VALUERO haftet als Vermittler nur für die korrekte Weiterleitung der Buchungsdaten, nicht für die Leistungserbringung. Für die Beherbergungsleistung haftet die jeweilige Unterkunft. Für Inhalte verlinkter Drittseiten wird keine Haftung übernommen.</p><h3>9. Datenschutz</h3><p>Informationen zur Datenverarbeitung finden Sie in unserer <a href="/datenschutz">Datenschutzerklärung</a>.</p><h3>10. Schlussbestimmungen</h3><p>Es gilt österreichisches Recht unter Ausschluss des UN-Kaufrechts. Unwirksame Bestimmungen berühren die Wirksamkeit der übrigen nicht. Online-Streitbeilegung: https://ec.europa.eu/consumers/odr.</p><p style="font-size:13px;color:#8b988e;margin-top:16px">Hinweis: Diese AGB sind eine sorgfältig erstellte Vorlage und sollten vor dem Live-Einsatz rechtlich geprüft werden.</p>`;
+  const DSGVO = `<h2>Datenschutzerklärung</h2><p>Der Schutz Ihrer personenbezogenen Daten ist uns wichtig. Nachfolgend informieren wir Sie gemäß DSGVO.</p><h3>1. Verantwortlicher</h3><p>Simon Leonhard Felder – FS Creative, Dorfstraße 3, 6793 Gaschurn, Österreich. E-Mail: simon@fs-creative.at.</p><h3>2. Welche Daten wir verarbeiten</h3><p>a) Buchungsdaten: Vor-/Nachname, E-Mail, Telefon, Reisedaten, Anzahl und Alter der Gäste, ggf. Nachrichten. b) Technische Daten: gekürzte IP, Datum/Uhrzeit, aufgerufene Seiten (Server-Logfiles). c) Daten bei Kontaktaufnahme.</p><h3>3. Zwecke &amp; Rechtsgrundlagen</h3><p>Buchungsdaten: Anbahnung/Abwicklung der Buchung (Art. 6 Abs. 1 lit. b DSGVO). Technische Daten: sicherer Betrieb (lit. f). Anfragen: Bearbeitung (lit. b/f).</p><h3>4. Empfänger</h3><p>Zur Abwicklung geben wir erforderliche Daten an die gewählte Unterkunft sowie deren Buchungssystem/Channel-Manager (z. B. Beds24) weiter. Hosting: Railway; Auslieferung ggf. über Cloudflare. Eine weitergehende Weitergabe erfolgt nicht.</p><h3>5. Speicherdauer</h3><p>Buchungsdaten für die Dauer der Vertragsabwicklung und im Rahmen gesetzlicher Aufbewahrungsfristen (z. B. § 132 BAO). Server-Logs werden regelmäßig gelöscht.</p><h3>6. Cookies</h3><p>Nur technisch notwendige Cookies/Speicher (z. B. Admin-Login). Kein Tracking, keine Werbe-Weitergabe.</p><h3>7. Ihre Rechte</h3><p>Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit, Widerspruch sowie Beschwerde bei der Österreichischen Datenschutzbehörde (www.dsb.gv.at).</p><h3>8. Kontakt</h3><p>Datenschutzanfragen: simon@fs-creative.at.</p><p style="font-size:13px;color:#8b988e;margin-top:16px">Hinweis: Diese Datenschutzerklärung ist eine sorgfältig erstellte Vorlage und sollte vor dem Live-Einsatz rechtlich geprüft werden.</p>`;
+  await query(`UPDATE content SET value=$1 WHERE key='agb_html' AND (value LIKE '%Hier stehen die Allgemeinen%' OR COALESCE(value,'')='')`, [AGB]);
+  await query(`UPDATE content SET value=$1 WHERE key='datenschutz_html' AND (value LIKE '%im Admin-Bereich unter%' OR value LIKE '%wichtiges Anliegen. Diesen Text%' OR COALESCE(value,'')='')`, [DSGVO]);
+
+  // ---- Impressum: Bildnachweis ergänzen (nur wenn noch nicht vorhanden) ----
+  const bildnachweis = `<h3>Bildnachweis</h3><p>Fotos der Unterkünfte und Gastronomiebetriebe: von den jeweiligen Inhabern bereitgestellt bzw. von deren Websites (Nutzung mit Genehmigung; die Inhaber sind für die Weitergabe verantwortlich). Stimmungs- und Themenbilder (Berge, Café, Veranstaltungen u. a.): Unsplash (unsplash.com), kostenlos und kommerziell nutzbar gemäß Unsplash-Lizenz. Vallüla-Titelbild: Robinhood50 / Wikimedia Commons, CC BY-SA 4.0. Restliche Grafiken: FS Creative &amp; Canva.</p>`;
+  await query(`UPDATE content SET value = value || $1 WHERE key='impressum_html' AND value NOT LIKE '%Bildnachweis%'`, [bildnachweis]);
 }
 
 async function seedContent(key, value) {
