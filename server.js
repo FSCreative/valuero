@@ -345,8 +345,8 @@ textarea{resize:vertical;min-height:90px}
 .filter-toggle{display:none}
 @media(max-width:900px){
   .filter-toggle{display:inline-flex;align-items:center;gap:8px;position:sticky;top:74px;z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:11px 20px;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);margin-bottom:14px;font-family:inherit}
-  .filters-panel{position:fixed;inset:0 0 0 auto;width:min(88vw,340px);max-width:340px;z-index:120;transform:translateX(105%);transition:transform .3s ease;border-radius:0;overflow-y:auto;box-shadow:-20px 0 50px -20px rgba(0,0,0,.4);top:0!important}
-  .filters-panel.open{transform:none}
+  .filters-panel{position:fixed!important;top:0!important;right:0;bottom:0;left:auto;width:min(88vw,340px);max-width:340px;height:100vh;z-index:120;transform:translateX(110%)!important;transition:transform .3s ease;border-radius:0;overflow-y:auto;box-shadow:-20px 0 50px -20px rgba(0,0,0,.4)}
+  .filters-panel.open{transform:translateX(0)!important}
   .filters-backdrop{position:fixed;inset:0;background:rgba(16,23,19,.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:110}
   .filters-backdrop.open{opacity:1;pointer-events:auto}
   .filters-panel .fp-close{display:flex;align-items:center;justify-content:space-between;font-family:"Fraunces",serif;font-size:20px;margin-bottom:6px}
