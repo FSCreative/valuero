@@ -3310,17 +3310,20 @@ app.get("/veranstaltungen", async (req, res, next) => {
   }
 });
 
-// Notify the team when a visitor submits a new event. Uses whatever is
-// configured (a generic webhook, or Resend); if nothing is set up it just logs,
-// so submissions never fail because of mail. Set on Railway:
-//   MAIL_TO          (default simon@fs-creative.at)
-//   RESEND_API_KEY   + optional MAIL_FROM  → sends via api.resend.com
-//   or MAIL_WEBHOOK_URL → receives a JSON POST of the submission
+// Notify the team when a visitor submits a new event, via SMTP (Google Workspace
+// mailbox simon@fs-creative.at). If SMTP isn't configured it just logs, so
+// submissions never fail because of mail. Set on Railway:
+//   SMTP_USER   e.g. simon@fs-creative.at  (the Workspace mailbox)
+//   SMTP_PASS   a Google App Password (16 chars, 2-Step-Verification required)
+//   SMTP_HOST   default smtp.gmail.com
+//   SMTP_PORT   default 587 (STARTTLS); use 465 for SSL
+//   MAIL_FROM   default "VALUERO <simon@fs-creative.at>"
+//   MAIL_TO     default simon@fs-creative.at
 async function notifyNewEvent(ev) {
   const to = (process.env.MAIL_TO || "simon@fs-creative.at").trim();
   const when = ev.event_date ? formatDateDE(ev.event_date) : ev.date_text || "—";
   const subject = `Neue Veranstaltung eingereicht: ${ev.name}`;
-  const lines = [
+  const text = [
     `Name: ${ev.name}`,
     `Datum: ${when}${ev.date_text && ev.event_date ? " (" + ev.date_text + ")" : ""}`,
     `Ort: ${ev.location || "—"}`,
@@ -3330,30 +3333,23 @@ async function notifyNewEvent(ev) {
     ``,
     ev.description || "",
     ``,
-    `→ Freigeben im Admin: /admin/veranstaltungen`,
-  ];
-  const text = lines.join("\n");
-  const hook = (process.env.MAIL_WEBHOOK_URL || "").trim();
-  if (hook) {
-    await fetch(hook, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ type: "new_event", to, subject, text, event: ev }),
-    });
+    `→ Freigeben im Admin: https://www.valuero.at/admin/veranstaltungen`,
+  ].join("\n");
+
+  const user = (process.env.SMTP_USER || "simon@fs-creative.at").trim();
+  const pass = (process.env.SMTP_PASS || "").trim();
+  if (!pass) {
+    console.log("[event submission] (SMTP nicht konfiguriert – setze SMTP_USER + SMTP_PASS)\n" + subject + "\n" + text);
     return;
   }
-  const rk = (process.env.RESEND_API_KEY || "").trim();
-  if (rk) {
-    const from = (process.env.MAIL_FROM || "VALUERO <onboarding@resend.dev>").trim();
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { authorization: "Bearer " + rk, "content-type": "application/json" },
-      body: JSON.stringify({ from, to: [to], subject, text }),
-    });
-    if (!res.ok) console.error("Resend", res.status, await res.text().catch(() => ""));
-    return;
-  }
-  console.log("[event submission] (no mailer configured)\n" + subject + "\n" + text);
+  const host = (process.env.SMTP_HOST || "smtp.gmail.com").trim();
+  const port = parseInt(process.env.SMTP_PORT, 10) || 587;
+  const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : port === 465;
+  const from = (process.env.MAIL_FROM || `VALUERO <${user}>`).trim();
+
+  const nodemailer = require("nodemailer");
+  const transport = nodemailer.createTransport({ host, port, secure, auth: { user, pass } });
+  await transport.sendMail({ from, to, replyTo: ev.submitter || undefined, subject, text });
 }
 
 app.post("/veranstaltungen/einreichen", async (req, res, next) => {
