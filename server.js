@@ -167,7 +167,7 @@ textarea{resize:vertical;min-height:90px}
   .nav-links.open{transform:none}
   .nav-links a{padding:11px 0;font-size:17px;width:100%}
   .nav-links a.nav-cta{margin-top:8px;padding:12px 22px;align-self:flex-start}
-  .burger{display:flex}
+  .burger{display:none}
   .cat-grid,.grid{grid-template-columns:1fr;gap:18px}
   .form-row.two{grid-template-columns:1fr;gap:0}
   .hero{min-height:auto}
@@ -348,11 +348,39 @@ textarea{resize:vertical;min-height:90px}
 .btn:active,.btn-search:active,.btn-book:active,.btn-web:active,.pill:active,.nav-cta:active{transform:scale(.96)}
 .bk-card,.card,.cat-card,.hub-col a,.link-cloud a{-webkit-tap-highlight-color:transparent}
 @media(hover:none){.bk-card:active{transform:scale(.99)}}
+/* ===== App-like mobile: bottom tab bar, bottom-sheet modals, native finish ===== */
+html{-webkit-text-size-adjust:100%}
+*{-webkit-tap-highlight-color:transparent}
+.tabbar{display:none}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+@media(max-width:720px){
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(255,255,255,.94);backdrop-filter:saturate(1.5) blur(16px);-webkit-backdrop-filter:saturate(1.5) blur(16px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -10px 26px -18px rgba(0,0,0,.5)}
+  .tabbar .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--muted);font-size:10.5px;font-weight:600;text-decoration:none;border-radius:13px;transition:color .15s,background .15s,transform .1s}
+  .tabbar .tab .ti,.tabbar .tab .ti svg{width:24px;height:24px;display:block}
+  .tabbar .tab .tl{line-height:1;letter-spacing:.01em}
+  .tabbar .tab.active{color:var(--accent)}
+  .tabbar .tab.active .ti{transform:translateY(-1px)}
+  .tabbar .tab:active{background:var(--surface-2);transform:scale(.93)}
+  body{padding-bottom:calc(58px + env(safe-area-inset-bottom))}
+  .to-top{bottom:calc(76px + env(safe-area-inset-bottom));right:14px}
+  .detail-mobilecta{bottom:calc(58px + env(safe-area-inset-bottom))}
+  .footer{padding-bottom:26px}
+  .bk-card:active,.ev-card:active,.card:active,.cat-card:active,.hub-col a:active{transform:scale(.985)}
+}
+@media(max-width:640px){
+  .bk-overlay{align-items:flex-end;padding:0}
+  .bk-modal{max-width:none;width:100%;border-radius:22px 22px 0 0;max-height:92vh;overflow:auto;-webkit-overflow-scrolling:touch;animation:sheetUp .34s cubic-bezier(.22,.61,.36,1);padding-bottom:env(safe-area-inset-bottom)}
+  .bk-modal .grab{display:block;width:40px;height:5px;margin:9px auto 0;border-radius:3px;background:var(--line)}
+  .dt-modal{border-radius:22px 22px 0 0}
+  .bk-close.dt-close{top:12px;right:12px}
+}
+.bk-modal .grab{display:none}
 .filter-toggle{display:none}
 @media(max-width:900px){
   .filter-toggle{display:inline-flex;align-items:center;gap:8px;position:sticky;top:74px;z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:11px 20px;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);margin-bottom:14px;font-family:inherit}
-  .filters-panel{position:fixed!important;top:0!important;right:0;bottom:0;left:auto;width:min(88vw,340px);max-width:340px;height:100vh;z-index:120;transform:translateX(110%)!important;transition:transform .3s ease;border-radius:0;overflow-y:auto;box-shadow:-20px 0 50px -20px rgba(0,0,0,.4)}
-  .filters-panel.open{transform:translateX(0)!important}
+  .filters-panel{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:auto!important;max-width:none!important;max-height:84vh;height:auto;z-index:120;transform:translateY(110%)!important;transition:transform .34s cubic-bezier(.22,.61,.36,1)!important;border-radius:22px 22px 0 0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:6px;padding-bottom:calc(20px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(0,0,0,.45)}
+  .filters-panel::before{content:"";display:block;width:40px;height:5px;margin:2px auto 12px;border-radius:3px;background:var(--line)}
+  .filters-panel.open{transform:translateY(0)!important}
   .filters-backdrop{position:fixed;inset:0;background:rgba(16,23,19,.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:110}
   .filters-backdrop.open{opacity:1;pointer-events:auto}
   .filters-panel .fp-close{display:flex;align-items:center;justify-content:space-between;font-family:"Fraunces",serif;font-size:20px;margin-bottom:6px}
@@ -752,6 +780,28 @@ function nav(active, c) {
   </header>`;
 }
 
+// App-style bottom tab bar (mobile only). Icons are inline SVG so they inherit
+// the active colour and stay crisp. Highlights the current section.
+function bottomNav(active) {
+  const ICON = {
+    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>',
+    bed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8v12M3 12h18v8M21 12v8M7 12V9.5a1.5 1.5 0 0 1 1.5-1.5H21"/><circle cx="7.5" cy="12" r="0" /></svg>',
+    fork: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 4 0V3M8 10v11M17 3c-1.5 0-2.5 1.8-2.5 4.5S15.5 12 17 12s2.5-1.8 2.5-4.5S18.5 3 17 3zM17 12v9"/></svg>',
+    cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+  };
+  const tab = (href, icon, label) =>
+    `<a href="${href}" class="tab${active === href ? " active" : ""}"><span class="ti">${ICON[icon]}</span><span class="tl">${label}</span></a>`;
+  return `
+  <nav class="tabbar" aria-label="Hauptnavigation">
+    ${tab("/", "home", "Home")}
+    ${tab("/unterkuenfte", "bed", "Unterkünfte")}
+    ${tab("/gastronomie", "fork", "Gastro")}
+    ${tab("/veranstaltungen", "cal", "Events")}
+    ${tab("/ueber-uns", "info", "Über")}
+  </nav>`;
+}
+
 function footer(c) {
   const y = new Date().getFullYear();
   return `
@@ -873,7 +923,11 @@ function layout({ title, active, body, content, extraScript, seo }) {
     .map((o) => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, "\\u003c")}</script>`)
     .join("");
   return `<!doctype html><html lang="de"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16231b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 ${seo.keywords ? `<meta name="keywords" content="${esc(seo.keywords)}">` : ""}
@@ -900,6 +954,7 @@ ${jsonLd}
 ${nav(active, content)}
 ${body}
 ${footer(content)}
+${bottomNav(active)}
 <button class="to-top" id="toTop" aria-label="Nach oben scrollen">↑</button>
 ${SCRIPT}
 ${extraScript || ""}
@@ -1132,6 +1187,7 @@ function bookingOverlayHTML() {
   return `
   <div class="bk-overlay" id="bkOverlay" aria-hidden="true">
     <div class="bk-modal" role="dialog" aria-modal="true" aria-labelledby="bk-title">
+      <div class="grab" aria-hidden="true"></div>
       <div class="mh">
         <div><h3 id="bk-title">Buchung</h3><div class="es">Sichere Buchung über VALUERO</div></div>
         <button class="bk-close" id="bk-close" aria-label="Schließen">×</button>
@@ -1167,6 +1223,7 @@ function detailOverlayHTML() {
   return `
   <div class="bk-overlay" id="dtOverlay" aria-hidden="true">
     <div class="bk-modal dt-modal" role="dialog" aria-modal="true" aria-labelledby="dt-title">
+      <div class="grab" aria-hidden="true"></div>
       <button class="bk-close dt-close" id="dt-close" aria-label="Schließen">×</button>
       <div class="dt-gallery"><div class="main" id="dt-main"></div><div class="dt-thumbs" id="dt-thumbs"></div></div>
       <div class="dt-body">
@@ -1799,6 +1856,7 @@ function evDetailOverlayHTML() {
   return `
   <div class="bk-overlay" id="evOverlay" aria-hidden="true">
     <div class="bk-modal dt-modal" role="dialog" aria-modal="true" aria-labelledby="ev-title">
+      <div class="grab" aria-hidden="true"></div>
       <button class="bk-close dt-close" id="ev-close" aria-label="Schließen">×</button>
       <div class="dt-gallery"><div class="main" id="ev-main"></div><div class="dt-thumbs" id="ev-thumbs"></div></div>
       <div class="dt-body">
