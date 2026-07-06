@@ -369,6 +369,7 @@ textarea{resize:vertical;min-height:90px}
 .ev-date{position:absolute;top:12px;left:12px;background:var(--accent);color:#fff;border-radius:13px;padding:8px 11px;text-align:center;line-height:1;box-shadow:0 8px 18px -8px rgba(0,0,0,.55);min-width:54px}
 .ev-date .d{display:block;font-size:25px;font-weight:800}
 .ev-date .m{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.ev-date .y{display:block;font-size:10px;font-weight:600;opacity:.82;margin-top:2px;letter-spacing:.04em}
 .ev-date-text{padding:9px 13px}
 .ev-date-text .m{font-size:13px;letter-spacing:.02em;text-transform:none}
 .ev-type{position:absolute;bottom:12px;right:12px;background:rgba(12,20,15,.66);color:#fff;font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px;backdrop-filter:blur(3px)}
@@ -626,7 +627,7 @@ function parseGallery(str) {
     .filter((u) => /^https?:\/\//.test(u) || /^data:image\//.test(u));
 }
 
-const MONTHS_DE = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+const MONTHS_DE = ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 const MONTHS_DE_SHORT = ["Jän", "Feb", "März", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 const WEEKDAYS_DE = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 function todayISO() {
@@ -643,13 +644,59 @@ function dateISO(v) {
 }
 function bigDate(iso) {
   const p = String(iso).split("-");
-  return { d: parseInt(p[2], 10) || "", m: MONTHS_DE_SHORT[(parseInt(p[1], 10) || 1) - 1] || "" };
+  return {
+    d: parseInt(p[2], 10) || "",
+    m: MONTHS_DE_SHORT[(parseInt(p[1], 10) || 1) - 1] || "",
+    y: p[0] || "",
+  };
 }
 function formatDateDE(iso) {
   const p = String(iso).split("-");
   if (p.length < 3) return "";
   const dt = new Date(parseInt(p[0], 10), (parseInt(p[1], 10) || 1) - 1, parseInt(p[2], 10) || 1);
   return WEEKDAYS_DE[dt.getDay()] + ", " + (parseInt(p[2], 10) || 1) + ". " + (MONTHS_DE[(parseInt(p[1], 10) || 1) - 1] || "") + " " + p[0];
+}
+// Format a date range for display, always incl. the year, compacted sensibly:
+//   same day        → "Sa, 24. Juli 2026"
+//   same month/year → "24.–26. Juli 2026"
+//   same year       → "29. Juli – 2. August 2026"
+//   different year  → "30. Dezember 2026 – 2. Jänner 2027"
+function formatRangeDE(startISO, endISO) {
+  if (!startISO) return "";
+  if (!endISO || endISO <= startISO) return formatDateDE(startISO);
+  const a = startISO.split("-"),
+    b = endISO.split("-");
+  const dA = parseInt(a[2], 10),
+    mA = parseInt(a[1], 10),
+    yA = a[0];
+  const dB = parseInt(b[2], 10),
+    mB = parseInt(b[1], 10),
+    yB = b[0];
+  const monA = MONTHS_DE[mA - 1] || "",
+    monB = MONTHS_DE[mB - 1] || "";
+  if (yA === yB && mA === mB) return dA + ".–" + dB + ". " + monA + " " + yA;
+  if (yA === yB) return dA + ". " + monA + " – " + dB + ". " + monB + " " + yA;
+  return dA + ". " + monA + " " + yA + " – " + dB + ". " + monB + " " + yB;
+}
+// Best-effort parse of a German free-text date ("24. Juli 2026", "24.07.2026",
+// "24.7.26") into ISO, so legacy events without event_date still sort/display.
+function parseGermanDate(text) {
+  const s = String(text || "").trim();
+  if (!s) return "";
+  let m = s.match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{2,4})/); // 24.07.2026 / 24.7.26
+  if (m) {
+    let y = parseInt(m[3], 10);
+    if (y < 100) y += 2000;
+    return y + "-" + String(parseInt(m[2], 10)).padStart(2, "0") + "-" + String(parseInt(m[1], 10)).padStart(2, "0");
+  }
+  m = s.match(/(\d{1,2})\.?\s*([A-Za-zäöüÄÖÜ]+)\s+(\d{4})/); // 24. Juli 2026
+  if (m) {
+    const mon = m[2].toLowerCase();
+    let idx = MONTHS_DE.findIndex((x) => x.toLowerCase() === mon);
+    if (idx < 0) idx = MONTHS_DE_SHORT.findIndex((x) => x.toLowerCase().replace(".", "") === mon.slice(0, 3));
+    if (idx >= 0) return m[3] + "-" + String(idx + 1).padStart(2, "0") + "-" + String(parseInt(m[1], 10)).padStart(2, "0");
+  }
+  return "";
 }
 
 const MTN = `<svg viewBox="0 0 34 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 22 L12 5 L17 13 L21 7 L32 22 Z" fill="currentColor"/><path d="M12 5 L15 10 L13.5 12 L10.5 9 Z" fill="#fff" opacity=".85"/></svg>`;
@@ -1523,10 +1570,18 @@ function listingPage(c, items, kind) {
 function eventsPage(c, events, opts) {
   opts = opts || {};
   // Split into upcoming (or undated) and past; sort by real date.
+  // _iso = start date (real column, or parsed from legacy free-text date_text).
+  // _end = optional end date for multi-day events. _sortEnd drives past/upcoming.
   const today = todayISO();
-  const withISO = (events || []).map((e) => ({ ...e, _iso: dateISO(e.event_date) }));
+  const withISO = (events || []).map((e) => {
+    const start = dateISO(e.event_date) || parseGermanDate(e.date_text);
+    const end = dateISO(e.event_end_date);
+    // date_text only counts as extra info (e.g. time) when a real date column exists.
+    const extra = e.event_date ? e.date_text || "" : "";
+    return { ...e, _iso: start, _end: end, _extra: extra, _sortEnd: end && end > start ? end : start };
+  });
   const upcoming = withISO
-    .filter((e) => !e._iso || e._iso >= today)
+    .filter((e) => !e._iso || e._sortEnd >= today)
     .sort((a, b) => {
       if (a._iso && b._iso) return a._iso < b._iso ? -1 : a._iso > b._iso ? 1 : 0;
       if (a._iso) return -1;
@@ -1534,10 +1589,11 @@ function eventsPage(c, events, opts) {
       return (b.id || 0) - (a.id || 0);
     });
   const past = withISO
-    .filter((e) => e._iso && e._iso < today)
+    .filter((e) => e._iso && e._sortEnd < today)
     .sort((a, b) => (a._iso < b._iso ? 1 : a._iso > b._iso ? -1 : 0))
     .slice(0, 5);
   const all = upcoming.concat(past);
+  const whenLabel = (e) => (e._iso ? formatRangeDE(e._iso, e._end) : e.date_text || "");
   // Data for the JS detail modal (index-addressed, matches card data-evidx).
   const evData = all.map((e) => ({
     name: e.name || "",
@@ -1545,15 +1601,20 @@ function eventsPage(c, events, opts) {
     location: e.location || "",
     description: e.description || "",
     website: e.website || "",
-    dateLabel: e._iso ? formatDateDE(e._iso) : e.date_text || "",
-    dateText: e.date_text || "",
+    dateLabel: whenLabel(e),
+    dateText: e._extra,
     images: [e.image].concat(parseGallery(e.gallery)).filter((u, i, a) => u && a.indexOf(u) === i),
   }));
 
   const badge = (e) => {
     if (e._iso) {
       const b = bigDate(e._iso);
-      return `<div class="ev-date"><span class="d">${b.d}</span><span class="m">${b.m}</span></div>`;
+      let day = String(b.d);
+      if (e._end && e._end > e._iso) {
+        const eb = bigDate(e._end);
+        day = eb.m === b.m && eb.y === b.y ? b.d + "–" + eb.d : b.d + "–…";
+      }
+      return `<div class="ev-date"><span class="d">${day}</span><span class="m">${b.m}</span><span class="y">${b.y}</span></div>`;
     }
     return e.date_text ? `<div class="ev-date ev-date-text"><span class="m">${esc(e.date_text)}</span></div>` : "";
   };
@@ -1566,10 +1627,8 @@ function eventsPage(c, events, opts) {
     <div class="ev-cbody">
       <h3>${esc(e.name)}</h3>
       ${
-        e._iso
-          ? `<div class="ev-when">${esc(formatDateDE(e._iso))}${e.date_text ? " · " + esc(e.date_text) : ""}</div>`
-          : e.date_text
-          ? `<div class="ev-when">${esc(e.date_text)}</div>`
+        whenLabel(e)
+          ? `<div class="ev-when">${esc(whenLabel(e))}${e._extra ? " · " + esc(e._extra) : ""}</div>`
           : ""
       }
       <p class="ev-desc">${esc(e.description)}</p>
@@ -1638,13 +1697,17 @@ function eventsPage(c, events, opts) {
         </div>
         <div class="form-row two">
           <div class="form-row" style="margin:0">
-            <label>Datum *</label>
+            <label>Datum (von) *</label>
             <input type="date" name="event_date" required>
           </div>
           <div class="form-row" style="margin:0">
-            <label>Uhrzeit / Zusatz (optional)</label>
-            <input name="date_text" maxlength="60" placeholder="z. B. ab 18 Uhr">
+            <label>Bis (optional, bei mehrtägigen)</label>
+            <input type="date" name="event_end_date">
           </div>
+        </div>
+        <div class="form-row">
+          <label>Uhrzeit / Zusatz (optional)</label>
+          <input name="date_text" maxlength="60" placeholder="z. B. ab 18 Uhr">
         </div>
         <div class="form-row two">
           <div class="form-row" style="margin:0">
@@ -2133,14 +2196,19 @@ function entryForm(kind, label, it, pendingCount) {
         )}"></div>
       </div>
       <div class="fr two">
-        <div class="fr" style="margin:0"><label>Datum</label><input type="date" name="event_date" value="${esc(
+        <div class="fr" style="margin:0"><label>Datum (von)</label><input type="date" name="event_date" value="${esc(
           dateISO(it.event_date)
         )}"></div>
+        <div class="fr" style="margin:0"><label>Bis (bei mehrtägigen)</label><input type="date" name="event_end_date" value="${esc(
+          dateISO(it.event_end_date)
+        )}"></div>
+      </div>
+      <div class="fr two">
         <div class="fr" style="margin:0"><label>Uhrzeit / Zusatz</label><input name="date_text" value="${esc(
           it.date_text
         )}" placeholder="z. B. ab 18 Uhr"></div>
+        <div class="fr" style="margin:0"><label>Website</label><input name="website" value="${esc(it.website)}"></div>
       </div>
-      <div class="fr"><label>Website</label><input name="website" value="${esc(it.website)}"></div>
       <div class="fr"><label>Status</label><select name="status">
         <option value="approved" ${it.status === "approved" ? "selected" : ""}>Online</option>
         <option value="pending" ${it.status === "pending" ? "selected" : ""}>Zur Freigabe</option>
@@ -2430,8 +2498,9 @@ async function init() {
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS gallery TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS api_url TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS api_key TEXT DEFAULT ''`);
-  // ---- Event columns: real date (for sorting/past-events) + image gallery ----
+  // ---- Event columns: real date range (for sorting/past-events) + image gallery ----
   await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS event_date DATE`);
+  await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS event_end_date DATE`);
   await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS gallery TEXT DEFAULT ''`);
   // ---- Rooms per accommodation (each maps to one Beds24 room id) ----
   await query(`
@@ -2818,7 +2887,7 @@ const KIND = {
   veranstaltungen: {
     table: "events",
     label: "Veranstaltungen",
-    cols: ["name", "description", "location", "type", "event_date", "date_text", "website", "image", "gallery", "status"],
+    cols: ["name", "description", "location", "type", "event_date", "event_end_date", "date_text", "website", "image", "gallery", "status"],
   },
 };
 
@@ -2828,7 +2897,7 @@ function valuesFor(cols, body) {
     if (Array.isArray(v)) v = v.join(","); // multi-value checkboxes (features)
     if (v == null) v = "";
     if (c === "max_guests") return String(parseInt(v, 10) || 0); // INTEGER column
-    if (c === "event_date") return /^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? String(v) : null; // DATE column (NULL if empty)
+    if (c === "event_date" || c === "event_end_date") return /^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? String(v) : null; // DATE column (NULL if empty)
     return String(v);
   });
 }
@@ -2985,7 +3054,8 @@ function eventJsonLd(req, ev) {
     "@type": "Event",
     name: ev.name,
     description: ev.description || undefined,
-    startDate: dateISO(ev.event_date) || undefined,
+    startDate: (dateISO(ev.event_date) || parseGermanDate(ev.date_text)) || undefined,
+    endDate: dateISO(ev.event_end_date) || undefined,
     eventStatus: "https://schema.org/EventScheduled",
     location: { "@type": "Place", name: ev.location || "Montafon", address: { "@type": "PostalAddress", addressLocality: ev.location || BIZ.city, addressRegion: BIZ.region, addressCountry: BIZ.country } },
     image: ev.image || undefined,
@@ -3183,9 +3253,11 @@ function eventDetailPage(c, ev, req) {
     { name: ev.name, href: eventHref(ev) },
   ];
   const web = ev.website ? `<a class="btn btn-primary" href="${esc(ev.website)}" target="_blank" rel="noopener">Zur Veranstaltung ↗</a>` : "";
-  const iso = dateISO(ev.event_date);
-  const dateLabel = iso ? formatDateDE(iso) : ev.date_text || "";
-  const termin = iso ? formatDateDE(iso) + (ev.date_text ? ", " + ev.date_text : "") : ev.date_text || "";
+  const iso = dateISO(ev.event_date) || parseGermanDate(ev.date_text);
+  const isoEnd = dateISO(ev.event_end_date);
+  const extra = ev.event_date ? ev.date_text || "" : "";
+  const dateLabel = iso ? formatRangeDE(iso, isoEnd) : ev.date_text || "";
+  const termin = iso ? formatRangeDE(iso, isoEnd) + (extra ? ", " + extra : "") : ev.date_text || "";
   const imgs = [ev.image].concat(parseGallery(ev.gallery)).filter((u, i, a) => u && a.indexOf(u) === i);
   const gallery = imgs.length
     ? `<div class="dg-main" style="${imgStyle(imgs[0], ev.name)};max-width:820px;margin-bottom:14px" id="edg-main"></div>` +
@@ -3219,7 +3291,7 @@ function eventDetailPage(c, ev, req) {
     <div style="margin-top:20px">${web}</div>
   </div></section>${galleryScript}`;
   return layout({
-    title: `${ev.name}${ev.date_text ? " – " + ev.date_text : ""} | Veranstaltung Montafon | VALUERO`,
+    title: `${ev.name}${dateLabel ? " – " + dateLabel : ""} | Veranstaltung Montafon | VALUERO`,
     active: "/veranstaltungen",
     body,
     content: c,
@@ -3356,7 +3428,10 @@ app.post("/veranstaltungen/einreichen", async (req, res, next) => {
   try {
     const b = req.body;
     if (!b.name || !b.description) return res.redirect("/veranstaltungen#einreichen");
-    const eventDate = /^\d{4}-\d{2}-\d{2}$/.test(String(b.event_date || "")) ? String(b.event_date) : null;
+    const isD = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || "")) ? String(v) : null);
+    const eventDate = isD(b.event_date);
+    let eventEnd = isD(b.event_end_date);
+    if (eventEnd && eventDate && eventEnd <= eventDate) eventEnd = null; // ignore end ≤ start
     const gallery = parseGallery(b.gallery).slice(0, 12).join("\n");
     const row = {
       name: String(b.name).slice(0, 160),
@@ -3365,12 +3440,13 @@ app.post("/veranstaltungen/einreichen", async (req, res, next) => {
       type: String(b.type || "").slice(0, 80),
       date_text: String(b.date_text || "").slice(0, 80),
       event_date: eventDate,
+      event_end_date: eventEnd,
       website: String(b.website || "").slice(0, 300),
       submitter: String(b.submitter || "").slice(0, 200),
     };
     await db.query(
-      `INSERT INTO events (name, description, location, type, date_text, event_date, website, image, gallery, submitter, status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'pending')`,
+      `INSERT INTO events (name, description, location, type, date_text, event_date, event_end_date, website, image, gallery, submitter, status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'pending')`,
       [
         row.name,
         row.description,
@@ -3378,6 +3454,7 @@ app.post("/veranstaltungen/einreichen", async (req, res, next) => {
         row.type,
         row.date_text,
         row.event_date,
+        row.event_end_date,
         row.website,
         String(b.image || "").slice(0, 4000000),
         gallery.slice(0, 20000000),
