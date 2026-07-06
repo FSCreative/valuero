@@ -69,6 +69,12 @@ async function getOffer(acc, { checkin, checkout, adults, childrenAges }) {
     roomId: String(r.roomId),
     name: r.name || "Zimmer",
     maxGuests: r.maxGuests || 0,
+    size: r.size || null,
+    floor: r.floor || "",
+    bedrooms: r.bedrooms || null,
+    bathrooms: r.bathrooms || null,
+    description: r.description || "",
+    features: Array.isArray(r.features) ? r.features : [],
     offer:
       r.available
         ? {

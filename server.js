@@ -274,7 +274,10 @@ textarea{resize:vertical;min-height:90px}
 .card-open{font-size:13px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-top:2px}
 /* room picker */
 .rooms-pick{display:flex;flex-direction:column;gap:8px;margin:2px 0 4px}
-.room-opt{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;transition:.15s}
+.room-opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;transition:.15s}
+.room-opt .rd{display:block;font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45;max-width:60ch}
+.room-opt .rf{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.room-opt .rf span{background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:2px 9px;font-size:11.5px;color:var(--ink)}
 .room-opt:hover{border-color:var(--accent)}
 .room-opt.sel{border-color:var(--accent);background:rgba(31,106,73,.06)}
 .room-opt input{accent-color:var(--accent);width:17px;height:17px;flex:0 0 auto}
@@ -356,6 +359,62 @@ textarea{resize:vertical;min-height:90px}
   .filters-panel .fp-close button{background:none;border:0;font-size:26px;cursor:pointer;color:var(--muted)}
 }
 @media(min-width:901px){.filters-panel .fp-close{display:none}}
+/* ---- Events grid, date badges, gallery preview ---- */
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.ev-grid-past{grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:16px;margin-top:16px}
+.ev-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s;box-shadow:var(--shadow)}
+.ev-card:hover{transform:translateY(-4px);box-shadow:0 22px 40px -22px rgba(0,0,0,.35)}
+.ev-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ev-img{position:relative;height:190px;background-size:cover;background-position:center;background-color:#dfe5de}
+.ev-date{position:absolute;top:12px;left:12px;background:var(--accent);color:#fff;border-radius:13px;padding:8px 11px;text-align:center;line-height:1;box-shadow:0 8px 18px -8px rgba(0,0,0,.55);min-width:54px}
+.ev-date .d{display:block;font-size:25px;font-weight:800}
+.ev-date .m{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.ev-date-text{padding:9px 13px}
+.ev-date-text .m{font-size:13px;letter-spacing:.02em;text-transform:none}
+.ev-type{position:absolute;bottom:12px;right:12px;background:rgba(12,20,15,.66);color:#fff;font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px;backdrop-filter:blur(3px)}
+.ev-cbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:7px;flex:1}
+.ev-cbody h3{margin:0;font-size:19px;line-height:1.25}
+.ev-when{color:var(--accent);font-weight:700;font-size:13.5px}
+.ev-desc{color:var(--muted);font-size:14.5px;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ev-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.ev-open{margin-top:auto;color:var(--accent);font-weight:700;font-size:13.5px}
+.ev-small{opacity:.7;filter:grayscale(.4);box-shadow:none}
+.ev-small:hover{opacity:1;filter:none}
+.ev-small .ev-img{height:120px}
+.ev-small .ev-cbody{padding:12px 14px}
+.ev-small .ev-cbody h3{font-size:16px}
+.ev-small .ev-desc{-webkit-line-clamp:2;font-size:13.5px}
+.ev-small .ev-date{min-width:44px;padding:5px 8px}
+.ev-small .ev-date .d{font-size:19px}
+.ev-past-head{margin-top:54px;border-top:1px solid var(--line);padding-top:30px}
+.ev-past-head h2{margin:0 0 4px}
+.ev-bigdate{font-size:17px;font-weight:700;color:var(--accent);margin:2px 0 10px}
+.ev-prev{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+.ev-prev .evp{position:relative;width:88px;height:66px;border-radius:11px;background-size:cover;background-position:center;box-shadow:0 4px 10px -4px rgba(0,0,0,.45)}
+.ev-prev .evp button{position:absolute;top:-8px;right:-8px;width:23px;height:23px;border-radius:50%;border:2px solid #fff;background:#c0392b;color:#fff;font-size:13px;line-height:1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.ev-prev .evp .star{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.55);color:#ffd94a;font-size:11px;padding:1px 5px;border-radius:6px}
+@media(max-width:680px){.ev-grid{grid-template-columns:1fr}.ev-grid-past{grid-template-columns:1fr 1fr;gap:12px}}
+/* ---- Search loading mini-game (Murmeltier-Klopfen) ---- */
+.loadgame{grid-column:1/-1;border:2px dashed var(--line);border-radius:20px;padding:26px 20px;background:var(--surface-2);text-align:center}
+.lg-title{font-family:"Fraunces",serif;font-weight:700;font-size:21px;color:var(--ink)}
+.lg-sub{color:var(--muted);font-size:14px;margin-top:7px;line-height:1.5}
+.lg-sub b{color:var(--accent)}
+.lg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:420px;margin:20px auto 10px}
+.lg-hole{position:relative;height:76px;background:radial-gradient(120% 90% at 50% 20%,#4a3524,#241a11);border-radius:50%/34%;overflow:hidden;box-shadow:inset 0 -7px 0 rgba(0,0,0,.4),0 4px 10px -4px rgba(0,0,0,.4);cursor:pointer;touch-action:manipulation;image-rendering:pixelated}
+.lg-mole{position:absolute;left:50%;bottom:-48px;transform:translateX(-50%);font-size:35px;line-height:1;transition:bottom .12s ease-out;user-select:none;pointer-events:none}
+.lg-hole.up .lg-mole{bottom:7px}
+.lg-hole.bonk .lg-mole{bottom:7px;transform:translateX(-50%) scale(1.25) rotate(-8deg)}
+.lg-foot{color:var(--muted);font-size:12.5px;margin-top:8px}
+.lg-foot::after{content:"";display:inline-block;width:1em;text-align:left;animation:lgdots 1.2s steps(4,end) infinite}
+@keyframes lgdots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+@media(max-width:480px){.lg-grid{gap:11px}.lg-hole{height:64px}.lg-mole{font-size:29px}}
+/* near-miss (filtered-out) results shown greyed + small */
+.near-head{grid-column:1/-1;margin:22px 0 2px;border-top:1px dashed var(--line);padding-top:20px}
+.near-head h3{margin:0 0 4px;font-size:19px}
+.near-head p{margin:0;color:var(--muted);font-size:14px}
+.bk-card-muted{opacity:.66;filter:grayscale(.5);background:var(--surface-2)}
+.bk-card-muted:hover{opacity:1;filter:none}
+.bk-card-muted .off-badge{position:absolute;top:10px;right:10px;background:rgba(20,20,20,.72);color:#fff;font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;backdrop-filter:blur(2px)}
 /* sticky mobile CTA on accommodation detail pages */
 .detail-mobilecta{display:none}
 @media(max-width:820px){
@@ -384,7 +443,10 @@ textarea{resize:vertical;min-height:90px}
 @media(max-width:680px){.kochdu{flex-direction:column-reverse;text-align:center;padding:26px 22px}.kochdu p{max-width:none}.kochdu-chips{justify-content:center}.kochdu-scooter{font-size:70px}}
 @media(prefers-reduced-motion:reduce){.kochdu-glow,.kochdu-scooter{animation:none}}
 @media(max-width:900px){.booking-layout{grid-template-columns:1fr}.filters-panel{position:static}.booking-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:680px){.booking-grid{grid-template-columns:1fr}.bk-form{grid-template-columns:1fr}.searchbar{gap:2px}.searchbar .sf{flex:1 1 100%}.searchbar .sf+.sf::before{display:none}.searchbar .sf.go{padding-top:6px}.searchbar .btn-search{width:100%;justify-content:center}}
+@media(max-width:680px){.booking-grid{grid-template-columns:1fr}.bk-form{grid-template-columns:1fr}.searchbar{gap:8px;padding:10px}.searchbar .sf{flex:1 1 100%;border:1.5px solid var(--line);border-radius:14px;background:var(--surface-2);padding:10px 14px;min-height:58px;justify-content:center}.searchbar .sf:focus-within{border-color:var(--accent);background:var(--surface)}.searchbar .sf+.sf::before{display:none}.searchbar .sf label{font-size:11.5px;margin-bottom:3px}.searchbar .sf input,.searchbar .sf select{font-size:17px}.searchbar .sf-date{flex:1 1 46%!important}.searchbar .sf-date input{min-height:26px;-webkit-appearance:none;appearance:none}.searchbar .sf.go{padding:0;border:0;min-height:0}.searchbar .btn-search{width:100%;justify-content:center}}
+/* Make the date value clearly visible (never a bare grey placeholder) */
+.searchbar .sf-date input[type=date]{color:var(--ink);font-weight:700}
+.searchbar .sf-date input[type=date]::-webkit-calendar-picker-indicator{opacity:.85;cursor:pointer}
 `;
 
 const adminCSS = `
@@ -556,11 +618,38 @@ function parseFeatures(str) {
 }
 
 // Parse a gallery field (URLs separated by newlines or "|") into a URL list.
+// Accepts http(s) URLs and inline base64 data URLs (user-uploaded event photos).
 function parseGallery(str) {
   return String(str || "")
-    .split(/[\n|]/)
+    .split(/\r?\n|\|/)
     .map((s) => s.trim())
-    .filter((u) => /^https?:\/\//.test(u));
+    .filter((u) => /^https?:\/\//.test(u) || /^data:image\//.test(u));
+}
+
+const MONTHS_DE = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+const MONTHS_DE_SHORT = ["Jän", "Feb", "März", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+const WEEKDAYS_DE = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+function todayISO() {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+// Normalize a DATE value (pg Date object or string) to a "YYYY-MM-DD" string.
+function dateISO(v) {
+  if (!v) return "";
+  if (typeof v === "string") return /^\d{4}-\d{2}-\d{2}/.test(v) ? v.slice(0, 10) : "";
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return "";
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function bigDate(iso) {
+  const p = String(iso).split("-");
+  return { d: parseInt(p[2], 10) || "", m: MONTHS_DE_SHORT[(parseInt(p[1], 10) || 1) - 1] || "" };
+}
+function formatDateDE(iso) {
+  const p = String(iso).split("-");
+  if (p.length < 3) return "";
+  const dt = new Date(parseInt(p[0], 10), (parseInt(p[1], 10) || 1) - 1, parseInt(p[2], 10) || 1);
+  return WEEKDAYS_DE[dt.getDay()] + ", " + (parseInt(p[2], 10) || 1) + ". " + (MONTHS_DE[(parseInt(p[1], 10) || 1) - 1] || "") + " " + p[0];
 }
 
 const MTN = `<svg viewBox="0 0 34 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 22 L12 5 L17 13 L21 7 L32 22 Z" fill="currentColor"/><path d="M12 5 L15 10 L13.5 12 L10.5 9 Z" fill="#fff" opacity=".85"/></svg>`;
@@ -952,10 +1041,25 @@ const FILTER_SCRIPT = `
 
 /* ---------------- BOOKING TOOL (Unterkünfte) ---------------- */
 // Search bar used on the home hero and on top of the Unterkünfte tool.
+// Sensible placeholder stay: next Saturday (≥7 days out) + 7 nights, so the
+// date fields never show an empty grey "tt.mm.jjjj" (esp. important on mobile).
+function defaultStay() {
+  const iso = (d) =>
+    d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  const s = new Date();
+  let add = (6 - s.getDay() + 7) % 7;
+  if (add < 7) add += 7; // always a Saturday at least a week out
+  s.setDate(s.getDate() + add);
+  const e = new Date(s);
+  e.setDate(e.getDate() + 7);
+  return { checkin: iso(s), checkout: iso(e) };
+}
+
 function searchBar(prefill) {
   prefill = prefill || {};
-  const ci = esc(prefill.checkin || "");
-  const co = esc(prefill.checkout || "");
+  const def = defaultStay();
+  const ci = esc(prefill.checkin || def.checkin);
+  const co = esc(prefill.checkout || def.checkout);
   const ages = (prefill.childrenAges || []).map((n) => parseInt(n, 10)).filter((n) => Number.isFinite(n) && n >= 0);
   const adults = parseInt(prefill.adults, 10) || parseInt(prefill.guests, 10) || 2;
   const children = ages.length || parseInt(prefill.children, 10) || 0;
@@ -967,8 +1071,8 @@ function searchBar(prefill) {
   const agesHtml = ages.map((a) => ageSel(a)).join("");
   return `
   <form class="searchbar" id="searchForm" action="/unterkuenfte" method="get">
-    <div class="sf"><label>Anreise</label><input type="date" name="checkin" value="${ci}" required></div>
-    <div class="sf"><label>Abreise</label><input type="date" name="checkout" value="${co}" required></div>
+    <div class="sf sf-date"><label>📅 Anreise</label><input type="date" name="checkin" value="${ci}" required></div>
+    <div class="sf sf-date"><label>📅 Abreise</label><input type="date" name="checkout" value="${co}" required></div>
     <div class="sf" style="flex:0 1 120px"><label>Erwachsene</label><select name="adults">${adultOpts}</select></div>
     <div class="sf" style="flex:0 1 108px"><label>Kinder</label><select name="children" class="sf-children">${childOpts}</select></div>
     <div class="sf go"><button class="btn-search" type="submit">Finden</button></div>
@@ -1154,9 +1258,42 @@ const BOOKING_SCRIPT = `
     if(state.priceMax)p.push('priceMax='+state.priceMax);
     return p.join('&');}
 
-  function run(){results.innerHTML='<div class="loading">Suche Unterkünfte…</div>';
+  var LGMSG=['Wir durchkämmen das Montafon nach deinen besten Plätzen','Wir klopfen bei den Vermietern an','Wir zählen die freien Betten im Tal','Wir fragen die Murmeltiere nach Geheimtipps'];
+  function loadGameHTML(){
+    var msg=LGMSG[(Math.random()*LGMSG.length)|0];
+    var holes='';for(var i=0;i<6;i++){holes+='<div class="lg-hole"><span class="lg-mole">\\ud83d\\udc39</span></div>';}
+    return '<div class="loadgame" id="loadgame">'
+      +'<div class="lg-title">\\ud83d\\udd0d '+msg+'</div>'
+      +'<div class="lg-sub">Dauert nur einen Moment. Solange: <b>Murmeltier-Klopfen</b> \\u2013 tipp die Murmeltiere! &nbsp;Punkte: <b id="lgScore">0</b></div>'
+      +'<div class="lg-grid" id="lgGrid">'+holes+'</div>'
+      +'<div class="lg-foot">L\\u00e4dt Live-Preise &amp; Verf\\u00fcgbarkeit</div></div>';
+  }
+  function startLoadGame(){
+    var grid=$('#lgGrid');if(!grid)return;
+    var holes=$$('#lgGrid .lg-hole'),score=0,alive=true,scoreEl=$('#lgScore');
+    holes.forEach(function(h){h.addEventListener('pointerdown',function(){
+      if(h.classList.contains('up')){score++;if(scoreEl)scoreEl.textContent=score;h.classList.remove('up');h.classList.add('bonk');setTimeout(function(){h.classList.remove('bonk')},150);}
+    });});
+    function tick(){
+      if(!document.body.contains(grid)){alive=false;return;}
+      var free=holes.filter(function(h){return !h.classList.contains('up')&&!h.classList.contains('bonk')});
+      if(free.length){var h=free[(Math.random()*free.length)|0];h.classList.add('up');
+        setTimeout(function(){h.classList.remove('up');},650+Math.random()*550);}
+      setTimeout(function(){if(alive)tick();},560+Math.random()*340);
+    }
+    tick();
+  }
+  function run(){results.innerHTML=loadGameHTML();startLoadGame();
     fetch('/api/search?'+params()).then(function(r){return r.json()}).then(function(d){last=d;renderList(d)})
     .catch(function(){results.innerHTML='<div class="empty">Fehler beim Laden. Bitte erneut versuchen.</div>'});}
+
+  function matchesFilters(x){
+    if(state.type && String(x.type||'').toLowerCase()!==state.type)return false;
+    if(state.loc && String(x.location||'').toLowerCase()!==state.loc)return false;
+    if(state.features&&state.features.length){var f=x.features||[];for(var i=0;i<state.features.length;i++){if(f.indexOf(state.features[i])<0)return false;}}
+    if(state.priceMax){var p=(x.offer&&x.offer.available&&x.offer.perNight)?x.offer.perNight:null;if(p!=null&&p>state.priceMax)return false;}
+    return true;
+  }
 
   function conn(x){return x.connected?0:1}
   function avail(x){return (x.offer&&x.offer.available)?0:1}
@@ -1172,19 +1309,33 @@ const BOOKING_SCRIPT = `
     });
     return a;}
 
-  function renderList(d){var list=sortResults(d.results||[]);var cnt=$('#resCount');
-    if(cnt)cnt.textContent=(d.count||list.length)+' Unterkünfte'+(d.nights?(' \\u00b7 '+d.nights+' Nächte'):'');
-    if(!list.length){results.innerHTML='<div class="empty">Keine Unterkünfte für diese Auswahl.</div>';return;}
-    results.innerHTML=list.map(card).join('');bindCards();}
+  function renderList(d){
+    var all=d.results||[];
+    var matched=[],excluded=[];
+    all.forEach(function(x){(matchesFilters(x)?matched:excluded).push(x);});
+    matched=sortResults(matched);
+    var cnt=$('#resCount');
+    if(cnt)cnt.textContent=matched.length+' '+(matched.length===1?'Unterkunft':'Unterkünfte')+(d.nights?(' \\u00b7 '+d.nights+' Nächte'):'');
+    if(!matched.length && !excluded.length){results.innerHTML='<div class="empty">Keine Unterkünfte für diese Auswahl.</div>';return;}
+    var html='';
+    if(matched.length)html+=matched.map(function(a){return card(a,false)}).join('');
+    else html+='<div class="empty" style="grid-column:1/-1">Keine Unterkunft passt exakt zu deinen Filtern \\u2013 sieh dir die Vorschläge unten an.</div>';
+    // Few exact matches → show the filtered-out near-misses greyed & small.
+    if(matched.length<3 && excluded.length){
+      html+='<div class="near-head"><h3>Passt nicht exakt zu deinen Filtern \\u2013 aber einen Blick wert</h3>'
+        +'<p>Diese Unterkünfte fallen knapp aus deiner Auswahl. Vielleicht trotzdem das Richtige?</p></div>';
+      html+=sortResults(excluded).map(function(a){return card(a,true)}).join('');
+    }
+    results.innerHTML=html;bindCards();}
 
   function feats(acc){return (acc.featureLabels||[]).slice(0,4).map(function(f){return '<span class="fi">'+f.icon+' '+esc(f.label)+'</span>'}).join('')}
 
-  function card(acc){
+  function card(acc,muted){
     var img=acc.image?('style="background-image:url(\\''+esc(acc.image)+'\\')"'):'class="img noimg"';
     var imgTag=acc.image?('<div class="img" '+img+'>'):'<div '+img+'>';
     var badge=acc.badge?'<span class="badge">'+esc(acc.badge)+'</span>':'';
     var rooms=(acc.roomCount>1)?'<span class="fi">\\ud83d\\udecf '+acc.roomCount+' Zimmer</span>':'';
-    return '<article class="bk-card" data-detail="'+acc.id+'">'+imgTag+badge+'</div><div class="body">'
+    return '<article class="bk-card'+(muted?' bk-card-muted':'')+'" data-detail="'+acc.id+'">'+imgTag+badge+(muted?'<span class="off-badge">au\\u00dferhalb der Filter</span>':'')+'</div><div class="body">'
       +'<h3>'+esc(acc.name)+'</h3>'
       +(acc.rating?'<div class="rating" style="color:#bfa06a;font-weight:600;font-size:14px">\\u2605 '+esc(acc.rating)+'</div>':'')
       +'<div class="feat-row">'+(acc.location?'<span class="fi">\\ud83d\\udccd '+esc(acc.location)+'</span>':'')+(acc.type?'<span class="fi">'+esc(acc.type)+'</span>':'')+rooms+'</div>'
@@ -1215,6 +1366,8 @@ const BOOKING_SCRIPT = `
   // ---- booking overlay (with room picker) ----
   var ov=$('#bkOverlay'), bkAcc=null, bkRoom=null;
   function roomsWithOffers(acc){return (acc.rooms||[]).filter(function(r){return r.offer&&r.offer.available})}
+  // Short room detail line (size, bedrooms, capacity, floor) — explains price differences.
+  function roomSub(r){var s=[];if(r.size)s.push(r.size+' m\\u00b2');if(r.bedrooms)s.push(r.bedrooms+' Schlafzi.');if(r.bathrooms&&r.bathrooms>1)s.push(r.bathrooms+' Bäder');if(r.maxGuests)s.push('bis '+r.maxGuests+' Gäste');if(r.floor)s.push(esc(r.floor));return s.join(' \\u00b7 ');}
   function renderBkSummary(){
     var o=(bkRoom&&bkRoom.offer)||{};
     var s='<div class="row"><span>An-/Abreise</span><span>'+fmt(state.checkin)+' \\u2192 '+fmt(state.checkout)+'</span></div>'
@@ -1238,7 +1391,7 @@ const BOOKING_SCRIPT = `
     if(avail.length>1){
       rp.innerHTML='<div class="dt-sec-title" style="font-size:15px;margin-top:0">Zimmer wählen</div><div class="rooms-pick">'+avail.map(function(r,i){
         return '<label class="room-opt'+(i===0?' sel':'')+'"><input type="radio" name="bkroom" value="'+esc(r.roomId)+'"'+(i===0?' checked':'')+'>'
-          +'<span><span class="rn">'+esc(r.name||'Zimmer')+'</span>'+(r.maxGuests?'<span class="rg"> · bis '+r.maxGuests+' Gäste</span>':'')+'</span>'
+          +'<span><span class="rn">'+esc(r.name||'Zimmer')+'</span>'+(roomSub(r)?'<span class="rg"> · '+roomSub(r)+'</span>':'')+(r.description?'<span class="rd">'+esc(r.description)+'</span>':'')+'</span>'
           +'<span class="rp"><b>'+euro(r.offer.total,r.offer.currency)+'</b>gesamt</span></label>';
       }).join('')+'</div>';
       $$('#bk-rooms input[name=bkroom]').forEach(function(inp){inp.addEventListener('change',function(){
@@ -1294,7 +1447,7 @@ const BOOKING_SCRIPT = `
     if(acc.connected){
       var avail=roomsWithOffers(acc);
       if(state.checkin&&state.checkout){
-        if(avail.length)rhtml='<div class="dt-sec-title">Verfügbare Zimmer</div><div class="rooms-pick">'+avail.map(function(r){return '<div class="room-opt"><span><span class="rn">'+esc(r.name||'Zimmer')+'</span>'+(r.maxGuests?'<span class="rg"> · bis '+r.maxGuests+' Gäste</span>':'')+'</span><span class="rp"><b>'+euro(r.offer.total,r.offer.currency)+'</b>gesamt</span></div>';}).join('')+'</div>';
+        if(avail.length)rhtml='<div class="dt-sec-title">Verfügbare Zimmer</div><div class="rooms-pick">'+avail.map(function(r){return '<div class="room-opt"><span><span class="rn">'+esc(r.name||'Zimmer')+'</span>'+(roomSub(r)?'<span class="rg"> · '+roomSub(r)+'</span>':'')+(r.description?'<span class="rd">'+esc(r.description)+'</span>':'')+(r.features&&r.features.length?'<span class="rf">'+r.features.slice(0,5).map(function(f){return '<span>'+esc(f)+'</span>'}).join('')+'</span>':'')+'</span><span class="rp"><b>'+euro(r.offer.total,r.offer.currency)+'</b>gesamt</span></div>';}).join('')+'</div>';
         else rhtml='<p class="note-web">Für diese Daten leider nicht verfügbar – bitte andere Daten wählen.</p>';
       }else rhtml='<p class="note-web">Wähle oben Anreise &amp; Abreise für Live-Preise.</p>';
     }else rhtml='<p class="note-web">Preise &amp; Buchung direkt über die Website der Unterkunft.</p>';
@@ -1369,26 +1522,65 @@ function listingPage(c, items, kind) {
 /* ---------------- EVENTS ---------------- */
 function eventsPage(c, events, opts) {
   opts = opts || {};
-  const evCard = (e) => `
-  <article class="card reveal" data-loc="${esc((e.location || "").toLowerCase())}" data-type="${esc(
-    (e.type || "").toLowerCase()
-  )}">
-    <div class="card-img" style="${imgStyle(e.image, e.name)}">
-      ${e.type ? `<span class="card-badge">${esc(e.type)}</span>` : ""}
+  // Split into upcoming (or undated) and past; sort by real date.
+  const today = todayISO();
+  const withISO = (events || []).map((e) => ({ ...e, _iso: dateISO(e.event_date) }));
+  const upcoming = withISO
+    .filter((e) => !e._iso || e._iso >= today)
+    .sort((a, b) => {
+      if (a._iso && b._iso) return a._iso < b._iso ? -1 : a._iso > b._iso ? 1 : 0;
+      if (a._iso) return -1;
+      if (b._iso) return 1;
+      return (b.id || 0) - (a.id || 0);
+    });
+  const past = withISO
+    .filter((e) => e._iso && e._iso < today)
+    .sort((a, b) => (a._iso < b._iso ? 1 : a._iso > b._iso ? -1 : 0))
+    .slice(0, 5);
+  const all = upcoming.concat(past);
+  // Data for the JS detail modal (index-addressed, matches card data-evidx).
+  const evData = all.map((e) => ({
+    name: e.name || "",
+    type: e.type || "",
+    location: e.location || "",
+    description: e.description || "",
+    website: e.website || "",
+    dateLabel: e._iso ? formatDateDE(e._iso) : e.date_text || "",
+    dateText: e.date_text || "",
+    images: [e.image].concat(parseGallery(e.gallery)).filter((u, i, a) => u && a.indexOf(u) === i),
+  }));
+
+  const badge = (e) => {
+    if (e._iso) {
+      const b = bigDate(e._iso);
+      return `<div class="ev-date"><span class="d">${b.d}</span><span class="m">${b.m}</span></div>`;
+    }
+    return e.date_text ? `<div class="ev-date ev-date-text"><span class="m">${esc(e.date_text)}</span></div>` : "";
+  };
+  const evCard = (e, idx, small) => `
+  <article class="ev-card${small ? " ev-small" : ""} reveal" data-evidx="${idx}" role="button" tabindex="0" aria-label="${esc(e.name)} – Details ansehen">
+    <div class="ev-img" style="${imgStyle(e.image, e.name)}">
+      ${badge(e)}
+      ${e.type ? `<span class="ev-type">${esc(e.type)}</span>` : ""}
     </div>
-    <div class="card-body">
-      <h3>${
-        e.website
-          ? `<a href="${esc(e.website)}" target="_blank" rel="noopener">${esc(e.name)}</a>`
-          : esc(e.name)
-      }</h3>
-      <p class="desc">${esc(e.description)}</p>
-      <div class="card-meta">
-        ${e.location ? `<span class="chip">📍 ${esc(e.location)}</span>` : ""}
-        ${e.date_text ? `<span class="chip">🗓 ${esc(e.date_text)}</span>` : ""}
-      </div>
+    <div class="ev-cbody">
+      <h3>${esc(e.name)}</h3>
+      ${
+        e._iso
+          ? `<div class="ev-when">${esc(formatDateDE(e._iso))}${e.date_text ? " · " + esc(e.date_text) : ""}</div>`
+          : e.date_text
+          ? `<div class="ev-when">${esc(e.date_text)}</div>`
+          : ""
+      }
+      <p class="ev-desc">${esc(e.description)}</p>
+      <div class="ev-meta">${e.location ? `<span class="chip">📍 ${esc(e.location)}</span>` : ""}${
+    e.website ? `<span class="chip">🔗 Website</span>` : ""
+  }</div>
+      <span class="ev-open">Details ansehen →</span>
     </div>
   </article>`;
+  const upHtml = upcoming.map((e, i) => evCard(e, i, false)).join("");
+  const pastHtml = past.map((e, i) => evCard(e, upcoming.length + i, true)).join("");
   const success = opts.success
     ? `<div class="form-success">Danke! Deine Veranstaltung wurde eingereicht und erscheint nach kurzer Prüfung.</div>`
     : "";
@@ -1405,13 +1597,16 @@ function eventsPage(c, events, opts) {
       <p class="muted reveal" style="max-width:70ch;margin-bottom:30px">${esc(
         c.veranstaltungen_intro
       )}</p>
-      <div class="grid">
-        ${
-          events.length
-            ? events.map(evCard).join("")
-            : `<div class="no-results">Aktuell sind keine Veranstaltungen eingetragen.</div>`
-        }
-      </div>
+      ${
+        upcoming.length
+          ? `<div class="ev-grid">${upHtml}</div>`
+          : `<div class="no-results">Aktuell sind keine kommenden Veranstaltungen eingetragen.</div>`
+      }
+      ${
+        past.length
+          ? `<div class="ev-past-head reveal"><h2>Bereits gewesen</h2><p class="muted">Ein kleiner Rückblick auf vergangene Highlights.</p></div><div class="ev-grid ev-grid-past">${pastHtml}</div>`
+          : ""
+      }
     </div>
   </section>
   <section class="section" id="einreichen" style="padding-top:0">
@@ -1444,50 +1639,86 @@ function eventsPage(c, events, opts) {
         <div class="form-row two">
           <div class="form-row" style="margin:0">
             <label>Datum *</label>
-            <input name="date_text" required maxlength="60" placeholder="z. B. 24. Juli 2026">
+            <input type="date" name="event_date" required>
           </div>
+          <div class="form-row" style="margin:0">
+            <label>Uhrzeit / Zusatz (optional)</label>
+            <input name="date_text" maxlength="60" placeholder="z. B. ab 18 Uhr">
+          </div>
+        </div>
+        <div class="form-row two">
           <div class="form-row" style="margin:0">
             <label>Website (optional)</label>
             <input name="website" maxlength="200" placeholder="https://">
           </div>
+          <div class="form-row" style="margin:0">
+            <label>Deine E-Mail (optional, für Rückfragen)</label>
+            <input name="submitter" type="email" maxlength="160">
+          </div>
         </div>
         <div class="form-row">
-          <label>Bild (optional)</label>
-          <input type="file" accept="image/*" id="evimg">
+          <label>Bilder (optional – mehrere möglich)</label>
+          <input type="file" accept="image/*" id="evimg" multiple>
           <input type="hidden" name="image" id="evimgdata">
-          <span class="form-note">Wird automatisch verkleinert. Alternativ Bilder an ${esc(
+          <input type="hidden" name="gallery" id="evgallery">
+          <div class="ev-prev" id="evprev"></div>
+          <span class="form-note">Mehrere Bilder möglich – werden im Detailfenster durchgeschaltet. Erstes Bild = Titelbild. Alternativ an ${esc(
             c.contact_email
           )} senden.</span>
-        </div>
-        <div class="form-row">
-          <label>Deine E-Mail (optional, für Rückfragen)</label>
-          <input name="submitter" type="email" maxlength="160">
         </div>
         <button class="btn btn-primary" type="submit">Einreichen</button>
       </form>
     </div>
-  </section>`;
-  const imgScript = `
+  </section>
+  ${evDetailOverlayHTML()}`;
+  const evJson = JSON.stringify(evData)
+    .replace(/</g, "\\u003c")
+    .replace(/[\u2028\u2029]/g, function (m) { return m === " " ? "\\u2028" : "\\u2029"; });
+  const evScript = `
 <script>
 (function(){
-  var f=document.getElementById('evimg'),d=document.getElementById('evimgdata');
-  if(!f)return;
-  f.addEventListener('change',function(){
-    var file=f.files[0];if(!file)return;
-    var r=new FileReader();
-    r.onload=function(ev){
-      var img=new Image();
-      img.onload=function(){
-        var max=1200,w=img.width,h=img.height;
-        if(w>max){h=h*max/w;w=max;}
-        var cv=document.createElement('canvas');cv.width=w;cv.height=h;
-        cv.getContext('2d').drawImage(img,0,0,w,h);
-        d.value=cv.toDataURL('image/jpeg',0.8);
-      };
-      img.src=ev.target.result;
-    };
-    r.readAsDataURL(file);
+  var EV=${evJson};
+  var $=function(s){return document.querySelector(s)};
+  var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+  // ---- detail modal (gallery carousel + info + website link) ----
+  var ov=document.getElementById('evOverlay');
+  function openEv(i){
+    var e=EV[i];if(!e||!ov)return;
+    var imgs=e.images||[];
+    var main=document.getElementById('ev-main');
+    if(imgs.length){main.className='main';main.style.backgroundImage="url('"+imgs[0]+"')";}else{main.className='main noimg';main.style.backgroundImage='';}
+    var th=document.getElementById('ev-thumbs');
+    if(imgs.length>1){th.style.display='';th.innerHTML=imgs.map(function(u,k){return '<div class="th'+(k===0?' active':'')+'" data-i="'+k+'" style="background-image:url(\\''+u+'\\')"></div>';}).join('');
+      $$('#ev-thumbs .th').forEach(function(t){t.addEventListener('click',function(){main.style.backgroundImage="url('"+imgs[+t.getAttribute('data-i')]+"')";$$('#ev-thumbs .th').forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});
+    }else{th.style.display='none';th.innerHTML='';}
+    document.getElementById('ev-title').textContent=e.name;
+    document.getElementById('ev-date').textContent=e.dateLabel||'';
+    document.getElementById('ev-meta').innerHTML=(e.type?'<span class="chip">'+esc(e.type)+'</span>':'')+(e.location?'<span class="chip">\\ud83d\\udccd '+esc(e.location)+'</span>':'')+(e.dateText&&e.dateLabel!==e.dateText?'<span class="chip">\\ud83d\\udd53 '+esc(e.dateText)+'</span>':'');
+    document.getElementById('ev-desc').textContent=e.description||'';
+    document.getElementById('ev-actions').innerHTML=e.website?'<a class="btn btn-primary" href="'+esc(e.website)+'" target="_blank" rel="noopener">Zur Veranstaltung \\u2197</a>':'';
+    ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+  }
+  function closeEv(){if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+  $$('.ev-card').forEach(function(card){
+    function go(){openEv(parseInt(card.getAttribute('data-evidx'),10));}
+    card.addEventListener('click',go);
+    card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
   });
+  if(ov){document.getElementById('ev-close').addEventListener('click',closeEv);ov.addEventListener('click',function(e){if(e.target===ov)closeEv();});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeEv();});}
+
+  // ---- submission form: multiple image uploads with preview ----
+  var f=document.getElementById('evimg'),gField=document.getElementById('evgallery'),iField=document.getElementById('evimgdata'),prev=document.getElementById('evprev');
+  var pics=[];
+  function sync(){
+    if(iField)iField.value=pics[0]||'';
+    if(gField)gField.value=pics.slice(1).join('\\n');
+    if(prev){prev.innerHTML=pics.map(function(u,k){return '<div class="evp" style="background-image:url(\\''+u+'\\')">'+(k===0?'<span class="star">Titel</span>':'')+'<button type="button" data-k="'+k+'" aria-label="Bild entfernen">\\u00d7</button></div>';}).join('');
+      $$('#evprev .evp button').forEach(function(b){b.addEventListener('click',function(){pics.splice(+b.getAttribute('data-k'),1);sync();});});}
+  }
+  function addFile(file){var r=new FileReader();r.onload=function(ev){var img=new Image();img.onload=function(){var max=1400,w=img.width,h=img.height;if(w>max){h=h*max/w;w=max;}var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);pics.push(cv.toDataURL('image/jpeg',0.82));sync();};img.src=ev.target.result;};r.readAsDataURL(file);}
+  if(f){f.addEventListener('change',function(){Array.prototype.forEach.call(f.files,addFile);f.value='';});}
 })();
 </script>`;
   return layout({
@@ -1495,9 +1726,27 @@ function eventsPage(c, events, opts) {
     active: "/veranstaltungen",
     body,
     content: c,
-    extraScript: imgScript,
+    extraScript: evScript,
     seo: c.__seo,
   });
+}
+
+// Event detail window (gallery carousel + info + website link), filled by JS.
+function evDetailOverlayHTML() {
+  return `
+  <div class="bk-overlay" id="evOverlay" aria-hidden="true">
+    <div class="bk-modal dt-modal" role="dialog" aria-modal="true" aria-labelledby="ev-title">
+      <button class="bk-close dt-close" id="ev-close" aria-label="Schließen">×</button>
+      <div class="dt-gallery"><div class="main" id="ev-main"></div><div class="dt-thumbs" id="ev-thumbs"></div></div>
+      <div class="dt-body">
+        <div class="dt-head"><h3 id="ev-title"></h3></div>
+        <div class="ev-bigdate" id="ev-date"></div>
+        <div class="dt-meta" id="ev-meta"></div>
+        <p class="dt-desc" id="ev-desc"></p>
+        <div class="dt-actions" id="ev-actions"></div>
+      </div>
+    </div>
+  </div>`;
 }
 
 /* ---------------- ABOUT ---------------- */
@@ -1721,6 +1970,44 @@ function fieldImage(value) {
     <span class="hint">Bild auswählen – wird automatisch verkleinert. Leer lassen für Platzhalter.</span>`;
 }
 
+// Admin gallery editor for events: add / delete / replace multiple images and
+// pick the title image. Writes hidden fields image (first) + gallery (rest).
+function eventGalleryEditor(it) {
+  const imgs = [it.image].concat(parseGallery(it.gallery)).filter((u, i, a) => u && a.indexOf(u) === i);
+  const json = JSON.stringify(imgs).replace(/</g, "\\u003c");
+  return `
+    <label>Bilder (Galerie)</label>
+    <div class="evadmin">
+      <style>
+        .evadmin .ev-prev{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0}
+        .evadmin .evp{position:relative;width:112px;height:82px;border-radius:10px;background-size:cover;background-position:center;background-color:var(--surface-2,#eee);box-shadow:0 3px 8px -3px rgba(0,0,0,.4)}
+        .evadmin .evp .rm{position:absolute;top:-8px;right:-8px;width:23px;height:23px;border-radius:50%;border:2px solid #fff;background:#c0392b;color:#fff;font-size:12px;line-height:1;cursor:pointer;padding:0}
+        .evadmin .evp .mk{position:absolute;bottom:5px;left:5px;background:rgba(0,0,0,.62);color:#fff;border:0;font-size:10px;padding:2px 7px;border-radius:6px;cursor:pointer}
+        .evadmin .evp .star{position:absolute;bottom:5px;left:5px;background:#1f6a49;color:#fff;font-size:10px;padding:2px 7px;border-radius:6px}
+        .evadmin .ev-empty{color:var(--muted,#888);font-size:13px;margin:6px 0}
+      </style>
+      <input type="hidden" name="image" id="ev_image" value="">
+      <input type="hidden" name="gallery" id="ev_gallery" value="">
+      <div class="ev-prev" id="ev_admin_prev"></div>
+      <input type="file" accept="image/*" id="ev_admin_add" multiple>
+      <span class="hint">Erstes Bild = Titelbild. „Titel“ holt ein Bild nach vorne, „×“ löscht es. Neue Bilder oben hinzufügen (mehrere möglich).</span>
+    </div>
+    <script>(function(){
+      var pics=${json};
+      var iF=document.getElementById('ev_image'),gF=document.getElementById('ev_gallery'),prev=document.getElementById('ev_admin_prev'),add=document.getElementById('ev_admin_add');
+      function sync(){
+        iF.value=pics[0]||'';gF.value=pics.slice(1).join('\\n');
+        if(!pics.length){prev.innerHTML='<div class="ev-empty">Noch keine Bilder – unten hinzufügen.</div>';return;}
+        prev.innerHTML=pics.map(function(u,k){return '<div class="evp" style="background-image:url(\\''+u+'\\')">'+(k===0?'<span class="star">Titel</span>':'<button type="button" class="mk" data-k="'+k+'">Titel</button>')+'<button type="button" class="rm" data-k="'+k+'" aria-label="Löschen">\\u00d7</button></div>';}).join('');
+        Array.prototype.forEach.call(prev.querySelectorAll('.rm'),function(b){b.addEventListener('click',function(){pics.splice(+b.getAttribute('data-k'),1);sync();});});
+        Array.prototype.forEach.call(prev.querySelectorAll('.mk'),function(b){b.addEventListener('click',function(){var k=+b.getAttribute('data-k');var x=pics.splice(k,1)[0];pics.unshift(x);sync();});});
+      }
+      function addFile(file){var r=new FileReader();r.onload=function(ev){var img=new Image();img.onload=function(){var max=1400,w=img.width,h=img.height;if(w>max){h=h*max/w;w=max;}var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);var keepAlpha=/png|svg|webp/i.test(file.type);pics.push(keepAlpha?cv.toDataURL('image/png'):cv.toDataURL('image/jpeg',0.82));sync();};img.src=ev.target.result;};r.readAsDataURL(file);}
+      add.addEventListener('change',function(){Array.prototype.forEach.call(add.files,addFile);add.value='';});
+      sync();
+    })();</script>`;
+}
+
 // One editable room row in the admin form.
 function roomRow(r) {
   r = r || {};
@@ -1846,19 +2133,20 @@ function entryForm(kind, label, it, pendingCount) {
         )}"></div>
       </div>
       <div class="fr two">
-        <div class="fr" style="margin:0"><label>Datum (Text)</label><input name="date_text" value="${esc(
-          it.date_text
-        )}" placeholder="z. B. 24. Juli 2026"></div>
-        <div class="fr" style="margin:0"><label>Website</label><input name="website" value="${esc(
-          it.website
+        <div class="fr" style="margin:0"><label>Datum</label><input type="date" name="event_date" value="${esc(
+          dateISO(it.event_date)
         )}"></div>
+        <div class="fr" style="margin:0"><label>Uhrzeit / Zusatz</label><input name="date_text" value="${esc(
+          it.date_text
+        )}" placeholder="z. B. ab 18 Uhr"></div>
       </div>
+      <div class="fr"><label>Website</label><input name="website" value="${esc(it.website)}"></div>
       <div class="fr"><label>Status</label><select name="status">
         <option value="approved" ${it.status === "approved" ? "selected" : ""}>Online</option>
         <option value="pending" ${it.status === "pending" ? "selected" : ""}>Zur Freigabe</option>
         <option value="rejected" ${it.status === "rejected" ? "selected" : ""}>Abgelehnt</option>
       </select></div>
-      <div class="fr">${fieldImage(it.image)}</div>`;
+      <div class="fr">${eventGalleryEditor(it)}</div>`;
   } else {
     const tagLabel = isGastro ? "Angebot (Komma-getrennt)" : "Annehmlichkeiten (Komma-getrennt)";
     const tagName = isGastro ? "tags" : "amenities";
@@ -2142,6 +2430,9 @@ async function init() {
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS gallery TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS api_url TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS api_key TEXT DEFAULT ''`);
+  // ---- Event columns: real date (for sorting/past-events) + image gallery ----
+  await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS event_date DATE`);
+  await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS gallery TEXT DEFAULT ''`);
   // ---- Rooms per accommodation (each maps to one Beds24 room id) ----
   await query(`
     CREATE TABLE IF NOT EXISTS rooms (
@@ -2527,7 +2818,7 @@ const KIND = {
   veranstaltungen: {
     table: "events",
     label: "Veranstaltungen",
-    cols: ["name", "description", "location", "type", "date_text", "website", "image", "status"],
+    cols: ["name", "description", "location", "type", "event_date", "date_text", "website", "image", "gallery", "status"],
   },
 };
 
@@ -2537,6 +2828,7 @@ function valuesFor(cols, body) {
     if (Array.isArray(v)) v = v.join(","); // multi-value checkboxes (features)
     if (v == null) v = "";
     if (c === "max_guests") return String(parseInt(v, 10) || 0); // INTEGER column
+    if (c === "event_date") return /^\d{4}-\d{2}-\d{2}$/.test(String(v)) ? String(v) : null; // DATE column (NULL if empty)
     return String(v);
   });
 }
@@ -2693,6 +2985,7 @@ function eventJsonLd(req, ev) {
     "@type": "Event",
     name: ev.name,
     description: ev.description || undefined,
+    startDate: dateISO(ev.event_date) || undefined,
     eventStatus: "https://schema.org/EventScheduled",
     location: { "@type": "Place", name: ev.location || "Montafon", address: { "@type": "PostalAddress", addressLocality: ev.location || BIZ.city, addressRegion: BIZ.region, addressCountry: BIZ.country } },
     image: ev.image || undefined,
@@ -2890,20 +3183,41 @@ function eventDetailPage(c, ev, req) {
     { name: ev.name, href: eventHref(ev) },
   ];
   const web = ev.website ? `<a class="btn btn-primary" href="${esc(ev.website)}" target="_blank" rel="noopener">Zur Veranstaltung ↗</a>` : "";
+  const iso = dateISO(ev.event_date);
+  const dateLabel = iso ? formatDateDE(iso) : ev.date_text || "";
+  const termin = iso ? formatDateDE(iso) + (ev.date_text ? ", " + ev.date_text : "") : ev.date_text || "";
+  const imgs = [ev.image].concat(parseGallery(ev.gallery)).filter((u, i, a) => u && a.indexOf(u) === i);
+  const gallery = imgs.length
+    ? `<div class="dg-main" style="${imgStyle(imgs[0], ev.name)};max-width:820px;margin-bottom:14px" id="edg-main"></div>` +
+      (imgs.length > 1
+        ? `<div class="dt-thumbs" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px">${imgs
+            .map(
+              (u, i) =>
+                `<div class="th${i === 0 ? " active" : ""}" data-i="${i}" style="width:88px;height:64px;border-radius:10px;background-size:cover;background-position:center;cursor:pointer;background-image:url('${esc(
+                  u
+                )}')"></div>`
+            )
+            .join("")}</div>`
+        : "")
+    : "";
+  const galleryScript =
+    imgs.length > 1
+      ? `<script>(function(){var imgs=${JSON.stringify(imgs).replace(/</g, "\\u003c")};var m=document.getElementById('edg-main');document.querySelectorAll('.dt-thumbs .th').forEach(function(t){t.addEventListener('click',function(){m.style.backgroundImage="url('"+imgs[+t.getAttribute('data-i')]+"')";document.querySelectorAll('.dt-thumbs .th').forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});})();</script>`
+      : "";
   const body = `
   <section class="page-hero">
     <div class="container">
       ${breadcrumbsHTML(trail)}
-      <div class="eyebrow">${esc(ev.type || "Veranstaltung")}${ev.date_text ? " · " + esc(ev.date_text) : ""}</div>
+      <div class="eyebrow">${esc(ev.type || "Veranstaltung")}${dateLabel ? " · " + esc(dateLabel) : ""}</div>
       <h1>${esc(ev.name)}</h1>
       ${ev.location ? `<p>📍 ${esc(ev.location)}</p>` : ""}
     </div>
   </section>
   <section class="section" style="padding-top:26px"><div class="container">
-    ${ev.image ? `<div class="dg-main" style="${imgStyle(ev.image, ev.name)};max-width:820px;margin-bottom:22px"></div>` : ""}
-    <div class="rich"><p style="font-size:19px">${esc(ev.description)}</p>${ev.date_text ? `<p><strong>Termin:</strong> ${esc(ev.date_text)}</p>` : ""}${ev.location ? `<p><strong>Ort:</strong> ${esc(ev.location)}</p>` : ""}</div>
+    ${gallery}
+    <div class="rich"><p style="font-size:19px">${esc(ev.description)}</p>${termin ? `<p><strong>Termin:</strong> ${esc(termin)}</p>` : ""}${ev.location ? `<p><strong>Ort:</strong> ${esc(ev.location)}</p>` : ""}</div>
     <div style="margin-top:20px">${web}</div>
-  </div></section>`;
+  </div></section>${galleryScript}`;
   return layout({
     title: `${ev.name}${ev.date_text ? " – " + ev.date_text : ""} | Veranstaltung Montafon | VALUERO`,
     active: "/veranstaltungen",
@@ -2996,24 +3310,86 @@ app.get("/veranstaltungen", async (req, res, next) => {
   }
 });
 
+// Notify the team when a visitor submits a new event. Uses whatever is
+// configured (a generic webhook, or Resend); if nothing is set up it just logs,
+// so submissions never fail because of mail. Set on Railway:
+//   MAIL_TO          (default simon@fs-creative.at)
+//   RESEND_API_KEY   + optional MAIL_FROM  → sends via api.resend.com
+//   or MAIL_WEBHOOK_URL → receives a JSON POST of the submission
+async function notifyNewEvent(ev) {
+  const to = (process.env.MAIL_TO || "simon@fs-creative.at").trim();
+  const when = ev.event_date ? formatDateDE(ev.event_date) : ev.date_text || "—";
+  const subject = `Neue Veranstaltung eingereicht: ${ev.name}`;
+  const lines = [
+    `Name: ${ev.name}`,
+    `Datum: ${when}${ev.date_text && ev.event_date ? " (" + ev.date_text + ")" : ""}`,
+    `Ort: ${ev.location || "—"}`,
+    `Art: ${ev.type || "—"}`,
+    `Website: ${ev.website || "—"}`,
+    `Einreicher: ${ev.submitter || "—"}`,
+    ``,
+    ev.description || "",
+    ``,
+    `→ Freigeben im Admin: /admin/veranstaltungen`,
+  ];
+  const text = lines.join("\n");
+  const hook = (process.env.MAIL_WEBHOOK_URL || "").trim();
+  if (hook) {
+    await fetch(hook, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ type: "new_event", to, subject, text, event: ev }),
+    });
+    return;
+  }
+  const rk = (process.env.RESEND_API_KEY || "").trim();
+  if (rk) {
+    const from = (process.env.MAIL_FROM || "VALUERO <onboarding@resend.dev>").trim();
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: "Bearer " + rk, "content-type": "application/json" },
+      body: JSON.stringify({ from, to: [to], subject, text }),
+    });
+    if (!res.ok) console.error("Resend", res.status, await res.text().catch(() => ""));
+    return;
+  }
+  console.log("[event submission] (no mailer configured)\n" + subject + "\n" + text);
+}
+
 app.post("/veranstaltungen/einreichen", async (req, res, next) => {
   try {
     const b = req.body;
     if (!b.name || !b.description) return res.redirect("/veranstaltungen#einreichen");
+    const eventDate = /^\d{4}-\d{2}-\d{2}$/.test(String(b.event_date || "")) ? String(b.event_date) : null;
+    const gallery = parseGallery(b.gallery).slice(0, 12).join("\n");
+    const row = {
+      name: String(b.name).slice(0, 160),
+      description: String(b.description).slice(0, 800),
+      location: String(b.location || "").slice(0, 160),
+      type: String(b.type || "").slice(0, 80),
+      date_text: String(b.date_text || "").slice(0, 80),
+      event_date: eventDate,
+      website: String(b.website || "").slice(0, 300),
+      submitter: String(b.submitter || "").slice(0, 200),
+    };
     await db.query(
-      `INSERT INTO events (name, description, location, type, date_text, website, image, submitter, status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'pending')`,
+      `INSERT INTO events (name, description, location, type, date_text, event_date, website, image, gallery, submitter, status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'pending')`,
       [
-        String(b.name).slice(0, 160),
-        String(b.description).slice(0, 800),
-        String(b.location || "").slice(0, 160),
-        String(b.type || "").slice(0, 80),
-        String(b.date_text || "").slice(0, 80),
-        String(b.website || "").slice(0, 300),
+        row.name,
+        row.description,
+        row.location,
+        row.type,
+        row.date_text,
+        row.event_date,
+        row.website,
         String(b.image || "").slice(0, 4000000),
-        String(b.submitter || "").slice(0, 200),
+        gallery.slice(0, 20000000),
+        row.submitter,
       ]
     );
+    // Notify the team of a new submission (non-blocking; skips cleanly if unconfigured).
+    notifyNewEvent(row).catch((e) => console.error("event mail", e.message));
     res.redirect("/veranstaltungen?ok=1#einreichen");
   } catch (e) {
     next(e);
@@ -3140,15 +3516,24 @@ app.get("/api/search", async (req, res, next) => {
     for (const row of rows) {
       // --- External partner booking API (own pricing logic per accommodation) ---
       if (partnerapi.hasApi(row)) {
-        const acc0 = publicAcc(row, true, []);
-        if (type && acc0.type.toLowerCase() !== type) continue;
-        if (loc && acc0.location.toLowerCase() !== loc) continue;
-        if (wantFeatures.length && !wantFeatures.every((f) => acc0.features.includes(f))) continue;
+        // Soft filters (type/location/features/price) are applied client-side so
+        // near-misses can still be shown greyed-out; here we only price & cap-check.
         let roomOffers = [];
         if (datesValid) {
           try {
             const data = await partnerapi.getOffer(row, { checkin, checkout, adults: adultsEff, childrenAges });
-            roomOffers = (data.rooms || []).map((r) => ({ roomId: r.roomId, name: r.name, maxGuests: r.maxGuests, offer: r.offer }));
+            roomOffers = (data.rooms || []).map((r) => ({
+              roomId: r.roomId,
+              name: r.name,
+              maxGuests: r.maxGuests,
+              size: r.size || null,
+              floor: r.floor || "",
+              bedrooms: r.bedrooms || null,
+              bathrooms: r.bathrooms || null,
+              description: r.description || "",
+              features: Array.isArray(r.features) ? r.features : [],
+              offer: r.offer,
+            }));
           } catch (e) {
             console.error("Partner API error", row.name, e.message);
             roomOffers = [{ roomId: "", name: "", maxGuests: 0, offer: { error: true, available: false } }];
@@ -3158,7 +3543,6 @@ app.get("/api/search", async (req, res, next) => {
         if (guests && cap && guests > cap) continue;
         const best = roomOffers.filter((r) => r.offer && r.offer.available).sort((a, b) => a.offer.total - b.offer.total)[0];
         const topOffer = best ? best.offer : (roomOffers[0] && roomOffers[0].offer) || null;
-        if (priceMax && topOffer && topOffer.available && topOffer.perNight && topOffer.perNight > priceMax) continue;
         const acc = publicAcc(row, true, roomOffers.map((r) => ({ max_guests: r.maxGuests })));
         results.push({ ...acc, offer: topOffer, rooms: roomOffers.filter((r) => r.roomId) });
         continue;
@@ -3166,9 +3550,8 @@ app.get("/api/search", async (req, res, next) => {
       const rooms = await getRooms(db, row);
       const connected = accConnected(row, rooms);
       const acc = publicAcc(row, connected, rooms);
-      if (type && acc.type.toLowerCase() !== type) continue;
-      if (loc && acc.location.toLowerCase() !== loc) continue;
-      if (wantFeatures.length && !wantFeatures.every((f) => acc.features.includes(f))) continue;
+      // Soft filters (type/location/features/price) run client-side (see above);
+      // guests capacity stays a hard server filter.
       if (guests && acc.maxGuests && guests > acc.maxGuests) continue;
 
       // Price each room for the stay; headline = cheapest available room.
@@ -3194,7 +3577,6 @@ app.get("/api/search", async (req, res, next) => {
         : (roomOffers.find((r) => r.offer && r.offer.available) || {}).offer ||
           (roomOffers[0] && roomOffers[0].offer) ||
           null;
-      if (priceMax && topOffer && topOffer.available && topOffer.perNight && topOffer.perNight > priceMax) continue;
       results.push({ ...acc, offer: topOffer, rooms: roomOffers });
     }
     // Beds24-connected accommodations always rank first (a small advantage),
