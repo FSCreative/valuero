@@ -15,11 +15,11 @@ const publicCSS = `
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
-  font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   background:var(--bg); color:var(--ink); line-height:1.6;
   -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
-h1,h2,h3,.display{font-family:"Fraunces","Georgia",serif; font-weight:600; line-height:1.08; letter-spacing:-.01em}
+h1,h2,h3,.display{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif; font-weight:600; line-height:1.08; letter-spacing:-.01em}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 .container{max-width:var(--maxw);margin:0 auto;padding:0 24px}
@@ -30,7 +30,7 @@ img{max-width:100%;display:block}
 .nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(160%) blur(16px);
   background:rgba(16,23,19,.86);border-bottom:1px solid rgba(255,255,255,.08)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;height:74px;max-width:var(--maxw);margin:0 auto;padding:0 24px}
-.brand{display:flex;align-items:center;gap:10px;font-family:"Fraunces",serif;font-weight:600;font-size:24px;letter-spacing:.04em;color:#fff}
+.brand{display:flex;align-items:center;gap:10px;font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-weight:600;font-size:24px;letter-spacing:.04em;color:#fff}
 .brand svg{width:34px;height:24px}
 .nav-links{display:flex;align-items:center;gap:28px}
 .nav-links a{font-size:15px;font-weight:500;color:#b6c2ba;position:relative;padding:4px 0;transition:color .2s}
@@ -139,7 +139,7 @@ textarea{resize:vertical;min-height:90px}
 .footer{background:#16201b;color:#cdd6cf;margin-top:60px;padding:56px 0 30px}
 .footer .brand{color:#fff}
 .foot-grid{display:flex;justify-content:space-between;flex-wrap:wrap;gap:30px;margin-bottom:36px}
-.foot-col h4{color:#fff;font-family:"Fraunces",serif;font-size:18px;margin-bottom:12px}
+.foot-col h4{color:#fff;font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:18px;margin-bottom:12px}
 .foot-col a{display:block;color:#aab6ad;font-size:14px;padding:3px 0}
 .foot-col a:hover{color:#fff}
 .foot-bottom{border-top:1px solid rgba(255,255,255,.12);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px;color:#8b988e}
@@ -242,7 +242,7 @@ textarea{resize:vertical;min-height:90px}
 .bk-card .feat-row .fi{background:var(--surface-2);border-radius:999px;padding:3px 9px}
 .price-box{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
 .price-box .pn{font-size:13px;color:var(--muted);line-height:1.35}
-.price-box .pn b{font-family:"Fraunces",serif;font-size:23px;color:var(--ink)}
+.price-box .pn b{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:23px;color:var(--ink)}
 .price-box .pn .tot{display:block;font-size:12px;color:var(--muted);margin-top:2px}
 .btn-book{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:12px 20px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .2s,transform .2s;box-shadow:0 8px 18px -10px rgba(31,106,73,.9)}
 .btn-book:hover{background:var(--accent-2);transform:translateY(-1px)}
@@ -284,7 +284,7 @@ textarea{resize:vertical;min-height:90px}
 .room-opt .rn{font-weight:600;font-size:14.5px}
 .room-opt .rg{font-size:12.5px;color:var(--muted)}
 .room-opt .rp{margin-left:auto;text-align:right;font-size:13px;color:var(--muted);white-space:nowrap}
-.room-opt .rp b{font-family:"Fraunces",serif;font-size:18px;color:var(--ink);display:block}
+.room-opt .rp b{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:18px;color:var(--ink);display:block}
 .room-opt.soldout{opacity:.55}
 .room-opt.soldout .rp{color:#b4553f}
 /* detail modal */
@@ -304,7 +304,7 @@ textarea{resize:vertical;min-height:90px}
 .dt-desc{color:var(--muted);margin:2px 0 16px;line-height:1.65}
 .dt-feats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 .dt-feats .fi{background:var(--surface-2);border-radius:999px;padding:6px 12px;font-size:13px}
-.dt-sec-title{font-family:"Fraunces",serif;font-size:18px;margin:4px 0 10px}
+.dt-sec-title{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:18px;margin:4px 0 10px}
 .dt-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
 .dt-actions .btn{flex:0 0 auto}
 .dt-web{color:var(--accent);font-weight:600;display:inline-flex;align-items:center;gap:6px}
@@ -325,7 +325,7 @@ textarea{resize:vertical;min-height:90px}
 .link-cloud a{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-size:14px;font-weight:500;color:var(--ink);transition:.15s}
 .link-cloud a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
 .hub-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
-.hub-col h4{font-family:"Fraunces",serif;font-size:18px;margin-bottom:10px}
+.hub-col h4{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:18px;margin-bottom:10px}
 .hub-col a{display:block;color:var(--muted);font-size:14.5px;padding:4px 0;transition:.15s}
 .hub-col a:hover{color:var(--accent)}
 .detail-gallery{margin-bottom:26px}
@@ -383,7 +383,7 @@ html{-webkit-text-size-adjust:100%}
   .filters-panel.open{transform:translateY(0)!important}
   .filters-backdrop{position:fixed;inset:0;background:rgba(16,23,19,.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:110}
   .filters-backdrop.open{opacity:1;pointer-events:auto}
-  .filters-panel .fp-close{display:flex;align-items:center;justify-content:space-between;font-family:"Fraunces",serif;font-size:20px;margin-bottom:6px}
+  .filters-panel .fp-close{display:flex;align-items:center;justify-content:space-between;font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:20px;margin-bottom:6px}
   .filters-panel .fp-close button{background:none;border:0;font-size:26px;cursor:pointer;color:var(--muted)}
 }
 @media(min-width:901px){.filters-panel .fp-close{display:none}}
@@ -425,7 +425,7 @@ html{-webkit-text-size-adjust:100%}
 @media(max-width:680px){.ev-grid{grid-template-columns:1fr}.ev-grid-past{grid-template-columns:1fr 1fr;gap:12px}}
 /* ---- Search loading mini-game (Murmeltier-Klopfen) ---- */
 .loadgame{grid-column:1/-1;border:2px dashed var(--line);border-radius:20px;padding:26px 20px;background:var(--surface-2);text-align:center}
-.lg-title{font-family:"Fraunces",serif;font-weight:700;font-size:21px;color:var(--ink)}
+.lg-title{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-weight:700;font-size:21px;color:var(--ink)}
 .lg-sub{color:var(--muted);font-size:14px;margin-top:7px;line-height:1.5}
 .lg-sub b{color:var(--accent)}
 .lg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:420px;margin:20px auto 10px}
@@ -481,11 +481,11 @@ html{-webkit-text-size-adjust:100%}
 const adminCSS = `
 :root{--bg:#0f1512;--surface:#172019;--surface-2:#1e2a22;--ink:#eaf0ec;--muted:#92a298;--line:#28352c;--accent:#48a87a;--accent-d:#2f6e52;--danger:#d96a5b;--radius:14px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Inter",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
 a{color:var(--accent);text-decoration:none}
 .admin-shell{display:flex;min-height:100vh}
 .sidebar{width:248px;background:var(--surface);border-right:1px solid var(--line);padding:24px 18px;position:sticky;top:0;height:100vh;flex-shrink:0}
-.sidebar .logo{font-family:"Fraunces",serif;font-size:22px;letter-spacing:.05em;margin-bottom:4px;color:#fff}
+.sidebar .logo{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:22px;letter-spacing:.05em;margin-bottom:4px;color:#fff}
 .sidebar .sub{font-size:12px;color:var(--muted);margin-bottom:26px}
 .sidebar nav a{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:10px;color:var(--muted);font-size:14.5px;font-weight:500;margin-bottom:4px}
 .sidebar nav a:hover{background:var(--surface-2);color:var(--ink)}
@@ -494,7 +494,7 @@ a{color:var(--accent);text-decoration:none}
 .sidebar .foot{position:absolute;bottom:20px;left:18px;right:18px;font-size:13px}
 .main{flex:1;padding:34px 40px;max-width:1080px}
 .page-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;gap:16px;flex-wrap:wrap}
-.page-title h1{font-family:"Fraunces",serif;font-size:30px;color:#fff}
+.page-title h1{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:30px;color:#fff}
 .btn{display:inline-flex;align-items:center;gap:7px;border-radius:10px;padding:10px 18px;font-weight:600;font-size:14px;cursor:pointer;border:1px solid transparent;font-family:inherit;transition:.15s}
 .btn-primary{background:var(--accent);color:#06140d}
 .btn-primary:hover{background:#5cbf8c}
@@ -526,17 +526,17 @@ a{color:var(--accent);text-decoration:none}
 .form-actions{display:flex;gap:10px;margin-top:8px}
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
-.stat .n{font-family:"Fraunces",serif;font-size:34px;color:#fff}
+.stat .n{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:34px;color:#fff}
 .stat .l{font-size:13px;color:var(--muted)}
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:38px;width:100%;max-width:380px}
-.login-card .logo{font-family:"Fraunces",serif;font-size:26px;color:#fff;letter-spacing:.05em;text-align:center;margin-bottom:6px}
+.login-card .logo{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:26px;color:#fff;letter-spacing:.05em;text-align:center;margin-bottom:6px}
 .login-card .sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:24px}
 .err{background:#3a2020;color:#e89b8f;border:1px solid #5e2f2f;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:16px}
 .section-divider{border:0;border-top:1px solid var(--line);margin:26px 0}
 .wd-group{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px}
-.wd-group h3{font-family:"Fraunces",serif;font-size:18px;color:#fff;margin-bottom:14px}
-.section-sep{display:flex;align-items:center;gap:10px;margin:26px 0 14px;font-family:"Fraunces",serif;font-size:17px;color:#fff}
+.wd-group h3{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:18px;color:#fff;margin-bottom:14px}
+.section-sep{display:flex;align-items:center;gap:10px;margin:26px 0 14px;font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:17px;color:#fff}
 .section-sep::after{content:"";flex:1;height:1px;background:var(--line)}
 .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 14px;margin-top:4px}
 .feat-cat{margin-bottom:14px}
@@ -744,7 +744,7 @@ function gradientFor(seed) {
 
 function imgStyle(image, seed) {
   if (image && image.length > 5)
-    return `background-image:url('${esc(image)}')`;
+    return `background-image:url('${esc(pimg(image))}')`;
   return `background-image:${gradientFor(seed || "v")}`;
 }
 
@@ -753,7 +753,7 @@ function brandMark(c, variant) {
   if (c.logo_image) {
     const cls = variant === "foot" ? "brand-logo foot-logo" : "brand-logo";
     return `<a class="brand brand-has-logo" href="/"><img class="${cls}" src="${esc(
-      c.logo_image
+      pimg(c.logo_image)
     )}" alt="VALUERO"></a>`;
   }
   const accent = variant === "foot" ? "" : "accent";
@@ -945,8 +945,6 @@ ${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">` : ""}
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
 ${ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}">` : ""}
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>${publicCSS}</style>
 ${jsonLd}
@@ -965,7 +963,7 @@ ${extraScript || ""}
 function homePage(c, req) {
   const heroImg = c.home_hero_image
     ? `<div class="hero-bg-img" style="background-image:url('${esc(
-        c.home_hero_image
+        pimg(c.home_hero_image)
       )}')"></div>`
     : "";
   const cat = (href, title, text, img, seed) => `
@@ -985,7 +983,7 @@ function homePage(c, req) {
       <path d="M0 220 L300 120 L520 180 L760 90 L980 170 L1200 110 L1440 180 L1440 220 Z" fill="#b7c6b8" opacity=".55"/>
     </svg>
     <div class="container">
-      ${c.logo_image ? `<img class="hero-logo" src="${esc(c.logo_image)}" alt="VALUERO">` : ""}
+      ${c.logo_image ? `<img class="hero-logo" src="${esc(pimg(c.logo_image))}" alt="VALUERO">` : ""}
       <div class="eyebrow">${esc(c.site_tagline)} · Hochmontafon</div>
       <h1>${esc(c.home_hero_title)}</h1>
       <p class="lead">${esc(c.home_hero_sub)}</p>
@@ -1660,7 +1658,7 @@ function eventsPage(c, events, opts) {
     website: e.website || "",
     dateLabel: whenLabel(e),
     dateText: e._extra,
-    images: [e.image].concat(parseGallery(e.gallery)).filter((u, i, a) => u && a.indexOf(u) === i),
+    images: [e.image].concat(parseGallery(e.gallery)).filter((u, i, a) => u && a.indexOf(u) === i).map(pimg),
   }));
 
   const badge = (e) => {
@@ -1786,6 +1784,7 @@ function eventsPage(c, events, opts) {
             c.contact_email
           )} senden.</span>
         </div>
+        <p class="form-note" style="margin-bottom:14px">Mit dem Absenden stimmst du zu, dass wir deine Angaben zur Prüfung und Veröffentlichung der Veranstaltung verarbeiten. Details in unserer <a href="/datenschutz" class="accent">Datenschutzerklärung</a>. Bitte nur Bilder einreichen, an denen du die Rechte hast.</p>
         <button class="btn btn-primary" type="submit">Einreichen</button>
       </form>
     </div>
@@ -1873,10 +1872,10 @@ function evDetailOverlayHTML() {
 /* ---------------- ABOUT ---------------- */
 function aboutPage(c) {
   const v1 = c.about_hero_image
-    ? `style="background-image:url('${esc(c.about_hero_image)}')"`
+    ? `style="background-image:url('${esc(pimg(c.about_hero_image))}')"`
     : "";
   const v2 = c.about_block2_image
-    ? `style="background-image:url('${esc(c.about_block2_image)}')"`
+    ? `style="background-image:url('${esc(pimg(c.about_block2_image))}')"`
     : `style="background:linear-gradient(150deg,#4a6c7a,#243640)"`;
   const body = `
   <section class="page-hero">
@@ -1951,8 +1950,6 @@ function shell({ title, active, body, pendingCount }) {
   return `<!doctype html><html lang="de"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)} · Valuero Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${adminCSS}</style></head><body>
 <div class="admin-shell">
   <aside class="sidebar">
@@ -2010,7 +2007,6 @@ function loginPage(error) {
   return `<!doctype html><html lang="de"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Login · Valuero Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>${adminCSS}</style></head><body>
 <div class="login-wrap"><form class="login-card" method="POST" action="/admin/login">
   <div class="logo">VALUERO</div>
@@ -2031,7 +2027,7 @@ function dashboard(counts) {
     <div class="stat"><div class="n">${counts.pending}</div><div class="l">Zur Freigabe</div></div>
   </div>
   <div class="form-card">
-    <h3 style="font-family:Fraunces,serif;font-size:20px;margin-bottom:10px">Willkommen, Simon 👋</h3>
+    <h3 style="font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:20px;margin-bottom:10px">Willkommen, Simon 👋</h3>
     <p class="hint" style="font-size:14px;line-height:1.7">Hier verwaltest du alle Inhalte deiner Valuero-Website. Lege Unterkünfte, Gastro-Partner und Veranstaltungen an, bearbeite oder lösche sie. Eingereichte Veranstaltungen erscheinen unter „Veranstaltungen“ und gehen erst nach deiner Freigabe online. Unter „Webdesign“ änderst du alle Texte und Bilder der einzelnen Seiten.</p>
     ${
       counts.pending
@@ -2057,7 +2053,7 @@ function entryList(kind, label, items, pendingCount) {
                 : "Abgelehnt"
             }</span>`
           : "";
-      const imgStyle = it.image ? `style="background-image:url('${esc(it.image)}')"` : "";
+      const imgStyle = it.image ? `style="background-image:url('${esc(pimg(it.image))}')"` : "";
       const approveBtn =
         kind === "veranstaltungen" && it.status !== "approved"
           ? `<form method="POST" action="${base}/${it.id}/approve" style="display:inline"><button class="btn btn-primary btn-sm">Freigeben</button></form>`
@@ -2082,7 +2078,7 @@ function entryList(kind, label, items, pendingCount) {
 }
 
 function fieldImage(value) {
-  const prev = value ? `style="background-image:url('${esc(value)}')"` : "";
+  const prev = value ? `style="background-image:url('${esc(pimg(value))}')"` : "";
   return `
     <label>Bild</label>
     <input type="file" accept="image/*" data-target="imgfield" data-preview="imgprev">
@@ -2116,10 +2112,15 @@ function eventGalleryEditor(it) {
     <script>(function(){
       var pics=${json};
       var iF=document.getElementById('ev_image'),gF=document.getElementById('ev_gallery'),prev=document.getElementById('ev_admin_prev'),add=document.getElementById('ev_admin_add');
+      // Preview external images through our own /img proxy (DSGVO + CSP);
+      // the stored value in the hidden field stays the original URL.
+      function disp(u){if(/^data:|^\\//.test(u))return u;
+        var b=btoa(unescape(encodeURIComponent(u))).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');
+        return '/img?u='+b;}
       function sync(){
         iF.value=pics[0]||'';gF.value=pics.slice(1).join('\\n');
         if(!pics.length){prev.innerHTML='<div class="ev-empty">Noch keine Bilder – unten hinzufügen.</div>';return;}
-        prev.innerHTML=pics.map(function(u,k){return '<div class="evp" style="background-image:url(\\''+u+'\\')">'+(k===0?'<span class="star">Titel</span>':'<button type="button" class="mk" data-k="'+k+'">Titel</button>')+'<button type="button" class="rm" data-k="'+k+'" aria-label="Löschen">\\u00d7</button></div>';}).join('');
+        prev.innerHTML=pics.map(function(u,k){return '<div class="evp" style="background-image:url(\\''+disp(u)+'\\')">'+(k===0?'<span class="star">Titel</span>':'<button type="button" class="mk" data-k="'+k+'">Titel</button>')+'<button type="button" class="rm" data-k="'+k+'" aria-label="Löschen">\\u00d7</button></div>';}).join('');
         Array.prototype.forEach.call(prev.querySelectorAll('.rm'),function(b){b.addEventListener('click',function(){pics.splice(+b.getAttribute('data-k'),1);sync();});});
         Array.prototype.forEach.call(prev.querySelectorAll('.mk'),function(b){b.addEventListener('click',function(){var k=+b.getAttribute('data-k');var x=pics.splice(k,1)[0];pics.unshift(x);sync();});});
       }
@@ -2335,7 +2336,7 @@ function webdesignPage(c, pendingCount, saved) {
   const txt = (key, label) =>
     `<div class="fr"><label>${label}</label><input name="${key}" value="${esc(c[key])}"></div>`;
   const imgField = (key, label) => {
-    const prev = c[key] ? `style="background-image:url('${esc(c[key])}')"` : "";
+    const prev = c[key] ? `style="background-image:url('${esc(pimg(c[key]))}')"` : "";
     return `<div class="fr"><label>${label}</label>
       <input type="file" accept="image/*" data-target="f_${key}" data-preview="p_${key}">
       <input type="hidden" name="${key}" id="f_${key}" value="${esc(c[key] || "")}">
@@ -2744,9 +2745,15 @@ async function enrich() {
 
   // ---- AGB & Datenschutz (Platzhalter ersetzen) ----
   const AGB = `<h2>Allgemeine Geschäftsbedingungen (AGB)</h2><p>Diese AGB regeln die Nutzung der Plattform VALUERO sowie die Vermittlung und Buchung von Unterkünften und Leistungen im Hochmontafon.</p><h3>1. Betreiber &amp; Vertragspartner</h3><p>Betreiber ist Simon Leonhard Felder – FS Creative, Dorfstraße 3, 6793 Gaschurn („VALUERO"). VALUERO betreibt eine Buchungs- und Werbeplattform. Der Beherbergungs- bzw. Mietvertrag kommt ausschließlich zwischen dem Gast und der jeweiligen Unterkunft zustande; VALUERO tritt als Vermittler auf und wird nicht selbst Vertragspartei, sofern nicht ausdrücklich anders angegeben.</p><h3>2. Buchung &amp; Vertragsabschluss</h3><p>Die Darstellung der Unterkünfte ist kein bindendes Angebot. Mit Absenden der Buchung gibt der Gast ein verbindliches Angebot ab; der Vertrag kommt mit der Bestätigung (E-Mail bzw. Anzeige der Buchungsnummer) zustande. Maßgeblich ist der bei der Buchung angezeigte Gesamtpreis.</p><h3>3. Preise &amp; Leistungen</h3><p>Sofern nicht anders angegeben, gelten die Preise für die gesamte Unterkunft und den gewählten Zeitraum. Kindertarife, Kurzaufenthalts-/Saisonzuschläge sowie eine etwaige Gästetaxe/Kurtaxe werden im Buchungsablauf ausgewiesen; die Gästetaxe ist je nach Unterkunft ggf. vor Ort zu entrichten.</p><h3>4. Zahlung</h3><p>Die Zahlungsmodalitäten (An-/Restzahlung, Überweisung oder Zahlung vor Ort) richten sich nach den Vorgaben der jeweiligen Unterkunft und werden im Buchungsablauf bzw. in der Bestätigung mitgeteilt.</p><h3>5. An- &amp; Abreise, Mindestaufenthalt</h3><p>An-/Abreisezeiten, ein etwaiger fixer Anreisetag (z. B. Samstag) und Mindestaufenthalt (z. B. 7 Nächte in der Hauptsaison) werden bei der jeweiligen Unterkunft angezeigt und sind einzuhalten.</p><h3>6. Stornierung &amp; Rücktritt</h3><p>Es gelten die Stornobedingungen der jeweiligen Unterkunft. Wir empfehlen eine Reiserücktrittsversicherung. Ein gesetzliches Rücktrittsrecht besteht bei Beherbergungsverträgen mit festem Termin gemäß § 18 Abs. 1 Z 10 FAGG grundsätzlich nicht.</p><h3>7. Pflichten des Gastes</h3><p>Die Unterkunft ist pfleglich zu behandeln; die vereinbarte Personenzahl darf nicht überschritten werden. Hausordnungen sind einzuhalten.</p><h3>8. Haftung</h3><p>VALUERO haftet als Vermittler nur für die korrekte Weiterleitung der Buchungsdaten, nicht für die Leistungserbringung. Für die Beherbergungsleistung haftet die jeweilige Unterkunft. Für Inhalte verlinkter Drittseiten wird keine Haftung übernommen.</p><h3>9. Datenschutz</h3><p>Informationen zur Datenverarbeitung finden Sie in unserer <a href="/datenschutz">Datenschutzerklärung</a>.</p><h3>10. Schlussbestimmungen</h3><p>Es gilt österreichisches Recht unter Ausschluss des UN-Kaufrechts. Unwirksame Bestimmungen berühren die Wirksamkeit der übrigen nicht. Online-Streitbeilegung: https://ec.europa.eu/consumers/odr.</p>`;
-  const DSGVO = `<h2>Datenschutzerklärung</h2><p>Der Schutz Ihrer personenbezogenen Daten ist uns wichtig. Nachfolgend informieren wir Sie gemäß DSGVO.</p><h3>1. Verantwortlicher</h3><p>Simon Leonhard Felder – FS Creative, Dorfstraße 3, 6793 Gaschurn, Österreich. E-Mail: simon@fs-creative.at.</p><h3>2. Welche Daten wir verarbeiten</h3><p>a) Buchungsdaten: Vor-/Nachname, E-Mail, Telefon, Reisedaten, Anzahl und Alter der Gäste, ggf. Nachrichten. b) Technische Daten: gekürzte IP, Datum/Uhrzeit, aufgerufene Seiten (Server-Logfiles). c) Daten bei Kontaktaufnahme.</p><h3>3. Zwecke &amp; Rechtsgrundlagen</h3><p>Buchungsdaten: Anbahnung/Abwicklung der Buchung (Art. 6 Abs. 1 lit. b DSGVO). Technische Daten: sicherer Betrieb (lit. f). Anfragen: Bearbeitung (lit. b/f).</p><h3>4. Empfänger</h3><p>Zur Abwicklung geben wir erforderliche Daten an die gewählte Unterkunft sowie deren Buchungssystem/Channel-Manager (z. B. Beds24) weiter. Hosting: Railway; Auslieferung ggf. über Cloudflare. Eine weitergehende Weitergabe erfolgt nicht.</p><h3>5. Speicherdauer</h3><p>Buchungsdaten für die Dauer der Vertragsabwicklung und im Rahmen gesetzlicher Aufbewahrungsfristen (z. B. § 132 BAO). Server-Logs werden regelmäßig gelöscht.</p><h3>6. Cookies</h3><p>Nur technisch notwendige Cookies/Speicher (z. B. Admin-Login). Kein Tracking, keine Werbe-Weitergabe.</p><h3>7. Ihre Rechte</h3><p>Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit, Widerspruch sowie Beschwerde bei der Österreichischen Datenschutzbehörde (www.dsb.gv.at).</p><h3>8. Kontakt</h3><p>Datenschutzanfragen: simon@fs-creative.at.</p>`;
+  const DSGVO = `<h2>Datenschutzerklärung</h2><p>Der Schutz Ihrer personenbezogenen Daten ist uns wichtig. Nachfolgend informieren wir Sie gemäß DSGVO darüber, welche Daten wir verarbeiten, zu welchem Zweck und auf welcher Rechtsgrundlage.</p><h3>1. Verantwortlicher</h3><p>Simon Leonhard Felder – FS Creative, Dorfstraße 3, 6793 Gaschurn, Österreich. E-Mail: simon@fs-creative.at.</p><h3>2. Keine Drittanbieter beim Seitenaufruf</h3><p>Beim bloßen Besuch unserer Website werden <strong>keine Daten an Dritte übertragen</strong>. Insbesondere:</p><p>a) <strong>Schriftarten:</strong> Wir binden <strong>keine Google Fonts</strong> und keine externen Schrift-Dienste ein. Es werden ausschließlich auf Ihrem Gerät vorhandene Systemschriften verwendet – es entsteht keine Verbindung zu Google.</p><p>b) <strong>Bilder:</strong> Fotos unserer Partnerbetriebe liegen teils auf externen Servern. Wir binden diese <strong>nicht direkt</strong> ein, sondern laden sie über unseren eigenen Server und liefern sie von unserer Domain aus. Ihre IP-Adresse wird dabei <strong>nicht</strong> an die Bild-Server (z. B. Wix, Unsplash) übermittelt.</p><p>c) <strong>Kein Tracking:</strong> Wir setzen keine Analyse-, Statistik-, Werbe- oder Social-Media-Dienste ein (kein Google Analytics, kein Facebook-Pixel, keine Werbenetzwerke). Es findet kein Profiling statt.</p><p>Technisch abgesichert wird dies zusätzlich durch eine Content-Security-Policy, die dem Browser das Laden von Drittinhalten untersagt.</p><h3>3. Cookies</h3><p>Wir verwenden <strong>ausschließlich technisch notwendige Cookies</strong>. Konkret wird ein Cookie nur gesetzt, wenn sich der Betreiber im geschützten Admin-Bereich anmeldet (Sitzungs-Cookie). Für normale Besucher werden <strong>keine Cookies</strong> gesetzt und es findet keine Speicherung im Browser statt. Da keine einwilligungspflichtigen Cookies zum Einsatz kommen, benötigen wir <strong>kein Cookie-Banner</strong> (§ 165 Abs. 3 TKG 2021, Art. 6 Abs. 1 lit. f DSGVO).</p><h3>4. Server-Logfiles</h3><p>Beim Aufruf unserer Seiten verarbeitet unser Hosting-Provider technisch notwendige Zugriffsdaten: IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, übertragene Datenmenge, Browsertyp/Betriebssystem und ggf. die Herkunftsseite. Zweck: Auslieferung der Website, Stabilität und Sicherheit (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Diese Logs werden nicht mit anderen Daten zusammengeführt und nach kurzer Zeit automatisch gelöscht.</p><h3>5. Buchungen</h3><p><strong>Verarbeitete Daten:</strong> Anrede, Vor- und Nachname, E-Mail, Telefonnummer, An-/Abreisedatum, Anzahl und Alter der Reisenden, gewählte Unterkunft/Zimmer, Preis sowie freiwillige Anmerkungen.</p><p><strong>Zweck &amp; Rechtsgrundlage:</strong> Anbahnung und Abwicklung des Beherbergungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p><p><strong>Empfänger:</strong> Die von Ihnen gewählte Unterkunft (eigenverantwortlich) sowie deren Buchungssystem. Je nach Unterkunft ist das der Channel-Manager <em>Beds24</em> (Beds24.com Ltd., Vereinigtes Königreich – angemessenes Datenschutzniveau per Angemessenheitsbeschluss der EU-Kommission) oder das <strong>eigene Buchungssystem des Partnerbetriebs</strong> (z. B. Chalet Antonhaus, Alpinappart Wachter – beide in Österreich). Eine darüber hinausgehende Weitergabe erfolgt nicht; Ihre Daten werden nicht verkauft.</p><h3>6. Veranstaltungen einreichen</h3><p>Wenn Sie eine Veranstaltung einreichen, verarbeiten wir die Angaben zur Veranstaltung, hochgeladene Bilder und – sofern angegeben – Ihre E-Mail-Adresse für Rückfragen. Zweck: Prüfung und Veröffentlichung des Eintrags (Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO). Zur Benachrichtigung über neue Einreichungen versenden wir eine E-Mail an unser eigenes Postfach; der E-Mail-Dienst (Google Workspace, Google Ireland Ltd.) ist dabei Auftragsverarbeiter. Bitte reichen Sie nur Bilder ein, an denen Sie die Rechte besitzen und auf denen keine Personen ohne deren Einwilligung erkennbar sind.</p><h3>7. Hosting</h3><p>Die Website wird bei <em>Railway Corp.</em> gehostet; die Auslieferung erfolgt ggf. über ein Content-Delivery-Netzwerk. Mit den eingesetzten Dienstleistern bestehen Auftragsverarbeitungsverträge nach Art. 28 DSGVO.</p><h3>8. Externe Links</h3><p>Unsere Seite enthält Links zu Websites von Partnerbetrieben und Werbepartnern (z. B. kochdu.at). Eine Datenübertragung an diese Anbieter findet erst statt, wenn Sie den Link aktiv anklicken. Für deren Inhalte und Datenverarbeitung sind ausschließlich die jeweiligen Anbieter verantwortlich.</p><h3>9. Speicherdauer</h3><p>Buchungsdaten speichern wir für die Dauer der Vertragsabwicklung und anschließend im Rahmen der gesetzlichen Aufbewahrungsfristen (insb. 7 Jahre gemäß § 132 BAO). Einreichungen und Anfragen löschen wir, sobald sie nicht mehr benötigt werden. Server-Logs werden kurzfristig gelöscht.</p><h3>10. Ihre Rechte</h3><p>Sie haben das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch gegen Verarbeitungen auf Basis berechtigter Interessen (Art. 21). Zudem können Sie sich bei der Österreichischen Datenschutzbehörde (Barichgasse 40–42, 1030 Wien, www.dsb.gv.at) beschweren.</p><h3>11. Datensicherheit</h3><p>Die Übertragung erfolgt verschlüsselt über HTTPS/TLS. Wir treffen technische und organisatorische Maßnahmen gemäß Art. 32 DSGVO, um Ihre Daten zu schützen.</p><h3>12. Kontakt</h3><p>Für alle Datenschutzanfragen: simon@fs-creative.at.</p>`;
   await query(`UPDATE content SET value=$1 WHERE key='agb_html' AND (value LIKE '%Hier stehen die Allgemeinen%' OR value LIKE '%sorgfältig erstellte Vorlage%' OR COALESCE(value,'')='')`, [AGB]);
-  await query(`UPDATE content SET value=$1 WHERE key='datenschutz_html' AND (value LIKE '%im Admin-Bereich unter%' OR value LIKE '%wichtiges Anliegen. Diesen Text%' OR value LIKE '%sorgfältig erstellte Vorlage%' OR COALESCE(value,'')='')`, [DSGVO]);
+  // Datenschutz: versioniertes Force-Update (läuft genau einmal pro Version,
+  // damit spätere manuelle Änderungen im Admin nicht überschrieben werden).
+  const dsv = await query("SELECT value FROM content WHERE key='dsgvo_v'");
+  if (!dsv.rows.length || dsv.rows[0].value !== "3") {
+    await query(`INSERT INTO content (key,value) VALUES ('datenschutz_html',$1) ON CONFLICT (key) DO UPDATE SET value=$1`, [DSGVO]);
+    await query(`INSERT INTO content (key,value) VALUES ('dsgvo_v','3') ON CONFLICT (key) DO UPDATE SET value='3'`);
+  }
 
   // ---- Impressum: Bildnachweis ergänzen (nur wenn noch nicht vorhanden) ----
   const bildnachweis = `<h3>Bildnachweis</h3><p>Fotos der Unterkünfte und Gastronomiebetriebe: von den jeweiligen Inhabern bereitgestellt bzw. von deren Websites (Nutzung mit Genehmigung; die Inhaber sind für die Weitergabe verantwortlich). Stimmungs- und Themenbilder (Berge, Café, Veranstaltungen u. a.): Unsplash (unsplash.com), kostenlos und kommerziell nutzbar gemäß Unsplash-Lizenz. Vallüla-Titelbild: Robinhood50 / Wikimedia Commons, CC BY-SA 4.0. Restliche Grafiken: FS Creative &amp; Canva.</p>`;
@@ -2900,6 +2907,120 @@ app.disable("x-powered-by");
 app.set("trust proxy", true);
 app.use(express.urlencoded({ extended: true, limit: "14mb" }));
 app.use(express.json({ limit: "14mb" }));
+
+// ---- Security & privacy headers (DSGVO Art. 32 / no third-party leakage) ----
+// The CSP is the technical guarantee behind our privacy promise: the browser may
+// only load resources from our own origin (plus data: URIs). No fonts, images,
+// scripts or connections to any third party — so a visitor's IP never leaves us.
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Permissions-Policy", "geolocation=(), camera=(), microphone=(), payment=(), usb=()");
+  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  res.setHeader(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      "img-src 'self' data:",
+      "style-src 'self' 'unsafe-inline'",
+      "script-src 'self' 'unsafe-inline'",
+      "font-src 'self' data:",
+      "connect-src 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'",
+      "base-uri 'self'",
+      "object-src 'none'",
+    ].join("; ")
+  );
+  next();
+});
+
+// ---- Same-origin image proxy (DSGVO) --------------------------------------
+// Partner photos live on third-party hosts (Wix, Unsplash). Embedding them
+// directly would send every visitor's IP to those hosts. Instead we fetch them
+// server-side and serve them from our own domain. pimg() rewrites any external
+// image URL to /img?u=<base64url>; data: URIs and local paths pass through.
+function pimg(u) {
+  const s = String(u || "");
+  if (!s || s.startsWith("data:") || s.startsWith("/")) return s;
+  if (!/^https?:\/\//i.test(s)) return s;
+  return "/img?u=" + Buffer.from(s, "utf8").toString("base64url");
+}
+
+const dnsp = require("dns").promises;
+const netMod = require("net");
+const IMG_CACHE = new Map(); // url -> {buf,type} (small in-process cache)
+
+function isPrivateIp(ip) {
+  if (netMod.isIPv4(ip)) {
+    const p = ip.split(".").map(Number);
+    return (
+      p[0] === 0 || p[0] === 10 || p[0] === 127 ||
+      (p[0] === 172 && p[1] >= 16 && p[1] <= 31) ||
+      (p[0] === 192 && p[1] === 168) ||
+      (p[0] === 169 && p[1] === 254)
+    );
+  }
+  const l = String(ip).toLowerCase();
+  return l === "::1" || l === "::" || l.startsWith("fc") || l.startsWith("fd") || l.startsWith("fe80");
+}
+// SSRF guard: never let the proxy reach internal/private addresses.
+async function hostIsPublic(host) {
+  try {
+    const rs = await dnsp.lookup(host, { all: true });
+    return rs.length > 0 && rs.every((r) => !isPrivateIp(r.address));
+  } catch {
+    return false;
+  }
+}
+
+app.get("/img", async (req, res) => {
+  try {
+    let url;
+    try {
+      url = Buffer.from(String(req.query.u || ""), "base64url").toString("utf8");
+    } catch {
+      return res.status(400).end();
+    }
+    let parsed;
+    try {
+      parsed = new URL(url);
+    } catch {
+      return res.status(400).end();
+    }
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return res.status(400).end();
+    if (!(await hostIsPublic(parsed.hostname))) return res.status(400).end();
+
+    const hit = IMG_CACHE.get(url);
+    if (hit) {
+      res.setHeader("Content-Type", hit.type);
+      res.setHeader("Cache-Control", "public, max-age=2592000, immutable");
+      return res.end(hit.buf);
+    }
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 12000);
+    let r;
+    try {
+      r = await fetch(url, { signal: ctrl.signal, redirect: "follow", headers: { accept: "image/*" } });
+    } finally {
+      clearTimeout(t);
+    }
+    if (!r || !r.ok) return res.status(502).end();
+    const type = r.headers.get("content-type") || "";
+    if (!/^image\//i.test(type)) return res.status(415).end();
+    const ab = await r.arrayBuffer();
+    if (ab.byteLength > 8 * 1024 * 1024) return res.status(413).end();
+    const buf = Buffer.from(ab);
+    if (IMG_CACHE.size > 250) IMG_CACHE.clear();
+    IMG_CACHE.set(url, { buf, type });
+    res.setHeader("Content-Type", type);
+    res.setHeader("Cache-Control", "public, max-age=2592000, immutable");
+    res.end(buf);
+  } catch (e) {
+    res.status(502).end();
+  }
+});
 
 // ---- SEO helpers ----
 function siteOrigin(req) {
@@ -3237,7 +3358,7 @@ function accDetailPage(c, row, rooms, req) {
   const gallery = imgs.length
     ? `<div class="detail-gallery">
         <div class="dg-main" style="${imgStyle(main, row.name)}"></div>
-        ${imgs.length > 1 ? `<div class="dg-thumbs">${imgs.slice(0, 6).map((u) => `<div class="dg-th" style="background-image:url('${esc(u)}')"></div>`).join("")}</div>` : ""}
+        ${imgs.length > 1 ? `<div class="dg-thumbs">${imgs.slice(0, 6).map((u) => `<div class="dg-th" style="background-image:url('${esc(pimg(u))}')"></div>`).join("")}</div>` : ""}
       </div>`
     : "";
   const feats = parseFeatures(row.features);
@@ -3324,7 +3445,7 @@ function eventDetailPage(c, ev, req) {
             .map(
               (u, i) =>
                 `<div class="th${i === 0 ? " active" : ""}" data-i="${i}" style="width:88px;height:64px;border-radius:10px;background-size:cover;background-position:center;cursor:pointer;background-image:url('${esc(
-                  u
+                  pimg(u)
                 )}')"></div>`
             )
             .join("")}</div>`
@@ -3332,7 +3453,7 @@ function eventDetailPage(c, ev, req) {
     : "";
   const galleryScript =
     imgs.length > 1
-      ? `<script>(function(){var imgs=${JSON.stringify(imgs).replace(/</g, "\\u003c")};var m=document.getElementById('edg-main');document.querySelectorAll('.dt-thumbs .th').forEach(function(t){t.addEventListener('click',function(){m.style.backgroundImage="url('"+imgs[+t.getAttribute('data-i')]+"')";document.querySelectorAll('.dt-thumbs .th').forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});})();</script>`
+      ? `<script>(function(){var imgs=${JSON.stringify(imgs.map(pimg)).replace(/</g, "\\u003c")};var m=document.getElementById('edg-main');document.querySelectorAll('.dt-thumbs .th').forEach(function(t){t.addEventListener('click',function(){m.style.backgroundImage="url('"+imgs[+t.getAttribute('data-i')]+"')";document.querySelectorAll('.dt-thumbs .th').forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});})();</script>`
       : "";
   const body = `
   <section class="page-hero">
@@ -3611,8 +3732,8 @@ function publicAcc(row, connected, rooms) {
     type: row.type || "",
     rating: row.rating || "",
     badge: row.badge || "",
-    image: row.image || "",
-    images,
+    image: pimg(row.image || ""),
+    images: images.map(pimg),
     link: row.link || "",
     features: featureKeys,
     featureLabels: featureKeys.map((k) => ({ key: k, label: FEATURE_LABEL[k], icon: FEATURE_ICON[k] })),
