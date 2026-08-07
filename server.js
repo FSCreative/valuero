@@ -2805,7 +2805,17 @@ async function enrich() {
     for (const [name, description] of descs) {
       await query(`UPDATE accommodations SET description=$2 WHERE name=$1`, [name, description]);
     }
-    await query(`INSERT INTO content (key,value) VALUES ('acc_desc_v','3') ON CONFLICT (key) DO UPDATE SET value='3'`);
+    // Badge-Highlights je Kachel
+    const badges = [["Alpinappart Wachter", "Große Gruppen"]];
+    for (const [name, badge] of badges) {
+      await query(`UPDATE accommodations SET badge=$2 WHERE name=$1`, [name, badge]);
+    }
+    // Bewertungs-Chip (Stern) – bei neuen Unterkünften Hinweis statt Note
+    const ratings = [["Alpinappart Wachter", "Neue Unterkunft ab Dezember 2026"]];
+    for (const [name, rating] of ratings) {
+      await query(`UPDATE accommodations SET rating=$2 WHERE name=$1`, [name, rating]);
+    }
+    await query(`INSERT INTO content (key,value) VALUES ('acc_desc_v','5') ON CONFLICT (key) DO UPDATE SET value='5'`);
   }
 
   // ---- AGB & Datenschutz (Platzhalter ersetzen) ----
