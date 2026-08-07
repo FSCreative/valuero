@@ -1323,7 +1323,7 @@ const BOOKING_SCRIPT = `
   var $=function(s,r){return (r||document).querySelector(s)};
   var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
   function qp(n){var m=new RegExp('[?&]'+n+'=([^&]*)').exec(location.search);return m?decodeURIComponent(m[1].replace(/\\+/g,' ')):''}
-  function euro(n,c){c=c||'EUR';try{return new Intl.NumberFormat('de-AT',{style:'currency',currency:c,maximumFractionDigits:0}).format(n)}catch(e){return '\\u20ac '+Math.round(n)}}
+  function euro(n,c){c=c||'EUR';try{return new Intl.NumberFormat('de-AT',{style:'currency',currency:c,minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}catch(e){return '\\u20ac '+(Math.round((Number(n)||0)*100)/100).toFixed(2)}}
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function fmt(d){if(!d)return '';var p=d.split('-');return p[2]+'.'+p[1]+'.'+p[0]}
 
@@ -1501,9 +1501,14 @@ const BOOKING_SCRIPT = `
       +'<div class="row"><span>Nächte</span><span>'+(o.nights||'')+'</span></div>'
       +'<div class="row"><span>Gäste</span><span>'+(parseInt(state.adults,10)||2)+' Erw.'+(state.childrenAges.length?' + '+state.childrenAges.length+' Kind(er)':'')+'</span></div>'
       +((bkRoom&&bkRoom.name&&bkAcc&&bkAcc.roomCount>1)?'<div class="row"><span>Zimmer</span><span>'+esc(bkRoom.name)+'</span></div>':'');
-    if(o.roomTotal)s+='<div class="row"><span>Unterkunft</span><span>'+euro(o.roomTotal,o.currency)+'</span></div>';
-    if(o.extraFees)s+='<div class="row"><span>Endreinigung / Gebühren</span><span>'+euro(o.extraFees,o.currency)+'</span></div>';
-    if(o.total)s+='<div class="row total"><span>Gesamt</span><span>'+euro(o.total,o.currency)+'</span></div>';
+    // Jede Preisposition einzeln (Grundpreis, Kinder-Rabatt, Endreinigung, Gästetaxe …).
+    var bd=o.breakdown||[];
+    if(bd.length){bd.forEach(function(b){s+='<div class="row"><span>'+esc(b.label)+'</span><span>'+euro(b.amount,o.currency)+'</span></div>';});}
+    else{
+      if(o.roomTotal)s+='<div class="row"><span>Unterkunft</span><span>'+euro(o.roomTotal,o.currency)+'</span></div>';
+      if(o.extraFees)s+='<div class="row"><span>Endreinigung / Gebühren</span><span>'+euro(o.extraFees,o.currency)+'</span></div>';
+    }
+    if(o.total!=null)s+='<div class="row total"><span>Gesamt</span><span>'+euro(o.total,o.currency)+'</span></div>';
     $('#bk-summary').innerHTML=s;
   }
   function openBooking(acc){
