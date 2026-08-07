@@ -1408,19 +1408,33 @@ const BOOKING_SCRIPT = `
     return true;
   }
 
-  function conn(x){return x.connected?0:1}
-  function avail(x){return (x.offer&&x.offer.available)?0:1}
   function pn(x){return (x.offer&&x.offer.available&&x.offer.perNight)?x.offer.perNight:null}
-  function sortResults(list){var a=list.slice();
-    a.sort(function(x,y){
-      if(conn(x)!==conn(y))return conn(x)-conn(y);      // Beds24-Unterkünfte immer zuerst
-      if(avail(x)!==avail(y))return avail(x)-avail(y);
-      var px=pn(x),py=pn(y);
-      if(state.sort==='price-asc'){if(px==null&&py==null)return 0;if(px==null)return 1;if(py==null)return -1;return px-py;}
-      if(state.sort==='price-desc'){if(px==null&&py==null)return 0;if(px==null)return 1;if(py==null)return -1;return py-px;}
-      return 0;
-    });
-    return a;}
+  // Ranking tiers for the default sort:
+  //  0 = jetzt buchbar mit Live-Preis, 1 = anbindungsfähig, aber für diese Daten
+  //  kein Preis, 2 = nur Website (keine Direktbuchung/kein Preis).
+  function tier(x){
+    if(x.offer&&x.offer.available&&x.offer.perNight!=null)return 0;
+    if(x.connected)return 1;
+    return 2;
+  }
+  function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
+  function sortResults(list){
+    var a=list.slice();
+    if(state.sort==='price-asc'||state.sort==='price-desc'){
+      a.sort(function(x,y){
+        if(tier(x)!==tier(y))return tier(x)-tier(y);            // Angebote mit Preis zuerst
+        var px=pn(x),py=pn(y);
+        if(px==null&&py==null)return 0;if(px==null)return 1;if(py==null)return -1;
+        return state.sort==='price-asc'?px-py:py-px;
+      });
+      return a;
+    }
+    // "Empfohlen": nach Rang gruppieren, innerhalb jeder Gruppe bei jedem Neuladen
+    // neu mischen → mit Preis+Verfügbarkeit oben (gemischt), Website-only ganz unten (gemischt).
+    var g=[[],[],[]];
+    a.forEach(function(x){g[tier(x)].push(x);});
+    return shuffle(g[0]).concat(shuffle(g[1]),shuffle(g[2]));
+  }
 
   function renderList(d){
     var all=d.results||[];
