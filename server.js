@@ -228,6 +228,7 @@ textarea{resize:vertical;min-height:90px}
 .results-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;flex-wrap:wrap}
 .results-head .rc{font-weight:600;font-size:15px}
 .results-head select{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;background:var(--surface);color:var(--ink);font-family:inherit}
+.fp-sort{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;background:var(--surface);color:var(--ink);font-family:inherit;cursor:pointer}
 .booking-grid{grid-template-columns:repeat(2,1fr)}
 .bk-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);transition:transform .25s,box-shadow .25s}
 .bk-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
@@ -1279,6 +1280,13 @@ function bookingToolPage(c, items) {
       <div class="booking-layout">
         <aside class="filters-panel">
           <div class="fp-close">Filter<button type="button" aria-label="Schließen">×</button></div>
+          <div class="fp-group"><h4>Sortierung</h4>
+            <select id="f-sort" class="fp-sort">
+              <option value="best">Empfohlen</option>
+              <option value="price-asc">Preis: aufsteigend</option>
+              <option value="price-desc">Preis: absteigend</option>
+            </select>
+          </div>
           <div class="fp-group"><h4>Unterkunftstyp</h4>${pillRow("type", types)}</div>
           <div class="fp-group"><h4>Ort</h4>${pillRow("loc", locs)}</div>
           <div class="fp-group"><h4>Preis / Nacht</h4>
@@ -1290,11 +1298,6 @@ function bookingToolPage(c, items) {
         <div class="results-col">
           <div class="results-head">
             <span class="rc" id="resCount">Lädt…</span>
-            <select id="f-sort">
-              <option value="best">Empfohlen</option>
-              <option value="price-asc">Preis: aufsteigend</option>
-              <option value="price-desc">Preis: absteigend</option>
-            </select>
           </div>
           <div id="results" class="grid booking-grid"><div class="loading">Lädt Unterkünfte…</div></div>
           <noscript><div class="grid">${items.map((i) => seoAccCard(i)).join("")}</div></noscript>
@@ -2753,17 +2756,37 @@ async function enrich() {
 
   // ---- Kurzbeschreibungen für einzelne Kacheln (versioniert, einmalig) ----
   const descv = await query("SELECT value FROM content WHERE key='acc_desc_v'");
-  if (((descv.rows[0] && descv.rows[0].value) || "") !== "1") {
+  if (((descv.rows[0] && descv.rows[0].value) || "") !== "3") {
     const descs = [
       [
         "Alpinappart Wachter",
         "Helle Ferienwohnung an der Sonnenseite von Gaschurn: per Schiebewand flexibel von gemütlich-kompakt bis großzügig für bis zu 10 Personen – 130 m², 4 Schlafzimmer, 2 Bäder, Balkon. Nur 2 Min. zur Skibushaltestelle (gratis zur Silvretta Montafon), 10 Min. ins Zentrum. Familiär geführt von Anna & Joel.",
       ],
+      [
+        "Chalet Antonhaus",
+        "Vier liebevoll eingerichtete Chalet-Appartements mit alpinem Luxus-Charme in Gaschurn: hochwertige Ausstattung, Infrarotkabine und Salzstein-Schlafzimmer. Großer Garten mit Fass-Sauna und Badefass, Frühstücksservice, beheiztes Skidepot und hundefreundlich – dazu die eigene Gaststube „Blauer Anton“. Gastgeber: Frank & Angelika.",
+      ],
+      [
+        "Haus Felder – Garfrescha",
+        "Neu errichtete Berghütte (2020) auf rund 1.500 m in Garfrescha oberhalb von St. Gallenkirch – mitten im Skigebiet Silvretta Montafon und in der schönen Maisäß-Landschaft. Modern und gemütlich für bis zu 5 Personen: Ski in & out im Winter, Ruhe und echtes Bergerlebnis im Sommer. Gastgeberin: Barbara Felder & Familie.",
+      ],
+      [
+        "Landhaus Angelika",
+        "Urlaub am Land bei Familie Wittwer in Gaschurn: gemütliche Ferienwohnung mit echtem Bauernhof-Flair – hier weckt schon mal der Hahn. Viel zu entdecken am Hof und im ganzen Tal, ideal für Familien, Kinder und Vierbeiner. Als BergePLUS-Partner mit täglich wechselndem Erlebnisprogramm für Groß und Klein.",
+      ],
+      [
+        "Haus Lerch",
+        "Top ausgestattete, kinderfreundliche Ferienwohnungen (Montiel & Grandau) in ruhiger, zentraler Lage in St. Gallenkirch – nahe den Ski- und Wandergebieten der Silvretta Montafon. Gratis WLAN, Parkplätze direkt am Haus, Trockenraum mit Schuhtrockner, Brötchenservice und Busanbindung. Nichtraucherhaus. Gastgeberin: Andrea Lerch.",
+      ],
+      [
+        "Haus zur Kapelle",
+        "Gemütliche Alphütte auf 1.500 m in der idyllischen Maisäß-Landschaft von Garfrescha, mitten im Skigebiet Silvretta Montafon Nova. Im Winter autofrei, nur per Doppelsessellift erreichbar (Dauerparkplatz an der Talstation) – ideal für Familien. Im Sommer perfekter Ausgangspunkt für Wanderungen und Radtouren.",
+      ],
     ];
     for (const [name, description] of descs) {
       await query(`UPDATE accommodations SET description=$2 WHERE name=$1`, [name, description]);
     }
-    await query(`INSERT INTO content (key,value) VALUES ('acc_desc_v','1') ON CONFLICT (key) DO UPDATE SET value='1'`);
+    await query(`INSERT INTO content (key,value) VALUES ('acc_desc_v','3') ON CONFLICT (key) DO UPDATE SET value='3'`);
   }
 
   // ---- AGB & Datenschutz (Platzhalter ersetzen) ----
