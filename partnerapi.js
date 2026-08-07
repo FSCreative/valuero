@@ -144,7 +144,18 @@ async function getOfferAlpin(acc, { checkin, checkout, adults, childrenAges }) {
   );
   const errs = (q && q.errors) || [];
   const available = !!(q && q.available && errs.length === 0);
-  const breakdown = q && q.discount > 0 ? [{ label: "Grundpreis", amount: q.base }, { label: "Kinder-Rabatt", amount: -q.discount }] : [];
+  // Grandtotal incl. all extras (Endreinigung, Gästetaxe …) is the price the
+  // guest actually pays — mirror it 1:1 so VALUERO shows the same as the partner.
+  const roomTotal = q && q.total != null ? q.total : null; // reine Unterkunft (nach Kinderrabatt)
+  const extrasTotal = q && q.extrasTotal != null ? q.extrasTotal : ((q && q.extras) || []).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+  const grand = q && q.grandTotal != null ? q.grandTotal : (roomTotal != null ? roomTotal + (extrasTotal || 0) : null);
+  const breakdown = [];
+  if (q && q.base != null) breakdown.push({ label: "Grundpreis", amount: q.base });
+  if (q && q.discount > 0) breakdown.push({ label: "Kinder-Rabatt", amount: -q.discount });
+  ((q && q.extras) || []).forEach((e) => {
+    const amt = Number(e.amount) || 0;
+    if (amt) breakdown.push({ label: e.label || e.name || "Zusatz", amount: amt });
+  });
   return {
     currency: "EUR",
     rooms: [
@@ -157,10 +168,10 @@ async function getOfferAlpin(acc, { checkin, checkout, adults, childrenAges }) {
               available: true,
               nights: q.nights,
               currency: "EUR",
-              perNight: q.nights ? Math.round(q.total / q.nights) : null,
-              roomTotal: q.total,
-              extraFees: 0,
-              total: q.total,
+              perNight: q.nights ? Math.round(grand / q.nights) : null,
+              roomTotal: roomTotal,
+              extraFees: extrasTotal || 0,
+              total: grand,
               breakdown,
             }
           : { available: false, reason: errs.join(" ") || "Für diese Daten nicht verfügbar." },
@@ -186,7 +197,7 @@ async function createBookingAlpin(acc, booking) {
     },
     20000
   );
-  return { ok: true, bookingId: (d && (d.bookingNo || d.bookingId)) || "", total: d && d.total, currency: "EUR" };
+  return { ok: true, bookingId: (d && (d.bookingNo || d.bookingId)) || "", total: d && (d.grandTotal != null ? d.grandTotal : d.total), currency: "EUR" };
 }
 
 module.exports = { hasApi, apiType, getOffer, createBooking };
