@@ -423,20 +423,23 @@ html{-webkit-text-size-adjust:100%}
 .ev-prev .evp button{position:absolute;top:-8px;right:-8px;width:23px;height:23px;border-radius:50%;border:2px solid #fff;background:#c0392b;color:#fff;font-size:13px;line-height:1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .ev-prev .evp .star{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.55);color:#ffd94a;font-size:11px;padding:1px 5px;border-radius:6px}
 @media(max-width:680px){.ev-grid{grid-template-columns:1fr}.ev-grid-past{grid-template-columns:1fr 1fr;gap:12px}}
-/* ---- Search loading mini-game (Murmeltier-Klopfen) ---- */
-.loadgame{grid-column:1/-1;border:2px dashed var(--line);border-radius:20px;padding:26px 20px;background:var(--surface-2);text-align:center}
-.lg-title{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-weight:700;font-size:21px;color:var(--ink)}
-.lg-sub{color:var(--muted);font-size:14px;margin-top:7px;line-height:1.5}
-.lg-sub b{color:var(--accent)}
-.lg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:420px;margin:20px auto 10px}
-.lg-hole{position:relative;height:76px;background:radial-gradient(120% 90% at 50% 20%,#4a3524,#241a11);border-radius:50%/34%;overflow:hidden;box-shadow:inset 0 -7px 0 rgba(0,0,0,.4),0 4px 10px -4px rgba(0,0,0,.4);cursor:pointer;touch-action:manipulation;image-rendering:pixelated}
-.lg-mole{position:absolute;left:50%;bottom:-48px;transform:translateX(-50%);font-size:35px;line-height:1;transition:bottom .12s ease-out;user-select:none;pointer-events:none}
-.lg-hole.up .lg-mole{bottom:7px}
-.lg-hole.bonk .lg-mole{bottom:7px;transform:translateX(-50%) scale(1.25) rotate(-8deg)}
-.lg-foot{color:var(--muted);font-size:12.5px;margin-top:8px}
-.lg-foot::after{content:"";display:inline-block;width:1em;text-align:left;animation:lgdots 1.2s steps(4,end) infinite}
+/* ---- Search loading screen (minimalist tap game) ---- */
+.loadgame{grid-column:1/-1;border:1px solid var(--line);border-radius:20px;padding:24px 22px;background:var(--surface);text-align:center;box-shadow:var(--shadow-sm)}
+.lg-title{font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-weight:600;font-size:19px;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:11px}
+.lg-spin{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;display:inline-block;animation:lgspin .8s linear infinite;flex:0 0 auto}
+@keyframes lgspin{to{transform:rotate(360deg)}}
+.lg-sub{color:var(--muted);font-size:13.5px;margin-top:6px}
+.lg-sub b{color:var(--accent);font-weight:600}
+.lg-play{position:relative;height:150px;max-width:460px;margin:16px auto 2px;border-radius:14px;background:var(--surface-2);overflow:hidden;cursor:pointer;touch-action:manipulation}
+.lg-dot{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:var(--accent);opacity:0;transform:scale(.4);transition:opacity .16s ease,transform .16s ease;box-shadow:0 4px 12px -3px rgba(31,106,73,.6);will-change:transform,opacity}
+.lg-dot.on{opacity:1;transform:scale(1)}
+.lg-dot::after{content:"";position:absolute;inset:7px;border-radius:50%;border:2px solid rgba(255,255,255,.75)}
+.lg-bar{height:3px;max-width:460px;margin:10px auto 0;border-radius:2px;background:var(--line);overflow:hidden;position:relative}
+.lg-bar::after{content:"";position:absolute;left:-40%;top:0;bottom:0;width:40%;background:var(--accent);border-radius:2px;animation:lgbar 1.1s ease-in-out infinite}
+@keyframes lgbar{to{left:110%}}
+.lg-foot{color:var(--muted);font-size:12px;margin-top:9px}
 @keyframes lgdots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
-@media(max-width:480px){.lg-grid{gap:11px}.lg-hole{height:64px}.lg-mole{font-size:29px}}
+@media(max-width:480px){.lg-play{height:128px}.lg-dot{width:38px;height:38px;margin:-19px 0 0 -19px}}
 /* near-miss (filtered-out) results shown greyed + small */
 .near-head{grid-column:1/-1;margin:22px 0 2px;border-top:1px dashed var(--line);padding-top:20px}
 .near-head h3{margin:0 0 4px;font-size:19px}
@@ -1360,30 +1363,33 @@ const BOOKING_SCRIPT = `
     if(state.priceMax)p.push('priceMax='+state.priceMax);
     return p.join('&');}
 
-  var LGMSG=['Wir durchkämmen das Montafon nach deinen besten Plätzen','Wir klopfen bei den Vermietern an','Wir zählen die freien Betten im Tal','Wir fragen die Murmeltiere nach Geheimtipps'];
+  var LGMSG=['Wir prüfen Live-Verfügbarkeit und Preise','Wir vergleichen die besten Angebote im Montafon','Wir holen die tagesaktuellen Preise'];
   function loadGameHTML(){
     var msg=LGMSG[(Math.random()*LGMSG.length)|0];
-    var holes='';for(var i=0;i<6;i++){holes+='<div class="lg-hole"><span class="lg-mole">\\ud83d\\udc39</span></div>';}
     return '<div class="loadgame" id="loadgame">'
-      +'<div class="lg-title">\\ud83d\\udd0d '+msg+'</div>'
-      +'<div class="lg-sub">Dauert nur einen Moment. Solange: <b>Murmeltier-Klopfen</b> \\u2013 tipp die Murmeltiere! &nbsp;Punkte: <b id="lgScore">0</b></div>'
-      +'<div class="lg-grid" id="lgGrid">'+holes+'</div>'
-      +'<div class="lg-foot">L\\u00e4dt Live-Preise &amp; Verf\\u00fcgbarkeit</div></div>';
+      +'<div class="lg-title"><span class="lg-spin"></span>'+msg+'</div>'
+      +'<div class="lg-sub">Kurzweil für die Wartezeit: tippe die Punkte &nbsp;\\u00b7&nbsp; <b id="lgScore">0</b></div>'
+      +'<div class="lg-play" id="lgPlay" aria-hidden="true"></div>'
+      +'<div class="lg-bar"></div>'
+      +'<div class="lg-foot">Einen Moment \\u2026</div></div>';
   }
   function startLoadGame(){
-    var grid=$('#lgGrid');if(!grid)return;
-    var holes=$$('#lgGrid .lg-hole'),score=0,alive=true,scoreEl=$('#lgScore');
-    holes.forEach(function(h){h.addEventListener('pointerdown',function(){
-      if(h.classList.contains('up')){score++;if(scoreEl)scoreEl.textContent=score;h.classList.remove('up');h.classList.add('bonk');setTimeout(function(){h.classList.remove('bonk')},150);}
-    });});
-    function tick(){
-      if(!document.body.contains(grid)){alive=false;return;}
-      var free=holes.filter(function(h){return !h.classList.contains('up')&&!h.classList.contains('bonk')});
-      if(free.length){var h=free[(Math.random()*free.length)|0];h.classList.add('up');
-        setTimeout(function(){h.classList.remove('up');},650+Math.random()*550);}
-      setTimeout(function(){if(alive)tick();},560+Math.random()*340);
+    var play=$('#lgPlay');if(!play)return;
+    var score=0,alive=true,scoreEl=$('#lgScore');
+    function spawn(){
+      if(!document.body.contains(play)){alive=false;return;}
+      var d=document.createElement('div');d.className='lg-dot';
+      var pad=24,w=play.clientWidth||300,h=play.clientHeight||150;
+      d.style.left=(pad+Math.random()*(w-2*pad))+'px';
+      d.style.top=(pad+Math.random()*(h-2*pad))+'px';
+      play.appendChild(d);
+      requestAnimationFrame(function(){d.classList.add('on');});
+      var life=setTimeout(remove,1150);
+      function remove(){clearTimeout(life);if(d.parentNode)d.parentNode.removeChild(d);}
+      d.addEventListener('pointerdown',function(e){e.stopPropagation();score++;if(scoreEl)scoreEl.textContent=score;remove();});
+      setTimeout(function(){if(alive)spawn();},520+Math.random()*260);
     }
-    tick();
+    spawn();
   }
   function run(){results.innerHTML=loadGameHTML();startLoadGame();
     fetch('/api/search?'+params()).then(function(r){return r.json()}).then(function(d){last=d;renderList(d)})
@@ -2743,6 +2749,21 @@ async function enrich() {
     await query(`INSERT INTO content (key,value) VALUES ('curate_v','2') ON CONFLICT (key) DO UPDATE SET value='2'`);
   }
 
+  // ---- Kurzbeschreibungen für einzelne Kacheln (versioniert, einmalig) ----
+  const descv = await query("SELECT value FROM content WHERE key='acc_desc_v'");
+  if (((descv.rows[0] && descv.rows[0].value) || "") !== "1") {
+    const descs = [
+      [
+        "Alpinappart Wachter",
+        "Helle Ferienwohnung an der Sonnenseite von Gaschurn: per Schiebewand flexibel von gemütlich-kompakt bis großzügig für bis zu 10 Personen – 130 m², 4 Schlafzimmer, 2 Bäder, Balkon. Nur 2 Min. zur Skibushaltestelle (gratis zur Silvretta Montafon), 10 Min. ins Zentrum. Familiär geführt von Anna & Joel.",
+      ],
+    ];
+    for (const [name, description] of descs) {
+      await query(`UPDATE accommodations SET description=$2 WHERE name=$1`, [name, description]);
+    }
+    await query(`INSERT INTO content (key,value) VALUES ('acc_desc_v','1') ON CONFLICT (key) DO UPDATE SET value='1'`);
+  }
+
   // ---- AGB & Datenschutz (Platzhalter ersetzen) ----
   const AGB = `<h2>Allgemeine Geschäftsbedingungen (AGB)</h2><p>Diese AGB regeln die Nutzung der Plattform VALUERO sowie die Vermittlung und Buchung von Unterkünften und Leistungen im Hochmontafon.</p><h3>1. Betreiber &amp; Vertragspartner</h3><p>Betreiber ist Simon Leonhard Felder – FS Creative, Dorfstraße 3, 6793 Gaschurn („VALUERO"). VALUERO betreibt eine Buchungs- und Werbeplattform. Der Beherbergungs- bzw. Mietvertrag kommt ausschließlich zwischen dem Gast und der jeweiligen Unterkunft zustande; VALUERO tritt als Vermittler auf und wird nicht selbst Vertragspartei, sofern nicht ausdrücklich anders angegeben.</p><h3>2. Buchung &amp; Vertragsabschluss</h3><p>Die Darstellung der Unterkünfte ist kein bindendes Angebot. Mit Absenden der Buchung gibt der Gast ein verbindliches Angebot ab; der Vertrag kommt mit der Bestätigung (E-Mail bzw. Anzeige der Buchungsnummer) zustande. Maßgeblich ist der bei der Buchung angezeigte Gesamtpreis.</p><h3>3. Preise &amp; Leistungen</h3><p>Sofern nicht anders angegeben, gelten die Preise für die gesamte Unterkunft und den gewählten Zeitraum. Kindertarife, Kurzaufenthalts-/Saisonzuschläge sowie eine etwaige Gästetaxe/Kurtaxe werden im Buchungsablauf ausgewiesen; die Gästetaxe ist je nach Unterkunft ggf. vor Ort zu entrichten.</p><h3>4. Zahlung</h3><p>Die Zahlungsmodalitäten (An-/Restzahlung, Überweisung oder Zahlung vor Ort) richten sich nach den Vorgaben der jeweiligen Unterkunft und werden im Buchungsablauf bzw. in der Bestätigung mitgeteilt.</p><h3>5. An- &amp; Abreise, Mindestaufenthalt</h3><p>An-/Abreisezeiten, ein etwaiger fixer Anreisetag (z. B. Samstag) und Mindestaufenthalt (z. B. 7 Nächte in der Hauptsaison) werden bei der jeweiligen Unterkunft angezeigt und sind einzuhalten.</p><h3>6. Stornierung &amp; Rücktritt</h3><p>Es gelten die Stornobedingungen der jeweiligen Unterkunft. Wir empfehlen eine Reiserücktrittsversicherung. Ein gesetzliches Rücktrittsrecht besteht bei Beherbergungsverträgen mit festem Termin gemäß § 18 Abs. 1 Z 10 FAGG grundsätzlich nicht.</p><h3>7. Pflichten des Gastes</h3><p>Die Unterkunft ist pfleglich zu behandeln; die vereinbarte Personenzahl darf nicht überschritten werden. Hausordnungen sind einzuhalten.</p><h3>8. Haftung</h3><p>VALUERO haftet als Vermittler nur für die korrekte Weiterleitung der Buchungsdaten, nicht für die Leistungserbringung. Für die Beherbergungsleistung haftet die jeweilige Unterkunft. Für Inhalte verlinkter Drittseiten wird keine Haftung übernommen.</p><h3>9. Datenschutz</h3><p>Informationen zur Datenverarbeitung finden Sie in unserer <a href="/datenschutz">Datenschutzerklärung</a>.</p><h3>10. Schlussbestimmungen</h3><p>Es gilt österreichisches Recht unter Ausschluss des UN-Kaufrechts. Unwirksame Bestimmungen berühren die Wirksamkeit der übrigen nicht. Online-Streitbeilegung: https://ec.europa.eu/consumers/odr.</p>`;
   const DSGVO = `<h2>Datenschutzerklärung</h2><p>Der Schutz Ihrer personenbezogenen Daten ist uns wichtig. Nachfolgend informieren wir Sie gemäß DSGVO darüber, welche Daten wir verarbeiten, zu welchem Zweck und auf welcher Rechtsgrundlage.</p><h3>1. Verantwortlicher</h3><p>Simon Leonhard Felder – FS Creative, Dorfstraße 3, 6793 Gaschurn, Österreich. E-Mail: simon@fs-creative.at.</p><h3>2. Keine Drittanbieter beim Seitenaufruf</h3><p>Beim bloßen Besuch unserer Website werden <strong>keine Daten an Dritte übertragen</strong>. Insbesondere:</p><p>a) <strong>Schriftarten:</strong> Wir binden <strong>keine Google Fonts</strong> und keine externen Schrift-Dienste ein. Es werden ausschließlich auf Ihrem Gerät vorhandene Systemschriften verwendet – es entsteht keine Verbindung zu Google.</p><p>b) <strong>Bilder:</strong> Fotos unserer Partnerbetriebe liegen teils auf externen Servern. Wir binden diese <strong>nicht direkt</strong> ein, sondern laden sie über unseren eigenen Server und liefern sie von unserer Domain aus. Ihre IP-Adresse wird dabei <strong>nicht</strong> an die Bild-Server (z. B. Wix, Unsplash) übermittelt.</p><p>c) <strong>Kein Tracking:</strong> Wir setzen keine Analyse-, Statistik-, Werbe- oder Social-Media-Dienste ein (kein Google Analytics, kein Facebook-Pixel, keine Werbenetzwerke). Es findet kein Profiling statt.</p><p>Technisch abgesichert wird dies zusätzlich durch eine Content-Security-Policy, die dem Browser das Laden von Drittinhalten untersagt.</p><h3>3. Cookies</h3><p>Wir verwenden <strong>ausschließlich technisch notwendige Cookies</strong>. Konkret wird ein Cookie nur gesetzt, wenn sich der Betreiber im geschützten Admin-Bereich anmeldet (Sitzungs-Cookie). Für normale Besucher werden <strong>keine Cookies</strong> gesetzt und es findet keine Speicherung im Browser statt. Da keine einwilligungspflichtigen Cookies zum Einsatz kommen, benötigen wir <strong>kein Cookie-Banner</strong> (§ 165 Abs. 3 TKG 2021, Art. 6 Abs. 1 lit. f DSGVO).</p><h3>4. Server-Logfiles</h3><p>Beim Aufruf unserer Seiten verarbeitet unser Hosting-Provider technisch notwendige Zugriffsdaten: IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, übertragene Datenmenge, Browsertyp/Betriebssystem und ggf. die Herkunftsseite. Zweck: Auslieferung der Website, Stabilität und Sicherheit (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Diese Logs werden nicht mit anderen Daten zusammengeführt und nach kurzer Zeit automatisch gelöscht.</p><h3>5. Buchungen</h3><p><strong>Verarbeitete Daten:</strong> Anrede, Vor- und Nachname, E-Mail, Telefonnummer, An-/Abreisedatum, Anzahl und Alter der Reisenden, gewählte Unterkunft/Zimmer, Preis sowie freiwillige Anmerkungen.</p><p><strong>Zweck &amp; Rechtsgrundlage:</strong> Anbahnung und Abwicklung des Beherbergungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p><p><strong>Empfänger:</strong> Die von Ihnen gewählte Unterkunft (eigenverantwortlich) sowie deren Buchungssystem. Je nach Unterkunft ist das der Channel-Manager <em>Beds24</em> (Beds24.com Ltd., Vereinigtes Königreich – angemessenes Datenschutzniveau per Angemessenheitsbeschluss der EU-Kommission) oder das <strong>eigene Buchungssystem des Partnerbetriebs</strong> (z. B. Chalet Antonhaus, Alpinappart Wachter – beide in Österreich). Eine darüber hinausgehende Weitergabe erfolgt nicht; Ihre Daten werden nicht verkauft.</p><h3>6. Veranstaltungen einreichen</h3><p>Wenn Sie eine Veranstaltung einreichen, verarbeiten wir die Angaben zur Veranstaltung, hochgeladene Bilder und – sofern angegeben – Ihre E-Mail-Adresse für Rückfragen. Zweck: Prüfung und Veröffentlichung des Eintrags (Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO). Zur Benachrichtigung über neue Einreichungen versenden wir eine E-Mail an unser eigenes Postfach; der E-Mail-Dienst (Google Workspace, Google Ireland Ltd.) ist dabei Auftragsverarbeiter. Bitte reichen Sie nur Bilder ein, an denen Sie die Rechte besitzen und auf denen keine Personen ohne deren Einwilligung erkennbar sind.</p><h3>7. Hosting</h3><p>Die Website wird bei <em>Railway Corp.</em> gehostet; die Auslieferung erfolgt ggf. über ein Content-Delivery-Netzwerk. Mit den eingesetzten Dienstleistern bestehen Auftragsverarbeitungsverträge nach Art. 28 DSGVO.</p><h3>8. Externe Links</h3><p>Unsere Seite enthält Links zu Websites von Partnerbetrieben und Werbepartnern (z. B. kochdu.at). Eine Datenübertragung an diese Anbieter findet erst statt, wenn Sie den Link aktiv anklicken. Für deren Inhalte und Datenverarbeitung sind ausschließlich die jeweiligen Anbieter verantwortlich.</p><h3>9. Speicherdauer</h3><p>Buchungsdaten speichern wir für die Dauer der Vertragsabwicklung und anschließend im Rahmen der gesetzlichen Aufbewahrungsfristen (insb. 7 Jahre gemäß § 132 BAO). Einreichungen und Anfragen löschen wir, sobald sie nicht mehr benötigt werden. Server-Logs werden kurzfristig gelöscht.</p><h3>10. Ihre Rechte</h3><p>Sie haben das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch gegen Verarbeitungen auf Basis berechtigter Interessen (Art. 21). Zudem können Sie sich bei der Österreichischen Datenschutzbehörde (Barichgasse 40–42, 1030 Wien, www.dsb.gv.at) beschweren.</p><h3>11. Datensicherheit</h3><p>Die Übertragung erfolgt verschlüsselt über HTTPS/TLS. Wir treffen technische und organisatorische Maßnahmen gemäß Art. 32 DSGVO, um Ihre Daten zu schützen.</p><h3>12. Kontakt</h3><p>Für alle Datenschutzanfragen: simon@fs-creative.at.</p>`;
@@ -3764,8 +3785,9 @@ app.get("/api/search", async (req, res, next) => {
     const datesValid = validDate(checkin) && validDate(checkout) && beds24.nights(checkin, checkout) > 0;
 
     const rows = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
-    const results = [];
-    for (const row of rows) {
+    // Price every accommodation concurrently (partner APIs + Beds24 in parallel)
+    // instead of one after another — this is the main search-latency win.
+    async function processRow(row) {
       // --- External partner booking API (own pricing logic per accommodation) ---
       if (partnerapi.hasApi(row)) {
         // Soft filters (type/location/features/price) are applied client-side so
@@ -3792,45 +3814,48 @@ app.get("/api/search", async (req, res, next) => {
           }
         }
         const cap = Math.max(row.max_guests || 0, ...roomOffers.map((r) => r.maxGuests || 0), 0);
-        if (guests && cap && guests > cap) continue;
+        if (guests && cap && guests > cap) return null;
         const best = roomOffers.filter((r) => r.offer && r.offer.available).sort((a, b) => a.offer.total - b.offer.total)[0];
         const topOffer = best ? best.offer : (roomOffers[0] && roomOffers[0].offer) || null;
         const acc = publicAcc(row, true, roomOffers.map((r) => ({ max_guests: r.maxGuests })));
-        results.push({ ...acc, offer: topOffer, rooms: roomOffers.filter((r) => r.roomId) });
-        continue;
+        return { ...acc, offer: topOffer, rooms: roomOffers.filter((r) => r.roomId) };
       }
       const rooms = await getRooms(db, row);
       const connected = accConnected(row, rooms);
       const acc = publicAcc(row, connected, rooms);
       // Soft filters (type/location/features/price) run client-side (see above);
       // guests capacity stays a hard server filter.
-      if (guests && acc.maxGuests && guests > acc.maxGuests) continue;
+      if (guests && acc.maxGuests && guests > acc.maxGuests) return null;
 
-      // Price each room for the stay; headline = cheapest available room.
-      const roomOffers = [];
-      let best = null;
+      // Price each room for the stay (rooms priced concurrently); headline = cheapest available room.
+      let roomOffers = [];
       if (datesValid && connected) {
-        for (const room of rooms) {
-          if (guests && room.max_guests && guests > room.max_guests) continue;
-          let offer = null;
-          try {
-            offer = await beds24.getStayOffer(db, row, room, checkin, checkout, guests || 2);
-          } catch (e) {
-            console.error("Beds24 offer error", acc.name, room.name, e.message);
-            offer = { error: true, available: false };
-          }
-          const ro = { roomId: room.beds24_room_id || String(room.id), name: room.name, maxGuests: room.max_guests, offer };
-          roomOffers.push(ro);
-          if (offer && offer.available && (!best || offer.total < best.offer.total)) best = ro;
-        }
+        const eligible = rooms.filter((room) => !(guests && room.max_guests && guests > room.max_guests));
+        roomOffers = await Promise.all(
+          eligible.map(async (room) => {
+            let offer = null;
+            try {
+              offer = await beds24.getStayOffer(db, row, room, checkin, checkout, guests || 2);
+            } catch (e) {
+              console.error("Beds24 offer error", acc.name, room.name, e.message);
+              offer = { error: true, available: false };
+            }
+            return { roomId: room.beds24_room_id || String(room.id), name: room.name, maxGuests: room.max_guests, offer };
+          })
+        );
+      }
+      let best = null;
+      for (const ro of roomOffers) {
+        if (ro.offer && ro.offer.available && (!best || ro.offer.total < best.offer.total)) best = ro;
       }
       const topOffer = best
         ? best.offer
         : (roomOffers.find((r) => r.offer && r.offer.available) || {}).offer ||
           (roomOffers[0] && roomOffers[0].offer) ||
           null;
-      results.push({ ...acc, offer: topOffer, rooms: roomOffers });
+      return { ...acc, offer: topOffer, rooms: roomOffers };
     }
+    const results = (await Promise.all(rows.map(processRow))).filter(Boolean);
     // Beds24-connected accommodations always rank first (a small advantage),
     // then available, then original order.
     results.sort((a, b) => {
