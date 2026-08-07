@@ -2775,7 +2775,7 @@ async function enrich() {
 
   // ---- Kurzbeschreibungen für einzelne Kacheln (versioniert, einmalig) ----
   const descv = await query("SELECT value FROM content WHERE key='acc_desc_v'");
-  if (((descv.rows[0] && descv.rows[0].value) || "") !== "3") {
+  if (((descv.rows[0] && descv.rows[0].value) || "") !== "5") {
     const descs = [
       [
         "Alpinappart Wachter",
