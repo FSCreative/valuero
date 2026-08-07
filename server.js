@@ -431,15 +431,16 @@ html{-webkit-text-size-adjust:100%}
 .lg-sub{color:var(--muted);font-size:13.5px;margin-top:6px}
 .lg-sub b{color:var(--accent);font-weight:600}
 .lg-play{position:relative;height:150px;max-width:460px;margin:16px auto 2px;border-radius:14px;background:var(--surface-2);overflow:hidden;cursor:pointer;touch-action:manipulation}
-.lg-dot{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:var(--accent);opacity:0;transform:scale(.4);transition:opacity .16s ease,transform .16s ease;box-shadow:0 4px 12px -3px rgba(31,106,73,.6);will-change:transform,opacity}
-.lg-dot.on{opacity:1;transform:scale(1)}
-.lg-dot::after{content:"";position:absolute;inset:7px;border-radius:50%;border:2px solid rgba(255,255,255,.75)}
+.lg-berg{position:absolute;width:48px;height:38px;margin:-19px 0 0 -24px;color:var(--accent);opacity:0;transform:scale(.4) translateY(6px);transform-origin:bottom center;transition:opacity .16s ease,transform .16s ease;filter:drop-shadow(0 5px 8px rgba(31,106,73,.45));will-change:transform,opacity;cursor:pointer}
+.lg-berg svg{width:100%;height:100%;display:block;pointer-events:none}
+.lg-berg.on{opacity:1;transform:scale(1) translateY(0)}
+.lg-berg.pop{transform:scale(1.25) translateY(-3px)}
 .lg-bar{height:3px;max-width:460px;margin:10px auto 0;border-radius:2px;background:var(--line);overflow:hidden;position:relative}
 .lg-bar::after{content:"";position:absolute;left:-40%;top:0;bottom:0;width:40%;background:var(--accent);border-radius:2px;animation:lgbar 1.1s ease-in-out infinite}
 @keyframes lgbar{to{left:110%}}
 .lg-foot{color:var(--muted);font-size:12px;margin-top:9px}
 @keyframes lgdots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
-@media(max-width:480px){.lg-play{height:128px}.lg-dot{width:38px;height:38px;margin:-19px 0 0 -19px}}
+@media(max-width:480px){.lg-play{height:128px}.lg-berg{width:52px;height:41px;margin:-20px 0 0 -26px}}
 /* near-miss (filtered-out) results shown greyed + small */
 .near-head{grid-column:1/-1;margin:22px 0 2px;border-top:1px dashed var(--line);padding-top:20px}
 .near-head h3{margin:0 0 4px;font-size:19px}
@@ -1368,7 +1369,7 @@ const BOOKING_SCRIPT = `
     var msg=LGMSG[(Math.random()*LGMSG.length)|0];
     return '<div class="loadgame" id="loadgame">'
       +'<div class="lg-title"><span class="lg-spin"></span>'+msg+'</div>'
-      +'<div class="lg-sub">Kurzweil für die Wartezeit: tippe die Punkte &nbsp;\\u00b7&nbsp; <b id="lgScore">0</b></div>'
+      +'<div class="lg-sub">Kurzweil für die Wartezeit: tippe die Berge &nbsp;\\u00b7&nbsp; <b id="lgScore">0</b></div>'
       +'<div class="lg-play" id="lgPlay" aria-hidden="true"></div>'
       +'<div class="lg-bar"></div>'
       +'<div class="lg-foot">Einen Moment \\u2026</div></div>';
@@ -1378,15 +1379,16 @@ const BOOKING_SCRIPT = `
     var score=0,alive=true,scoreEl=$('#lgScore');
     function spawn(){
       if(!document.body.contains(play)){alive=false;return;}
-      var d=document.createElement('div');d.className='lg-dot';
-      var pad=24,w=play.clientWidth||300,h=play.clientHeight||150;
+      var d=document.createElement('div');d.className='lg-berg';
+      d.innerHTML='<svg viewBox="0 0 44 34" xmlns="http://www.w3.org/2000/svg"><path d="M2 32 L16 6 L23 18 L28 10 L42 32 Z" fill="currentColor"/><path d="M16 6 L20 12 L18 14 L13 10 Z" fill="#fff" opacity=".9"/><path d="M28 10 L31 15 L29.5 16.5 L26.5 13 Z" fill="#fff" opacity=".9"/></svg>';
+      var pad=26,w=play.clientWidth||300,h=play.clientHeight||150;
       d.style.left=(pad+Math.random()*(w-2*pad))+'px';
       d.style.top=(pad+Math.random()*(h-2*pad))+'px';
       play.appendChild(d);
       requestAnimationFrame(function(){d.classList.add('on');});
-      var life=setTimeout(remove,1150);
+      var life=setTimeout(remove,1200);
       function remove(){clearTimeout(life);if(d.parentNode)d.parentNode.removeChild(d);}
-      d.addEventListener('pointerdown',function(e){e.stopPropagation();score++;if(scoreEl)scoreEl.textContent=score;remove();});
+      d.addEventListener('pointerdown',function(e){e.stopPropagation();score++;if(scoreEl)scoreEl.textContent=score;d.classList.add('pop');setTimeout(remove,90);});
       setTimeout(function(){if(alive)spawn();},520+Math.random()*260);
     }
     spawn();
