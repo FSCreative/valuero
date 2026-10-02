@@ -2859,6 +2859,10 @@ async function enrich() {
   // ---- Impressum: Bildnachweis ergänzen (nur wenn noch nicht vorhanden) ----
   const bildnachweis = `<h3>Bildnachweis</h3><p>Fotos der Unterkünfte und Gastronomiebetriebe: von den jeweiligen Inhabern bereitgestellt bzw. von deren Websites (Nutzung mit Genehmigung; die Inhaber sind für die Weitergabe verantwortlich). Stimmungs- und Themenbilder (Berge, Café, Veranstaltungen u. a.): Unsplash (unsplash.com), kostenlos und kommerziell nutzbar gemäß Unsplash-Lizenz. Vallüla-Titelbild: Robinhood50 / Wikimedia Commons, CC BY-SA 4.0. Restliche Grafiken: FS Creative &amp; Canva.</p>`;
   await query(`UPDATE content SET value = value || $1 WHERE key='impressum_html' AND value NOT LIKE '%Bildnachweis%'`, [bildnachweis]);
+
+  // ---- Impressum: KI-Hinweis ergänzen (nur wenn noch nicht vorhanden) ----
+  const kiHinweis = `<h3>Hinweis zum Einsatz von Künstlicher Intelligenz</h3><p>Bei der Erstellung und Pflege dieser Website werden KI-Systeme unterstützend eingesetzt, z. B. für Programmierung, Textentwürfe und die Übersetzungen ins Englische und Niederländische. Die Inhalte werden redaktionell geprüft. Verbindlich ist die deutsche Fassung. Auf VALUERO erfolgt keine automatisierte Entscheidungsfindung oder Profilbildung zu Lasten von Nutzern; Preise und Verfügbarkeiten stammen aus den Buchungssystemen der Unterkünfte.</p>`;
+  await query(`UPDATE content SET value = value || $1 WHERE key='impressum_html' AND value NOT LIKE '%Künstlicher Intelligenz%'`, [kiHinweis]);
 }
 
 async function seedContent(key, value) {
