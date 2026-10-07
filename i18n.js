@@ -23,7 +23,7 @@ const store = () => als.getStore() || null;
 const getLang = () => (als.getStore() || {}).lang || DEFAULT;
 
 // Paths that are never language-prefixed.
-const NO_PREFIX = /^\/(admin|img|api|favicon\.svg|sitemap\.xml|robots\.txt)(\/|\?|#|$)/;
+const NO_PREFIX = /^\/(admin|img|media|api|favicon\.svg|sitemap\.xml|robots\.txt)(\/|\?|#|$)/;
 function localizePath(p, lang) {
   lang = lang || getLang();
   if (lang === DEFAULT || typeof p !== "string" || !p.startsWith("/") || p.startsWith("//")) return p;
@@ -442,9 +442,9 @@ const API_KEYS = new Set(["error", "label", "type", "badge"]);
 // Named templates, {vars} are substituted. German is authoritative for de.
 const SX = {
   default_desc: {
-    de: "VALUERO – {tag} im Hochmontafon. Ferienwohnungen, Chalets & Appartements, Gastronomie und Veranstaltungen – mit Live-Preisen buchen.",
-    en: "VALUERO – {tag} in the Hochmontafon. Holiday apartments, chalets & apartments, dining and events – book with live prices.",
-    nl: "VALUERO – {tag} in het Hochmontafon. Vakantieappartementen, chalets & appartementen, horeca en evenementen – boek met actuele prijzen.",
+    de: "VALUERO – {tag}: Ferienwohnungen, Chalets & Appartements im Hochmontafon mit Live-Preisen direkt buchen. Dazu Gastronomie & Events.",
+    en: "VALUERO – {tag}: book holiday apartments, chalets & apartments in the Hochmontafon directly with live prices. Plus dining & events.",
+    nl: "VALUERO – {tag}: boek vakantieappartementen, chalets & appartementen in het Hochmontafon direct met actuele prijzen. Plus horeca & evenementen.",
   },
   acc_title: { de: "{label} {name} – jetzt buchen | VALUERO", en: "{label} {name} – book now | VALUERO", nl: "{label} {name} – nu boeken | VALUERO" },
   acc_h1: { de: "{label} {where}", en: "{label} {where}", nl: "{label} {where}" },

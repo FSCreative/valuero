@@ -941,8 +941,10 @@ function layout({ title, active, body, content, extraScript, seo }) {
     seo.description ||
     i18n.sx("default_desc", { tag: i18n.t(content.site_tagline || "Urlaub im Montafon") });
   const canonical = seo.canonical || "";
-  const ogImage = seo.ogImage || content.home_hero_image || content.logo_image || "";
+  const stReq = (i18n.store() || {}).req;
+  const ogImage = stReq ? absImg(stReq, seo.ogImage || content.home_hero_image || content.logo_image || "") : "";
   const robots = seo.robots || "index,follow";
+  const robotsFull = /^index/.test(robots) ? robots + ",max-image-preview:large,max-snippet:-1" : robots;
   const jsonLdArr = seo.jsonLd ? (Array.isArray(seo.jsonLd) ? seo.jsonLd : [seo.jsonLd]) : [];
   const jsonLd = jsonLdArr
     .filter(Boolean)
@@ -960,7 +962,7 @@ function layout({ title, active, body, content, extraScript, seo }) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 ${seo.keywords ? `<meta name="keywords" content="${esc(seo.keywords)}">` : ""}
-<meta name="robots" content="${esc(robots)}">
+<meta name="robots" content="${esc(robotsFull)}">
 <meta name="author" content="VALUERO – FS Creative">
 ${canonical ? `<link rel="canonical" href="${esc(canonical)}">` : ""}
 ${canonical ? hreflang : ""}
@@ -3048,8 +3050,24 @@ app.use((req, res, next) => {
 // directly would send every visitor's IP to those hosts. Instead we fetch them
 // server-side and serve them from our own domain. pimg() rewrites any external
 // image URL to /img?u=<base64url>; data: URIs and local paths pass through.
+const MEDIA = new Map(); // id -> {type, buf}; filled whenever a page that uses the image is rendered
+const MEDIA_MAX = 300;
 function pimg(u) {
   const s = String(u || "");
+  if (s.startsWith("data:image/")) {
+    // Uploaded images are stored as base64 data URIs. Inlining them bloated pages to several MB;
+    // serve raster images from a cacheable, content-addressed URL instead. (SVG stays inline: never served from our origin.)
+    const m = /^data:(image\/(?:png|jpe?g|webp|gif|avif));base64,([A-Za-z0-9+/=]+)$/i.exec(s);
+    if (m) {
+      const id = require("crypto").createHash("sha1").update(s).digest("hex").slice(0, 24);
+      if (!MEDIA.has(id)) {
+        if (MEDIA.size >= MEDIA_MAX) MEDIA.delete(MEDIA.keys().next().value);
+        MEDIA.set(id, { type: m[1].toLowerCase(), buf: Buffer.from(m[2], "base64") });
+      }
+      return "/media/" + id;
+    }
+    return s;
+  }
   if (!s || s.startsWith("data:") || s.startsWith("/")) return s;
   if (!/^https?:\/\//i.test(s)) return s;
   return "/img?u=" + Buffer.from(s, "utf8").toString("base64url");
@@ -3081,6 +3099,14 @@ async function hostIsPublic(host) {
     return false;
   }
 }
+
+app.get("/media/:id", (req, res) => {
+  const hit = MEDIA.get(String(req.params.id));
+  if (!hit) return res.status(404).set("Cache-Control", "no-store").end();
+  res.setHeader("Content-Type", hit.type);
+  res.setHeader("Cache-Control", "public, max-age=31536000, immutable"); // id = hash of the content
+  res.end(hit.buf);
+});
 
 app.get("/img", async (req, res) => {
   try {
@@ -3136,6 +3162,20 @@ function siteOrigin(req) {
   const host = (req && req.get && req.get("host")) || "valuero-production.up.railway.app";
   const proto = (req && req.protocol) || "https";
   return proto + "://" + host;
+}
+function absImg(req, u) {
+  if (!u) return "";
+  const p = pimg(u);
+  if (p.startsWith("data:")) return "";
+  return p.startsWith("/") ? siteOrigin(req) + p : p;
+}
+// Meta descriptions: ~155 characters, cut at a word boundary.
+function trimDesc(s, max) {
+  s = String(s || "").replace(/\s+/g, " ").trim();
+  max = max || 158;
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max - 1);
+  return cut.slice(0, Math.max(cut.lastIndexOf(" "), 80)).replace(/[\s,;:–-]+$/, "") + "…";
 }
 function absUrl(req, p) {
   return siteOrigin(req) + i18n.localizePath(p.startsWith("/") ? p : "/" + p);
@@ -3327,11 +3367,12 @@ function lodgingJsonLd(req, row) {
     name: row.name,
     description: row.description || undefined,
     url: absUrl(req, `/unterkunft/${row.id}/${slugify(row.name)}`),
-    image: imgs.length ? imgs : undefined,
+    image: imgs.length ? imgs.map((u) => absImg(req, u)).filter(Boolean) : undefined,
     address: { "@type": "PostalAddress", addressLocality: row.location || BIZ.city, addressRegion: BIZ.region, addressCountry: BIZ.country },
     amenityFeature: parseFeatures(row.features).map((k) => ({ "@type": "LocationFeatureSpecification", name: FEATURE_LABEL[k], value: true })),
   };
-  if (rv) o.aggregateRating = { "@type": "AggregateRating", ratingValue: rv, bestRating: 5, ratingCount: 12 };
+  // No aggregateRating: the star values are an average of external portals and there is no verifiable review count
+  // (an invented ratingCount violates Google's structured-data guidelines).
   return o;
 }
 function eventJsonLd(req, ev) {
@@ -3344,7 +3385,8 @@ function eventJsonLd(req, ev) {
     endDate: dateISO(ev.event_end_date) || undefined,
     eventStatus: "https://schema.org/EventScheduled",
     location: { "@type": "Place", name: ev.location || "Montafon", address: { "@type": "PostalAddress", addressLocality: ev.location || BIZ.city, addressRegion: BIZ.region, addressCountry: BIZ.country } },
-    image: ev.image || undefined,
+    image: absImg(req, ev.image) || undefined,
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     url: ev.website || absUrl(req, `/veranstaltung/${ev.id}/${slugify(ev.name)}`),
   };
 }
@@ -3484,7 +3526,7 @@ function accDetailPage(c, row, rooms, req) {
     { name: row.name, href: accHref(row) },
   ];
   const title = `${row.name}${row.location ? " – " + row.location : ""} | VALUERO`;
-  const desc = (row.description || `${row.name} im Montafon`).slice(0, 300);
+  const desc = trimDesc(row.description || `${row.name} im Montafon`);
   const body = `
   <section class="page-hero">
     <div class="container">
@@ -3583,7 +3625,7 @@ function eventDetailPage(c, ev, req) {
     content: c,
     seo: {
       canonical: absUrl(req, eventHref(ev)),
-      description: (ev.description || ev.name).slice(0, 300),
+      description: trimDesc(ev.description || ev.name),
       ogType: "article",
       ogImage: ev.image || "",
       keywords: [ev.type, ev.location, "Montafon", "Veranstaltung", "Event"].filter(Boolean).join(", "),
@@ -4339,6 +4381,14 @@ app.get("/admin/logout", (req, res) => {
 });
 
 // all /admin routes below require auth
+app.use("/admin", (req, res, next) => {
+  res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  next();
+});
+app.use("/api", (req, res, next) => {
+  res.setHeader("X-Robots-Tag", "noindex");
+  next();
+});
 app.use("/admin", auth.requireAuth);
 
 app.get("/admin", async (req, res, next) => {
