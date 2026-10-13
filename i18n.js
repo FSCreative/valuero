@@ -236,6 +236,10 @@ const UI = {
   // ---- types / badges / tags that appear in the seeded partner data ----
   "Ferienwohnung": ["Holiday apartment", "Vakantieappartement"],
   "Appartements": ["Apartments", "Appartementen"],
+  "Pension & Appartements": ["Guesthouse & apartments", "Pension & appartementen"],
+  "Yoga & Sauna": ["Yoga & sauna", "Yoga & sauna"],
+  "Genießer-Frühstück": ["Gourmet breakfast", "Genieterontbijt"],
+  "Yogaraum": ["Yoga room", "Yogaruimte"],
   "Appartement": ["Apartment", "Appartement"],
   "Chalet": ["Chalet", "Chalet"],
   "Bauernhof": ["Farm", "Boerderij"],
