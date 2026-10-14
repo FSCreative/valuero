@@ -2615,6 +2615,7 @@ async function init() {
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS gallery TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS api_url TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS api_key TEXT DEFAULT ''`);
+  await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS partner_slug TEXT DEFAULT ''`);
   // ---- Event columns: real date range (for sorting/past-events) + image gallery ----
   await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS event_date DATE`);
   await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS event_end_date DATE`);
@@ -4645,10 +4646,51 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
+// ---- Automatischer Abgleich mit VALUERO Partner (partner.valuero.at) ----
+// Häuser, die dort freigeschaltet sind (Modul „valuero.at-Listing“), erscheinen hier automatisch –
+// inkl. Buchungs-API für Live-Preise & Direktbuchung. Env: PARTNER_URL + VALUERO_SYNC_TOKEN.
+// Neu angelegt wird nur, was es noch nicht gibt; manuelle Admin-Änderungen an Texten/Bildern bleiben erhalten.
+async function syncPartnerListings() {
+  const base = (process.env.PARTNER_URL || "").replace(/\/+$/, "");
+  const tok = process.env.VALUERO_SYNC_TOKEN || "";
+  if (!base || !tok) return;
+  try {
+    const r = await fetch(base + "/api/valuero/listings", { headers: { "x-sync-token": tok, accept: "application/json" }, signal: AbortSignal.timeout(20000) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const { listings = [] } = await r.json();
+    for (const l of listings) {
+      const ex = (await db.query("SELECT id FROM accommodations WHERE partner_slug=$1", [l.slug])).rows[0];
+      if (ex) {
+        await db.query(
+          `UPDATE accommodations SET api_url=$2, api_key=$3,
+             link = CASE WHEN COALESCE(link,'')='' THEN $4 ELSE link END,
+             image = CASE WHEN COALESCE(image,'')='' THEN $5 ELSE image END,
+             gallery = CASE WHEN COALESCE(gallery,'')='' THEN $6 ELSE gallery END,
+             features = CASE WHEN COALESCE(features,'')='' THEN $7 ELSE features END,
+             max_guests = CASE WHEN COALESCE(max_guests,0)=0 THEN $8 ELSE max_guests END
+           WHERE id=$1`,
+          [ex.id, l.apiUrl, l.apiKey, l.website, l.image, (l.gallery || []).join("\n"), (l.features || []).join(","), l.maxGuests || 0]
+        );
+      } else {
+        await db.query(
+          `INSERT INTO accommodations (name, description, location, type, link, image, gallery, features, max_guests, api_url, api_key, partner_slug, sort)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,(SELECT COALESCE(MAX(sort),0)+1 FROM accommodations))`,
+          [l.name, l.description || "", l.location || "", l.type || "Ferienwohnung", l.website || "", l.image || "", (l.gallery || []).join("\n"), (l.features || []).join(","), l.maxGuests || 0, l.apiUrl, l.apiKey, l.slug]
+        );
+        console.log("VALUERO Partner: neues Haus übernommen –", l.name);
+      }
+    }
+  } catch (e) {
+    console.error("Partner-Abgleich:", e.message);
+  }
+}
+
 function start() {
   db.init()
     .then(() => {
       app.listen(PORT, () => console.log("VALUERO läuft auf Port " + PORT));
+      syncPartnerListings();
+      setInterval(syncPartnerListings, 60 * 60 * 1000);
     })
     .catch((e) => {
       console.error("DB-Init fehlgeschlagen:", e);
@@ -4657,5 +4699,5 @@ function start() {
     });
 }
 if (require.main === module) start();
-module.exports = { app, V, A, db, auth, start };
+module.exports = { app, V, A, db, auth, start, syncPartnerListings };
 
