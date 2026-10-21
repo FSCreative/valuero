@@ -986,7 +986,7 @@ ${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">` : ""}
 ${ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}">` : ""}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>${publicCSS}</style>
-<link rel="stylesheet" href="/fs-consent.css?v=1">
+<link rel="stylesheet" href="/fs-consent.css?v=2">
 <script type="application/json" id="fs-consent-config">${JSON.stringify({ privacyUrl: i18n.localizePath("/datenschutz"), imprintUrl: i18n.localizePath("/impressum"), position: "bottom-right", tone: "du", lang: lang === "de" ? "de" : "en", categories: {} }).replace(/</g, "\\u003c")}</script>
 ${i18n.clientBootstrap()}
 ${jsonLd}
@@ -998,7 +998,7 @@ ${bottomNav(active)}
 <button class="to-top" id="toTop" aria-label="Nach oben scrollen">↑</button>
 ${SCRIPT}
 ${extraScript || ""}
-<script src="/fs-consent.js?v=1" defer></script>
+<script src="/fs-consent.js?v=2" defer></script>
 </body></html>`;
 }
 
