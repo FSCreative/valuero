@@ -66,6 +66,7 @@ const UI = {
   "AGB": ["Terms & Conditions", "Algemene voorwaarden"],
   "Datenschutz": ["Privacy policy", "Privacybeleid"],
   "Impressum": ["Legal notice", "Colofon"],
+  "Cookie-Einstellungen": ["Cookie settings", "Cookie-instellingen"],
   "Kontakt": ["Contact", "Contact"],
   "Nach oben scrollen": ["Scroll to top", "Naar boven scrollen"],
   "Brotkrumen": ["Breadcrumbs", "Kruimelpad"],
