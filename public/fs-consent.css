@@ -225,6 +225,18 @@
   .fsc-pos-center { align-items: flex-end; }
 }
 
+/* Mobil kompakt (valuero.at): Hinweis-Banner nimmt nur einen schmalen Streifen ein */
+@media (max-width: 560px) {
+  /* über der mobilen Navigationsleiste (63 px) */
+  .fsc-root { padding: 8px 8px calc(71px + env(safe-area-inset-bottom, 0px)); }
+  .fsc-card { padding: 12px 14px 10px; border-radius: 14px; max-height: 45vh; }
+  .fsc-title { font-size: 1em; margin: 0 0 2px; }
+  .fsc-text { font-size: 12.5px; line-height: 1.4; margin: 0; }
+  .fsc-actions { margin-top: 8px; gap: 6px; }
+  .fsc-root .fsc-btn { padding: 8px 12px; font-size: 14px; }
+  .fsc-links { margin: 6px 0 0; font-size: 11.5px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fsc-card, .fsc-switch-ui, .fsc-switch-ui::after { transition: none; }
 }

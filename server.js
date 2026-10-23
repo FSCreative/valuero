@@ -1003,8 +1003,8 @@ ${ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}">` : ""}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>${publicCSS}</style>
 ${bookingUI ? `<link rel="stylesheet" href="${BUI_ASSETS.css}">` : ""}
-<link rel="stylesheet" href="/fs-consent.css?v=2">
-<script type="application/json" id="fs-consent-config">${JSON.stringify({ privacyUrl: i18n.localizePath("/datenschutz"), imprintUrl: i18n.localizePath("/impressum"), position: "bottom-right", tone: "du", lang: lang === "de" ? "de" : "en", categories: {} }).replace(/</g, "\\u003c")}</script>
+<link rel="stylesheet" href="/fs-consent.css?v=4">
+<script type="application/json" id="fs-consent-config">${JSON.stringify({ privacyUrl: i18n.localizePath("/datenschutz"), imprintUrl: i18n.localizePath("/impressum"), position: "bottom-right", tone: "du", lang: lang === "de" ? "de" : "en", categories: {}, text: lang === "de" ? "Nur technisch notwendige Cookies – kein Tracking, keine Werbung." : "Only technically necessary cookies – no tracking, no ads." }).replace(/</g, "\\u003c")}</script>
 ${i18n.clientBootstrap()}
 ${jsonLd}
 </head><body>
