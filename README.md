@@ -9,9 +9,24 @@ mit Beds24-Anbindung. Eine einzelne Node.js/Express-App mit PostgreSQL.
   Über uns, Impressum/Datenschutz/AGB.
 - **Admin-CMS** (`/admin`): Unterkünfte, Gastro und Events pflegen, Webdesign-Texte
   und Bilder bearbeiten.
-- **Buchungstool im Booking.com-Stil**: Suchleiste (Anreise/Abreise/Gäste) auf der
-  Startseite und das komplette Tool unter **Unterkünfte** — mit Filtern, tagesaktuellen
-  Live-Preisen, Verfügbarkeit und kompletter Buchungsstrecke über **Beds24**.
+- **Unterkunftssuche**: Suchleiste (Reisedaten + Gäste, je als Pop-up-Dialog) auf der
+  Startseite, unter **Unterkünfte** und auf jeder Detailseite — mit Filtern, Live-Gesamtpreis
+  für Daten & Personen, Anreiseregeln („Anreise nur samstags · mind. 7 Nächte"),
+  Alternativterminen statt bloßem „belegt", Belegungskalender und Preisaufstellung.
+
+## Häuser von VALUERO Partner (gast.valuero.at)
+
+Häuser, die auf der Plattform das Modul „valuero.at-Listing" aktiv haben, werden stündlich
+übernommen (`PARTNER_URL` + `VALUERO_SYNC_TOKEN`; ein bereits vorhandenes Haus mit gleichem
+Namen wird verknüpft statt doppelt angelegt). Für diese Häuser (`platform.js`):
+
+- Kalender/Regeln: `GET /api/public/<slug>/calendar` (öffentlich), Live-Preis:
+  `GET /api/v/<slug>/api/quote` (API-Key) — beides kurz zwischengespeichert.
+- **Gebucht wird auf der Buchungsseite der Plattform**: der Button „Zur Buchung" führt zu
+  `https://gast.valuero.at/b/<slug>?arrival=…&departure=…&adults=…&children=…&ref=valuero`
+  (Bedingungen, Zahlung und Bestätigung bleiben an einer Stelle).
+- Ist die Online-Buchung dort ausgeschaltet, erscheint das Haus automatisch wie ein Eintrag
+  ohne Buchung (Website-Link).
 
 ## Beds24-Anbindung (Preise · Verfügbarkeit · Buchung)
 
@@ -69,11 +84,15 @@ automatisch. Die `BEDS24_*`-Variablen in Railway unter **Variables** setzen.
 ## Aufbau
 
 - `server.js` — komplette App: Styles, öffentliche Views, Admin-CMS, DB-Layer,
-  Routing, Buchungs-API (`/api/search`, `/api/quote/:id`, `/api/calendar/:id`,
-  `/api/book`).
+  Routing, Such-/Preis-API (`/api/search`, `/api/quote/:id`, `/api/calendar/:id`,
+  `/api/book` – Letzteres nur noch für Beds24/eigene Partner-API).
+- `platform.js` — Client für VALUERO Partner (Kalender, Regeln, Live-Preis, Alternativtermine,
+  Übergabe-Link) inkl. Cache.
+- `booking-ui.js` — Styles + Browser-Skripte der Suche (Datums-/Gäste-Dialog, Ergebnisliste,
+  Detailseite); ausgeliefert als cachebare Dateien unter `/assets/…`.
+- `partnerapi.js` — eigene Buchungs-Apps einzelner Häuser (z. B. Antonhaus).
 - `beds24.js` — Beds24-API-v2-Client: Token-Management, Preise/Verfügbarkeit
   (`/inventory/rooms/offers` + `/calendar`), Buchung (`POST /bookings`), Demo-Modus.
-- `test/` — Offline-Testharness (`harness.js`) und Vorschau-Generator (`preview.js`).
 
 > Hinweis: Die Feld-Namen der Beds24-`offers`-Antwort können je nach Konto-Setup
 > leicht abweichen. `beds24.js` parst tolerant; die Stelle ist dort kommentiert und

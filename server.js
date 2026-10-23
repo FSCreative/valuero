@@ -1,5 +1,24 @@
 // VALUERO — gebündelte App (öffentliche Website + Admin-CMS). Auto-generiert.
 const i18n = require("./i18n");
+const bookingUi = require("./booking-ui");
+// Styles + Skripte der Unterkunftssuche als cachebare Dateien (statt bei jedem Seitenaufruf inline).
+const BUI_FILES = (() => {
+  const strip = (s) => s.replace(/^\s*<script>/, "").replace(/<\/script>\s*$/, "");
+  const files = {
+    "booking.css": ["text/css; charset=utf-8", bookingUi.BOOKING_CSS],
+    "booking.js": ["application/javascript; charset=utf-8", strip(bookingUi.PICKER_JS)],
+    "booking-search.js": ["application/javascript; charset=utf-8", strip(bookingUi.SEARCH_JS)],
+    "booking-detail.js": ["application/javascript; charset=utf-8", strip(bookingUi.DETAIL_JS)],
+  };
+  const v = require("crypto").createHash("sha1").update(Object.values(files).map((f) => f[1]).join("")).digest("hex").slice(0, 10);
+  return { files, v };
+})();
+const BUI_ASSETS = {
+  css: "/assets/booking.css?v=" + BUI_FILES.v,
+  js: "/assets/booking.js?v=" + BUI_FILES.v,
+  search: `<script src="/assets/booking-search.js?v=${BUI_FILES.v}"></script>`,
+  detail: `<script src="/assets/booking-detail.js?v=${BUI_FILES.v}"></script>`,
+};
 
 /* ===== styles ===== */
 // CSS for the public site and the admin area, exported as strings.
@@ -582,6 +601,21 @@ a{color:var(--accent);text-decoration:none}
 /* ===== views ===== */
 // Public site HTML rendering.
 
+// Nur http(s)/mailto/tel-Links ausgeben (verhindert javascript:-Links aus Einreichungen/Daten).
+function safeUrl(u) {
+  const s = String(u || "").trim();
+  if (!s) return "";
+  if (/^(https?:|mailto:|tel:)/i.test(s) || s.startsWith("/") && !s.startsWith("//")) return s;
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(\/|$)/i.test(s)) return "https://" + s;
+  return "";
+}
+function eur(n) {
+  try {
+    return new Intl.NumberFormat(i18n.NUM_LOCALE ? i18n.NUM_LOCALE[i18n.getLang()] || "de-AT" : "de-AT", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  } catch (e) {
+    return "€ " + Number(n || 0).toFixed(2);
+  }
+}
 function esc(s) {
   return String(s == null ? "" : s)
     .replace(/&/g, "&amp;")
@@ -908,27 +942,9 @@ const SCRIPT = `
   revealVisible();
   window.addEventListener('load',revealVisible);
   setTimeout(revealVisible,400);
-  // Date inputs: min = today; departure must be after arrival.
+  // Datumsfelder (z. B. Veranstaltung einreichen): min = heute.
   var today=new Date().toISOString().slice(0,10);
   document.querySelectorAll('input[type=date]').forEach(function(d){if(!d.min)d.min=today});
-  document.querySelectorAll('.searchbar').forEach(function(sb){
-    var ci=sb.querySelector('input[name=checkin]'),co=sb.querySelector('input[name=checkout]');
-    if(ci&&co){ci.addEventListener('change',function(){
-      var d=new Date(ci.value);d.setDate(d.getDate()+1);var min=d.toISOString().slice(0,10);
-      var d7=new Date(ci.value);d7.setDate(d7.getDate()+7);var sug=d7.toISOString().slice(0,10);
-      co.min=min;if(!co.value||co.value<=ci.value)co.value=sug;});}
-    var childSel=sb.querySelector('.sf-children'),wrap=sb.querySelector('.child-ages'),row=sb.querySelector('.ages-row');
-    function renderAges(){
-      if(!childSel||!row)return;
-      var n=parseInt(childSel.value,10)||0;
-      var vals=Array.prototype.map.call(row.querySelectorAll('select'),function(s){return s.value});
-      var html='';
-      for(var i=0;i<n;i++){var v=vals[i]!=null?vals[i]:6;html+='<select name="childAge" class="age-sel">';
-        for(var a=0;a<18;a++){html+='<option value="'+a+'"'+(a==v?' selected':'')+'>'+a+' '+T('J.')+'</option>';}html+='</select>';}
-      row.innerHTML=html;if(wrap)wrap.style.display=n>0?'':'none';
-    }
-    if(childSel)childSel.addEventListener('change',renderAges);
-  });
   var tt=document.getElementById('toTop');
   if(tt){window.addEventListener('scroll',function(){if(window.scrollY>500)tt.classList.add('show');else tt.classList.remove('show');},{passive:true});
     tt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});}
@@ -942,7 +958,7 @@ const SCRIPT = `
 })();
 </script>`;
 
-function layout({ title, active, body, content, extraScript, seo }) {
+function layout({ title, active, body, content, extraScript, seo, bookingUI }) {
   seo = seo || {};
   const desc =
     seo.description ||
@@ -986,6 +1002,7 @@ ${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">` : ""}
 ${ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}">` : ""}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>${publicCSS}</style>
+${bookingUI ? `<link rel="stylesheet" href="${BUI_ASSETS.css}">` : ""}
 <link rel="stylesheet" href="/fs-consent.css?v=2">
 <script type="application/json" id="fs-consent-config">${JSON.stringify({ privacyUrl: i18n.localizePath("/datenschutz"), imprintUrl: i18n.localizePath("/impressum"), position: "bottom-right", tone: "du", lang: lang === "de" ? "de" : "en", categories: {} }).replace(/</g, "\\u003c")}</script>
 ${i18n.clientBootstrap()}
@@ -997,6 +1014,7 @@ ${footer(content)}
 ${bottomNav(active)}
 <button class="to-top" id="toTop" aria-label="Nach oben scrollen">↑</button>
 ${SCRIPT}
+${bookingUI ? `<script src="${BUI_ASSETS.js}"></script>` : ""}
 ${extraScript || ""}
 <script src="/fs-consent.js?v=2" defer></script>
 </body></html>`;
@@ -1085,7 +1103,7 @@ function homePage(c, req) {
         keywords: "Montafon, Urlaub Montafon, Ferienwohnung Montafon, Chalet Montafon, Unterkunft Gaschurn, Skiurlaub Montafon",
       }
     : undefined;
-  return layout({ title: "Urlaub im Montafon – Ferienwohnungen, Chalets & Appartements | VALUERO", active: "/", body, content: c, seo });
+  return layout({ title: "Urlaub im Montafon – Ferienwohnungen, Chalets & Appartements | VALUERO", active: "/", body, content: c, seo, bookingUI: true });
 }
 
 /* ---------------- LISTING (Unterkünfte / Gastro) ---------------- */
@@ -1100,7 +1118,7 @@ function listingCard(item, isGastro) {
   const dataTags = esc((tags.join("|") || "").toLowerCase());
   const titleInner = `${esc(item.name)}`;
   const title = item.link
-    ? `<a href="${esc(item.link)}" target="_blank" rel="noopener">${titleInner}</a>`
+    ? `<a href="${esc(safeUrl(item.link))}" target="_blank" rel="noopener">${titleInner}</a>`
     : titleInner;
   return `
   <article class="card reveal" data-loc="${dataLoc}" data-type="${dataType}" data-tags="${dataTags}">
@@ -1118,7 +1136,7 @@ function listingCard(item, isGastro) {
       ${
         item.link
           ? `<div class="card-foot"><a class="card-link" href="${esc(
-              item.link
+              safeUrl(item.link)
             )}" target="_blank" rel="noopener">Direkt buchen →</a></div>`
           : ""
       }
@@ -1183,43 +1201,21 @@ const FILTER_SCRIPT = `
 </script>`;
 
 /* ---------------- BOOKING TOOL (Unterkünfte) ---------------- */
-// Search bar used on the home hero and on top of the Unterkünfte tool.
-// Sensible placeholder stay: next Saturday (≥7 days out) + 7 nights, so the
-// date fields never show an empty grey "tt.mm.jjjj" (esp. important on mobile).
-function defaultStay() {
-  const iso = (d) =>
-    d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-  const s = new Date();
-  let add = (6 - s.getDay() + 7) % 7;
-  if (add < 7) add += 7; // always a Saturday at least a week out
-  s.setDate(s.getDate() + add);
-  const e = new Date(s);
-  e.setDate(e.getDate() + 7);
-  return { checkin: iso(s), checkout: iso(e) };
-}
-
-function searchBar(prefill) {
+// Suchleiste (Startseite, Unterkünfte, Detailseite): Reisedaten & Gäste öffnen je einen Dialog (booking-ui.js).
+// Ohne gewählte Daten wird bewusst nichts vorbelegt → Ergebnisse zeigen „ab … € / Nacht".
+function stayHidden(prefill) {
   prefill = prefill || {};
-  const def = defaultStay();
-  const ci = esc(prefill.checkin || def.checkin);
-  const co = esc(prefill.checkout || def.checkout);
-  const ages = (prefill.childrenAges || []).map((n) => parseInt(n, 10)).filter((n) => Number.isFinite(n) && n >= 0);
-  const adults = parseInt(prefill.adults, 10) || parseInt(prefill.guests, 10) || 2;
-  const children = ages.length || parseInt(prefill.children, 10) || 0;
-  const opt = (n, sel) => `<option value="${n}" ${n === sel ? "selected" : ""}>${n}</option>`;
-  const adultOpts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => opt(n, adults)).join("");
-  const childOpts = [0, 1, 2, 3, 4, 5, 6].map((n) => opt(n, children)).join("");
-  const ageSel = (v) =>
-    `<select name="childAge" class="age-sel">${Array.from({ length: 18 }, (_, a) => `<option value="${a}" ${a === v ? "selected" : ""}>${a} J.</option>`).join("")}</select>`;
-  const agesHtml = ages.map((a) => ageSel(a)).join("");
+  const ages = (prefill.childrenAges || []).map((n) => parseInt(n, 10)).filter((n) => Number.isFinite(n) && n >= 0 && n < 18);
+  const ok = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || "")) ? String(v) : "");
+  return `<input type="hidden" name="checkin" value="${esc(ok(prefill.checkin))}"><input type="hidden" name="checkout" value="${esc(ok(prefill.checkout))}"><input type="hidden" name="adults" value="${Math.min(20, Math.max(1, parseInt(prefill.adults, 10) || 2))}"><input type="hidden" name="childrenAges" value="${esc(ages.join(","))}">`;
+}
+function searchBar(prefill) {
   return `
-  <form class="searchbar" id="searchForm" action="/unterkuenfte" method="get">
-    <div class="sf sf-date"><label>📅 Anreise</label><input type="date" name="checkin" value="${ci}" required></div>
-    <div class="sf sf-date"><label>📅 Abreise</label><input type="date" name="checkout" value="${co}" required></div>
-    <div class="sf" style="flex:0 1 120px"><label>Erwachsene</label><select name="adults">${adultOpts}</select></div>
-    <div class="sf" style="flex:0 1 108px"><label>Kinder</label><select name="children" class="sf-children">${childOpts}</select></div>
-    <div class="sf go"><button class="btn-search" type="submit">Finden</button></div>
-    <div class="sf child-ages" style="flex:1 1 100%;${children ? "" : "display:none"}"><label>Alter der Kinder (bei Anreise)</label><div class="ages-row">${agesHtml}</div></div>
+  <form class="vsb" id="searchForm" action="/unterkuenfte" method="get" role="search" aria-label="Unterkunft suchen">
+    <button type="button" class="vsb-f vsb-dates" data-open="dates" aria-haspopup="dialog"><span class="l">Reisedaten</span><span class="v ph" data-v="dates">Anreise – Abreise</span></button>
+    <button type="button" class="vsb-f vsb-guests" data-open="guests" aria-haspopup="dialog"><span class="l">Gäste</span><span class="v" data-v="guests">2 Erwachsene</span></button>
+    ${stayHidden(prefill)}
+    <button class="vsb-go" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Suchen</button>
   </form>`;
 }
 
@@ -1259,26 +1255,6 @@ function bookingOverlayHTML() {
   </div>`;
 }
 
-// Detail window (gallery + description + rooms + website link), filled by JS.
-function detailOverlayHTML() {
-  return `
-  <div class="bk-overlay" id="dtOverlay" aria-hidden="true">
-    <div class="bk-modal dt-modal" role="dialog" aria-modal="true" aria-labelledby="dt-title">
-      <div class="grab" aria-hidden="true"></div>
-      <button class="bk-close dt-close" id="dt-close" aria-label="Schließen">×</button>
-      <div class="dt-gallery"><div class="main" id="dt-main"></div><div class="dt-thumbs" id="dt-thumbs"></div></div>
-      <div class="dt-body">
-        <div class="dt-head"><h3 id="dt-title"></h3><div class="dt-rating" id="dt-rating"></div></div>
-        <div class="dt-meta" id="dt-meta"></div>
-        <p class="dt-desc" id="dt-desc"></p>
-        <div class="dt-feats" id="dt-feats"></div>
-        <div id="dt-rooms"></div>
-        <div class="dt-actions" id="dt-actions"></div>
-      </div>
-    </div>
-  </div>`;
-}
-
 function bookingToolPage(c, items) {
   const prefill = c.__prefill || {};
   const types = uniq(items.map((i) => i.type));
@@ -1288,9 +1264,9 @@ function bookingToolPage(c, items) {
   );
   const pillRow = (group, values) => `
     <div class="pills" data-group="${group}">
-      <button type="button" class="pill active" data-val="">Alle</button>
+      <button type="button" class="pill active" data-val="" aria-pressed="true">Alle</button>
       ${values
-        .map((v) => `<button type="button" class="pill" data-val="${esc(String(v).toLowerCase())}">${esc(v)}</button>`)
+        .map((v) => `<button type="button" class="pill" data-val="${esc(String(v).toLowerCase())}" aria-pressed="false">${esc(v)}</button>`)
         .join("")}
     </div>`;
   // Amenity filters grouped by category — only categories with a present feature show.
@@ -1329,311 +1305,31 @@ function bookingToolPage(c, items) {
           <div class="fp-group"><h4>Ort</h4>${pillRow("loc", locs)}</div>
           <div class="fp-group"><h4>Preis / Nacht</h4>
             <div class="price-range"><span class="lbl" id="priceLbl">egal</span>
-            <input type="range" id="f-price" min="0" max="400" step="10" value="400"></div>
+            <input type="range" id="f-price" min="0" max="800" step="20" value="800" aria-label="Höchstpreis pro Nacht"></div>
           </div>
           ${featChecks ? `<div class="fp-group"><h4>Ausstattung</h4>${featChecks}</div>` : ""}
         </aside>
         <div class="results-col">
-          <div class="results-head">
-            <span class="rc" id="resCount">Lädt…</span>
+          <div class="rs-head">
+            <span class="rs-count" id="resCount" aria-live="polite">Lädt…</span>
           </div>
-          <div id="results" class="grid booking-grid"><div class="loading">Lädt Unterkünfte…</div></div>
+          <div id="results" class="rs-grid"></div>
           <noscript><div class="grid">${items.map((i) => seoAccCard(i)).join("")}</div></noscript>
         </div>
       </div>
     </div>
   </section>
-  ${bookingOverlayHTML()}
-  ${detailOverlayHTML()}`;
+  ${bookingOverlayHTML()}`;
   return layout({
     title: "Unterkünfte im Montafon – Ferienwohnungen & Chalets buchen | VALUERO",
     active: "/unterkuenfte",
     body,
     content: c,
-    extraScript: BOOKING_SCRIPT,
+    bookingUI: true,
+    extraScript: BUI_ASSETS.search,
     seo: c.__seo,
   });
 }
-
-const BOOKING_SCRIPT = `
-<script>
-(function(){
-  var $=function(s,r){return (r||document).querySelector(s)};
-  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
-  function qp(n){var m=new RegExp('[?&]'+n+'=([^&]*)').exec(location.search);return m?decodeURIComponent(m[1].replace(/\\+/g,' ')):''}
-  function euro(n,c){c=c||'EUR';try{return new Intl.NumberFormat(window.__LOCALE||'de-AT',{style:'currency',currency:c,minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}catch(e){return '\\u20ac '+(Math.round((Number(n)||0)*100)/100).toFixed(2)}}
-  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-  function fmt(d){if(!d)return '';var p=d.split('-');return p[2]+'.'+p[1]+'.'+p[0]}
-
-  var form=$('#searchForm'), results=$('#results');
-  var fv=function(n){return form&&form[n]?form[n].value:''};
-  function readAges(){return $$('.searchbar .ages-row select').map(function(s){return s.value}).filter(function(v){return v!==''&&v!=null})}
-  var state={checkin:qp('checkin')||fv('checkin'),checkout:qp('checkout')||fv('checkout'),adults:fv('adults')||qp('adults')||'2',childrenAges:readAges(),type:'',loc:'',features:[],priceMax:0,sort:'best'};
-  state.guests=(parseInt(state.adults,10)||0)+state.childrenAges.length;
-  var last={results:[]};
-
-  $$('.pills').forEach(function(p){p.addEventListener('click',function(e){
-    var b=e.target.closest('.pill');if(!b)return;
-    $$('.pill',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');
-    state[p.getAttribute('data-group')]=b.getAttribute('data-val');run();});});
-  $$('.f-feat').forEach(function(ch){ch.addEventListener('change',function(){
-    state.features=$$('.f-feat').filter(function(x){return x.checked}).map(function(x){return x.value});run();});});
-  var price=$('#f-price');
-  if(price){
-    price.addEventListener('input',function(){var v=parseInt(price.value,10);state.priceMax=v>=400?0:v;
-      $('#priceLbl').textContent=state.priceMax?('bis '+euro(state.priceMax)+' / Nacht'):'egal';});
-    price.addEventListener('change',run);
-  }
-  var sort=$('#f-sort');if(sort)sort.addEventListener('change',function(){state.sort=sort.value;renderList(last)});
-
-  if(form)form.addEventListener('submit',function(e){e.preventDefault();
-    state.checkin=form.checkin.value;state.checkout=form.checkout.value;
-    state.adults=form.adults?form.adults.value:'2';state.childrenAges=readAges();
-    state.guests=(parseInt(state.adults,10)||0)+state.childrenAges.length;
-    history.replaceState(null,'',(window.__BASE||'')+'/unterkuenfte?checkin='+state.checkin+'&checkout='+state.checkout+'&adults='+state.adults+'&childrenAges='+state.childrenAges.join(','));
-    run();});
-
-  function params(){var p=[];var ad=parseInt(state.adults,10)||0;
-    if(state.checkin)p.push('checkin='+state.checkin);
-    if(state.checkout)p.push('checkout='+state.checkout);
-    if(ad)p.push('adults='+ad);
-    if(state.childrenAges.length)p.push('childrenAges='+state.childrenAges.join(','));
-    var g=ad+state.childrenAges.length;if(g)p.push('guests='+g);
-    if(state.type)p.push('type='+encodeURIComponent(state.type));
-    if(state.loc)p.push('loc='+encodeURIComponent(state.loc));
-    if(state.features.length)p.push('features='+state.features.join(','));
-    if(state.priceMax)p.push('priceMax='+state.priceMax);
-    return p.join('&');}
-
-  var LGMSG=[T('Wir prüfen Live-Verfügbarkeit und Preise'),T('Wir vergleichen die besten Angebote im Montafon'),T('Wir holen die tagesaktuellen Preise')];
-  function loadGameHTML(){
-    var msg=LGMSG[(Math.random()*LGMSG.length)|0];
-    return '<div class="loadgame" id="loadgame">'
-      +'<div class="lg-title"><span class="lg-spin"></span>'+msg+'</div>'
-      +'<div class="lg-sub">'+T('Kurzweil für die Wartezeit: tippe die Berge')+' &nbsp;\\u00b7&nbsp; <b id="lgScore">0</b></div>'
-      +'<div class="lg-play" id="lgPlay" aria-hidden="true"></div>'
-      +'<div class="lg-bar"></div>'
-      +'<div class="lg-foot">'+T('Einen Moment \\u2026')+'</div></div>';
-  }
-  function startLoadGame(){
-    var play=$('#lgPlay');if(!play)return;
-    var score=0,alive=true,scoreEl=$('#lgScore');
-    function spawn(){
-      if(!document.body.contains(play)){alive=false;return;}
-      var d=document.createElement('div');d.className='lg-berg';
-      d.innerHTML='<svg viewBox="0 0 44 34" xmlns="http://www.w3.org/2000/svg"><path d="M2 32 L16 6 L23 18 L28 10 L42 32 Z" fill="currentColor"/><path d="M16 6 L20 12 L18 14 L13 10 Z" fill="#fff" opacity=".9"/><path d="M28 10 L31 15 L29.5 16.5 L26.5 13 Z" fill="#fff" opacity=".9"/></svg>';
-      var pad=26,w=play.clientWidth||300,h=play.clientHeight||150;
-      d.style.left=(pad+Math.random()*(w-2*pad))+'px';
-      d.style.top=(pad+Math.random()*(h-2*pad))+'px';
-      play.appendChild(d);
-      requestAnimationFrame(function(){d.classList.add('on');});
-      var life=setTimeout(remove,1200);
-      function remove(){clearTimeout(life);if(d.parentNode)d.parentNode.removeChild(d);}
-      d.addEventListener('pointerdown',function(e){e.stopPropagation();score++;if(scoreEl)scoreEl.textContent=score;d.classList.add('pop');setTimeout(remove,90);});
-      setTimeout(function(){if(alive)spawn();},520+Math.random()*260);
-    }
-    spawn();
-  }
-  function run(){results.innerHTML=loadGameHTML();startLoadGame();
-    fetch('/api/search?lang='+(window.__LANG||'de')+'&'+params()).then(function(r){return r.json()}).then(function(d){last=d;renderList(d)})
-    .catch(function(){results.innerHTML='<div class="empty">'+T('Fehler beim Laden. Bitte erneut versuchen.')+'</div>'});}
-
-  function matchesFilters(x){
-    if(state.type && String(x.typeDe||x.type||'').toLowerCase()!==state.type)return false;
-    if(state.loc && String(x.location||'').toLowerCase()!==state.loc)return false;
-    if(state.features&&state.features.length){var f=x.features||[];for(var i=0;i<state.features.length;i++){if(f.indexOf(state.features[i])<0)return false;}}
-    if(state.priceMax){var p=(x.offer&&x.offer.available&&x.offer.perNight)?x.offer.perNight:null;if(p!=null&&p>state.priceMax)return false;}
-    return true;
-  }
-
-  function pn(x){return (x.offer&&x.offer.available&&x.offer.perNight)?x.offer.perNight:null}
-  // Ranking tiers for the default sort:
-  //  0 = jetzt buchbar mit Live-Preis, 1 = anbindungsfähig, aber für diese Daten
-  //  kein Preis, 2 = nur Website (keine Direktbuchung/kein Preis).
-  function tier(x){
-    if(x.offer&&x.offer.available&&x.offer.perNight!=null)return 0;
-    if(x.connected)return 1;
-    return 2;
-  }
-  function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
-  function sortResults(list){
-    var a=list.slice();
-    if(state.sort==='price-asc'||state.sort==='price-desc'){
-      a.sort(function(x,y){
-        if(tier(x)!==tier(y))return tier(x)-tier(y);            // Angebote mit Preis zuerst
-        var px=pn(x),py=pn(y);
-        if(px==null&&py==null)return 0;if(px==null)return 1;if(py==null)return -1;
-        return state.sort==='price-asc'?px-py:py-px;
-      });
-      return a;
-    }
-    // "Empfohlen": nach Rang gruppieren, innerhalb jeder Gruppe bei jedem Neuladen
-    // neu mischen → mit Preis+Verfügbarkeit oben (gemischt), Website-only ganz unten (gemischt).
-    var g=[[],[],[]];
-    a.forEach(function(x){g[tier(x)].push(x);});
-    return shuffle(g[0]).concat(shuffle(g[1]),shuffle(g[2]));
-  }
-
-  function renderList(d){
-    var all=d.results||[];
-    var matched=[],excluded=[];
-    all.forEach(function(x){(matchesFilters(x)?matched:excluded).push(x);});
-    matched=sortResults(matched);
-    var cnt=$('#resCount');
-    if(cnt)cnt.textContent=T(matched.length===1?'{n} Unterkunft':'{n} Unterkünfte',{n:matched.length})+(d.nights?(' \\u00b7 '+T('{n} Nächte',{n:d.nights})):'');
-    if(!matched.length && !excluded.length){results.innerHTML='<div class="empty">'+T('Keine Unterkünfte für diese Auswahl.')+'</div>';return;}
-    var html='';
-    if(matched.length)html+=matched.map(function(a){return card(a,false)}).join('');
-    else html+='<div class="empty" style="grid-column:1/-1">'+T('Keine Unterkunft passt exakt zu deinen Filtern \\u2013 sieh dir die Vorschläge unten an.')+'</div>';
-    // Few exact matches → show the filtered-out near-misses greyed & small.
-    if(matched.length<3 && excluded.length){
-      html+='<div class="near-head"><h3>'+T('Passt nicht exakt zu deinen Filtern \\u2013 aber einen Blick wert')+'</h3>'
-        +'<p>'+T('Diese Unterkünfte fallen knapp aus deiner Auswahl. Vielleicht trotzdem das Richtige?')+'</p></div>';
-      html+=sortResults(excluded).map(function(a){return card(a,true)}).join('');
-    }
-    results.innerHTML=html;bindCards();}
-
-  function feats(acc){return (acc.featureLabels||[]).slice(0,4).map(function(f){return '<span class="fi">'+f.icon+' '+esc(f.label)+'</span>'}).join('')}
-
-  function card(acc,muted){
-    var img=acc.image?('style="background-image:url(\\''+esc(acc.image)+'\\')"'):'class="img noimg"';
-    var imgTag=acc.image?('<div class="img" '+img+'>'):'<div '+img+'>';
-    var badge=acc.badge?'<span class="badge">'+esc(acc.badge)+'</span>':'';
-    var rooms=(acc.roomCount>1)?'<span class="fi">\\ud83d\\udecf '+T('{n} Zimmer',{n:acc.roomCount})+'</span>':'';
-    return '<article class="bk-card'+(muted?' bk-card-muted':'')+'" data-detail="'+acc.id+'">'+imgTag+badge+(muted?'<span class="off-badge">'+T('au\\u00dferhalb der Filter')+'</span>':'')+'</div><div class="body">'
-      +'<h3>'+esc(acc.name)+'</h3>'
-      +(acc.rating?'<div class="rating" style="color:#bfa06a;font-weight:600;font-size:14px">\\u2605 '+esc(acc.rating)+'</div>':'')
-      +'<div class="feat-row">'+(acc.location?'<span class="fi">\\ud83d\\udccd '+esc(acc.location)+'</span>':'')+(acc.type?'<span class="fi">'+esc(acc.type)+'</span>':'')+rooms+'</div>'
-      +'<p class="desc">'+esc(acc.description)+'</p>'
-      +'<div class="feat-row">'+feats(acc)+'</div>'
-      +'<span class="card-open">'+T('Details & Bilder ansehen \\u2192')+'</span>'
-      +priceBox(acc)+'</div></article>';}
-
-  function priceBox(acc){
-    if(!acc.connected){
-      var web=acc.link?'<a class="btn-web" href="'+esc(acc.link)+'" target="_blank" rel="noopener">'+T('Zur Website \\u2192')+'</a>':'<span class="note-web">'+T('Auf Anfrage')+'</span>';
-      return '<div class="price-box"><span class="pn note-web">'+T('Preise siehe Website')+'</span>'+web+'</div>';}
-    var o=acc.offer;
-    if(!o)return '<div class="price-box"><span class="pn note-web">'+T('Termine wählen für Live-Preis')+'</span><button class="btn-book" data-pick="1">'+T('Verfügbarkeit')+'</button></div>';
-    if(o.error)return '<div class="price-box"><span class="pn note-web">'+T('Preis derzeit nicht verfügbar')+'</span></div>';
-    if(o.available===false)return '<div class="price-box"><span class="soldout">'+T('Für diese Daten belegt')+'</span><button class="btn-web" data-pick="1">'+T('Andere Daten')+'</button></div>';
-    return '<div class="price-box"><span class="pn">'+T('ab {p} / Nacht',{p:'<b>'+euro(o.perNight,o.currency)+'</b>'})+'<span class="tot">'+T('{p} gesamt \\u00b7 {n} Nächte',{p:euro(o.total,o.currency),n:o.nights})+'</span></span>'
-      +'<button class="btn-book" data-book="'+acc.id+'">'+T('Jetzt buchen')+'</button></div>';}
-
-  function bindCards(){
-    $$('.bk-card').forEach(function(c){c.addEventListener('click',function(e){
-      if(e.target.closest('button,a'))return;
-      openDetail(findAcc(c.getAttribute('data-detail')));});});
-    $$('[data-book]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();openBooking(findAcc(b.getAttribute('data-book')))})});
-    $$('[data-pick]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();if(form&&form.checkin){form.checkin.focus();}window.scrollTo({top:0,behavior:'smooth'})})});}
-  function findAcc(id){var m=(last.results||[]).filter(function(x){return String(x.id)===String(id)});return m[0]}
-
-  // ---- booking overlay (with room picker) ----
-  var ov=$('#bkOverlay'), bkAcc=null, bkRoom=null;
-  function roomsWithOffers(acc){return (acc.rooms||[]).filter(function(r){return r.offer&&r.offer.available})}
-  // Short room detail line (size, bedrooms, capacity, floor) — explains price differences.
-  function roomSub(r){var s=[];if(r.size)s.push(r.size+' m\\u00b2');if(r.bedrooms)s.push(T('{n} Schlafzi.',{n:r.bedrooms}));if(r.bathrooms&&r.bathrooms>1)s.push(T('{n} Bäder',{n:r.bathrooms}));if(r.maxGuests)s.push(T('bis {n} Gäste',{n:r.maxGuests}));if(r.floor)s.push(esc(r.floor));return s.join(' \\u00b7 ');}
-  function renderBkSummary(){
-    var o=(bkRoom&&bkRoom.offer)||{};
-    var s='<div class="row"><span>'+T('An-/Abreise')+'</span><span>'+fmt(state.checkin)+' \\u2192 '+fmt(state.checkout)+'</span></div>'
-      +'<div class="row"><span>'+T('Nächte')+'</span><span>'+(o.nights||'')+'</span></div>'
-      +'<div class="row"><span>'+T('Gäste')+'</span><span>'+T('{n} Erw.',{n:(parseInt(state.adults,10)||2)})+(state.childrenAges.length?' + '+T('{n} Kind(er)',{n:state.childrenAges.length}):'')+'</span></div>'
-      +((bkRoom&&bkRoom.name&&bkAcc&&bkAcc.roomCount>1)?'<div class="row"><span>'+T('Zimmer')+'</span><span>'+esc(bkRoom.name)+'</span></div>':'');
-    // Jede Preisposition einzeln (Grundpreis, Kinder-Rabatt, Endreinigung, Gästetaxe …).
-    var bd=o.breakdown||[];
-    if(bd.length){bd.forEach(function(b){s+='<div class="row"><span>'+esc(b.label)+'</span><span>'+euro(b.amount,o.currency)+'</span></div>';});}
-    else{
-      if(o.roomTotal)s+='<div class="row"><span>'+T('Unterkunft')+'</span><span>'+euro(o.roomTotal,o.currency)+'</span></div>';
-      if(o.extraFees)s+='<div class="row"><span>'+T('Endreinigung / Gebühren')+'</span><span>'+euro(o.extraFees,o.currency)+'</span></div>';
-    }
-    if(o.total!=null)s+='<div class="row total"><span>'+T('Gesamt')+'</span><span>'+euro(o.total,o.currency)+'</span></div>';
-    $('#bk-summary').innerHTML=s;
-  }
-  function openBooking(acc){
-    if(!acc)return;
-    if(!acc.connected){if(acc.link)window.open(acc.link,'_blank','noopener');return;}
-    if(!state.checkin||!state.checkout){alert(T('Bitte zuerst An- und Abreise wählen.'));if(form&&form.checkin)form.checkin.focus();return;}
-    var avail=roomsWithOffers(acc);
-    if(!avail.length){alert(T('Für diese Daten leider nicht verfügbar.'));return;}
-    bkAcc=acc;bkRoom=avail[0];
-    $('#bk-title').textContent=acc.name;$('#bk-accId').value=acc.id;$('#bk-msg').innerHTML='';
-    var rp=$('#bk-rooms');
-    if(avail.length>1){
-      rp.innerHTML='<div class="dt-sec-title" style="font-size:15px;margin-top:0">'+T('Zimmer wählen')+'</div><div class="rooms-pick">'+avail.map(function(r,i){
-        return '<label class="room-opt'+(i===0?' sel':'')+'"><input type="radio" name="bkroom" value="'+esc(r.roomId)+'"'+(i===0?' checked':'')+'>'
-          +'<span><span class="rn">'+esc(r.name||T('Zimmer'))+'</span>'+(roomSub(r)?'<span class="rg"> · '+roomSub(r)+'</span>':'')+(r.description?'<span class="rd">'+esc(r.description)+'</span>':'')+'</span>'
-          +'<span class="rp"><b>'+euro(r.offer.total,r.offer.currency)+'</b>'+T('gesamt')+'</span></label>';
-      }).join('')+'</div>';
-      $$('#bk-rooms input[name=bkroom]').forEach(function(inp){inp.addEventListener('change',function(){
-        bkRoom=avail.filter(function(r){return String(r.roomId)===String(inp.value)})[0];
-        $$('#bk-rooms .room-opt').forEach(function(o){o.classList.remove('sel')});inp.closest('.room-opt').classList.add('sel');
-        renderBkSummary();});});
-    } else rp.innerHTML='';
-    renderBkSummary();
-    $('#bk-form').style.display='';$('#bk-actions').style.display='';
-    ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
-  }
-  function closeBooking(){ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.body.style.overflow=''}
-  function msg(t,html){$('#bk-msg').innerHTML='<div class="msg '+t+'">'+html+'</div>'}
-  if(ov){
-    $('#bk-close').addEventListener('click',closeBooking);
-    $('#bk-cancel').addEventListener('click',closeBooking);
-    ov.addEventListener('click',function(e){if(e.target===ov)closeBooking()});
-    $('#bk-submit').addEventListener('click',function(){
-      var f=$('#bk-form');
-      var data={accId:$('#bk-accId').value,roomId:(bkRoom&&bkRoom.roomId)||'',roomName:(bkRoom&&bkRoom.name)||'',
-        checkin:state.checkin,checkout:state.checkout,adults:parseInt(state.adults,10)||2,childrenAges:state.childrenAges||[],guests:state.guests||2,
-        title:f.title.value,firstName:f.firstName.value.trim(),lastName:f.lastName.value.trim(),
-        email:f.email.value.trim(),phone:f.phone.value.trim(),notes:f.notes.value.trim()};
-      if(!data.firstName||!data.lastName||!data.email){msg('err',T('Bitte Vorname, Nachname und E-Mail ausfüllen.'));return;}
-      if(!f.agb.checked){msg('err',T('Bitte AGB & Datenschutz akzeptieren.'));return;}
-      var btn=$('#bk-submit');btn.disabled=true;btn.textContent=T('Wird gebucht…');
-      fetch('/api/book?lang='+(window.__LANG||'de'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)})
-        .then(function(r){return r.json()}).then(function(res){
-          btn.disabled=false;btn.textContent=T('Jetzt verbindlich buchen');
-          if(res.ok){$('#bk-form').style.display='none';$('#bk-actions').style.display='none';$('#bk-rooms').innerHTML='';
-            msg('ok','<b>'+T('Buchung bestätigt!')+'</b><br>'+T('Buchungsnummer:')+' <b>'+(res.bookingId||'\\u2014')+'</b><br>'+T('Du erhältst in Kürze eine Bestätigung per E-Mail.')+(res.demo?'<br><em>'+T('(Demo-Modus \\u2013 keine echte Buchung erstellt)')+'</em>':''));
-          }else{msg('err',res.error||T('Buchung fehlgeschlagen.'))}
-        }).catch(function(){btn.disabled=false;btn.textContent=T('Jetzt verbindlich buchen');msg('err',T('Netzwerkfehler. Bitte erneut versuchen.'))});
-    });
-  }
-  // ---- detail window (gallery + info + website link) ----
-  var dt=$('#dtOverlay');
-  function openDetail(acc){
-    if(!acc)return;
-    var imgs=(acc.images&&acc.images.length)?acc.images:(acc.image?[acc.image]:[]);
-    var main=$('#dt-main');
-    if(imgs.length){main.className='main';main.style.backgroundImage="url('"+imgs[0]+"')";}else{main.className='main noimg';main.style.backgroundImage='';}
-    var th=$('#dt-thumbs');
-    if(imgs.length>1){th.style.display='';th.innerHTML=imgs.map(function(u,i){return '<div class="th'+(i===0?' active':'')+'" data-i="'+i+'" style="background-image:url(\\''+u+'\\')"></div>';}).join('');
-      $$('#dt-thumbs .th').forEach(function(t){t.addEventListener('click',function(){main.style.backgroundImage="url('"+imgs[+t.getAttribute('data-i')]+"')";$$('#dt-thumbs .th').forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});
-    }else{th.style.display='none';th.innerHTML='';}
-    $('#dt-title').textContent=acc.name;
-    $('#dt-rating').innerHTML=acc.rating?('\\u2605 '+esc(acc.rating)):'';
-    $('#dt-meta').innerHTML=(acc.location?'<span class="chip">\\ud83d\\udccd '+esc(acc.location)+'</span>':'')+(acc.type?'<span class="chip">'+esc(acc.type)+'</span>':'')+(acc.maxGuests?'<span class="chip">'+T('bis {n} Gäste',{n:acc.maxGuests})+'</span>':'')+(acc.roomCount>1?'<span class="chip">'+T('{n} Zimmer',{n:acc.roomCount})+'</span>':'');
-    $('#dt-desc').textContent=acc.description||'';
-    $('#dt-feats').innerHTML=(acc.featureLabels||[]).map(function(f){return '<span class="fi">'+f.icon+' '+esc(f.label)+'</span>';}).join('');
-    var rhtml='';
-    if(acc.connected){
-      var avail=roomsWithOffers(acc);
-      if(state.checkin&&state.checkout){
-        if(avail.length)rhtml='<div class="dt-sec-title">'+T('Verfügbare Zimmer')+'</div><div class="rooms-pick">'+avail.map(function(r){return '<div class="room-opt"><span><span class="rn">'+esc(r.name||T('Zimmer'))+'</span>'+(roomSub(r)?'<span class="rg"> · '+roomSub(r)+'</span>':'')+(r.description?'<span class="rd">'+esc(r.description)+'</span>':'')+(r.features&&r.features.length?'<span class="rf">'+r.features.slice(0,5).map(function(f){return '<span>'+esc(f)+'</span>'}).join('')+'</span>':'')+'</span><span class="rp"><b>'+euro(r.offer.total,r.offer.currency)+'</b>'+T('gesamt')+'</span></div>';}).join('')+'</div>';
-        else rhtml='<p class="note-web">'+T('Für diese Daten leider nicht verfügbar – bitte andere Daten wählen.')+'</p>';
-      }else rhtml='<p class="note-web">'+T('Wähle oben Anreise & Abreise für Live-Preise.')+'</p>';
-    }else rhtml='<p class="note-web">'+T('Preise & Buchung direkt über die Website der Unterkunft.')+'</p>';
-    $('#dt-rooms').innerHTML=rhtml;
-    var a='';
-    if(acc.connected){var canBook=state.checkin&&state.checkout&&roomsWithOffers(acc).length;a+='<button class="btn btn-primary" id="dt-book"'+(canBook?'':' disabled style="opacity:.5;cursor:default"')+'>'+T('Jetzt buchen')+'</button>';}
-    if(acc.link)a+='<a class="dt-web" href="'+esc(acc.link)+'" target="_blank" rel="noopener">'+T('Zur Website \\u2192')+'</a>';
-    $('#dt-actions').innerHTML=a;
-    var b=$('#dt-book');if(b)b.addEventListener('click',function(){closeDetail();openBooking(acc);});
-    dt.classList.add('open');dt.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
-  }
-  function closeDetail(){dt.classList.remove('open');dt.setAttribute('aria-hidden','true');document.body.style.overflow=''}
-  if(dt){$('#dt-close').addEventListener('click',closeDetail);dt.addEventListener('click',function(e){if(e.target===dt)closeDetail();});}
-  run();
-})();
-</script>`;
 
 // Interactive ad banner for the delivery partner kochdu.at (Gastronomie page).
 function kochduBanner() {
@@ -1659,7 +1355,7 @@ function listingPage(c, items, kind) {
   const sub = isGastro ? c.gastronomie_sub : c.unterkuenfte_sub;
   const intro = isGastro ? c.gastronomie_intro : c.unterkuenfte_intro;
   const active = isGastro ? "/gastronomie" : "/unterkuenfte";
-  const pageTitle = (isGastro ? "Gastronomie" : "Unterkünfte") + " | VALUERO";
+  const pageTitle = isGastro ? "Gastronomie im Montafon – Restaurants, Cafés & Pizzerias | VALUERO" : "Unterkünfte | VALUERO";
   const body = `
   <section class="page-hero">
     <div class="container">
@@ -1723,7 +1419,7 @@ function eventsPage(c, events, opts) {
     type: e.type || "",
     location: e.location || "",
     description: e.description || "",
-    website: e.website || "",
+    website: safeUrl(e.website),
     dateLabel: whenLabel(e),
     dateText: e._extra,
     images: [e.image].concat(parseGallery(e.gallery)).filter((u, i, a) => u && a.indexOf(u) === i).map(pimg),
@@ -2241,7 +1937,12 @@ function accBookingFields(it) {
       .join("")}</div></div>`
   ).join("");
   const apiOn = String(it.api_url || "").trim();
-  return `
+  const plat = platform.of(it);
+  const platInfo = plat
+    ? `<div class="section-sep">VALUERO Partner <span class="beds-badge on">● verknüpft: ${esc(plat.slug)}</span></div>
+    <p class="hint" style="margin:-6px 0 14px">Preise, Belegungskalender, Anreiseregeln und Buchung kommen automatisch von der Plattform. Gäste buchen auf <a href="${esc(plat.base)}/b/${esc(plat.slug)}" target="_blank" rel="noopener">${esc(plat.base.replace(/^https?:\/\//, ""))}/b/${esc(plat.slug)}</a> (Reisedaten werden übergeben). Die Felder unten werden beim stündlichen Abgleich gesetzt.</p>`
+    : "";
+  return `${platInfo}
     <div class="section-sep">Externe Buchungs-API ${
       apiOn
         ? `<span class="beds-badge on">● aktiv – Preise/Buchung von der eigenen App</span>`
@@ -2508,7 +2209,13 @@ function parseCookies(req) {
   if (!raw) return out;
   raw.split(";").forEach((p) => {
     const i = p.indexOf("=");
-    if (i > -1) out[p.slice(0, i).trim()] = decodeURIComponent(p.slice(i + 1).trim());
+    if (i > -1) {
+      try {
+        out[p.slice(0, i).trim()] = decodeURIComponent(p.slice(i + 1).trim());
+      } catch (e) {
+        /* kaputtes Cookie ignorieren statt 500 */
+      }
+    }
   });
   return out;
 }
@@ -2521,15 +2228,20 @@ function checkPassword(pw) {
   return crypto.timingSafeEqual(a, b);
 }
 
+function isHttps(req) {
+  return !!(req && (req.secure || String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim() === "https"));
+}
 function issueCookie(res) {
   const token = sign({ admin: true, exp: Date.now() + MAX_AGE });
   res.setHeader(
     "Set-Cookie",
     `${COOKIE}=${token}; HttpOnly; Path=/; Max-Age=${Math.floor(
       MAX_AGE / 1000
-    )}; SameSite=Lax`
+    )}; SameSite=Lax${isHttps(res.req) ? "; Secure" : ""}`
   );
 }
+if (!process.env.ADMIN_PASSWORD || !process.env.SESSION_SECRET)
+  console.warn("WARNUNG: ADMIN_PASSWORD und/oder SESSION_SECRET nicht gesetzt – unsichere Standardwerte aktiv!");
 
 function clearCookie(res) {
   res.setHeader("Set-Cookie", `${COOKIE}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax`);
@@ -2625,6 +2337,7 @@ async function init() {
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS gallery TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS api_url TEXT DEFAULT ''`);
   await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS api_key TEXT DEFAULT ''`);
+  await query(`ALTER TABLE accommodations ADD COLUMN IF NOT EXISTS partner_slug TEXT DEFAULT ''`);
   // ---- Event columns: real date range (for sorting/past-events) + image gallery ----
   await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS event_date DATE`);
   await query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS event_end_date DATE`);
@@ -2688,7 +2401,7 @@ async function enrich() {
   ];
   const gas = [
     ["La Torteria", "https://www.la-torteria.at/", W("https://static.wixstatic.com/media/d2f3ea_d045d75d0c0c4447b7dd3b16a5ecf785~mv2.jpeg/v1/fill/img.jpeg")],
-    ["Blauer Anton", "https://www.antonhaus.at/blaueranton", W("https://static.wixstatic.com/media/d2f3ea_f299e7c05a5948caaec520f7a00f04e8~mv2.jpg/v1/fill/img.jpg")],
+    ["Blauer Anton", "https://antonhaus.at/blauer-anton", W("https://static.wixstatic.com/media/d2f3ea_f299e7c05a5948caaec520f7a00f04e8~mv2.jpg/v1/fill/img.jpg")],
     ["La Taverna", "https://www.la-taverna-pizzeria.at/", W("https://static.wixstatic.com/media/11062b_b6f3a9bdc88b4195b4af6792d79e28ac~mv2.jpg")],
     ["Alt Montafon", "https://www.alt-montafon.com/alt-montafon-gaschurn", ""],
   ];
@@ -2959,6 +2672,9 @@ async function enrich() {
   await query(`UPDATE content SET value = REPLACE(value, $1, $2) WHERE key='datenschutz_html' AND strpos(value, $1) > 0`,
     ["<p>Die Website wird bei <em>Railway Corp.</em> gehostet; die Auslieferung erfolgt ggf. über ein Content-Delivery-Netzwerk. Mit den eingesetzten Dienstleistern bestehen Auftragsverarbeitungsverträge nach Art. 28 DSGVO.</p>", "<p>Die Website wird bei einem externen Hosting-Dienstleister betrieben, der in unserem Auftrag tätig ist (Auftragsverarbeiter nach Art. 28 DSGVO). Beim Aufruf der Website verarbeitet er die in Abschnitt 4 genannten technisch notwendigen Daten (Server-Logfiles), um die Website auszuliefern und abzusichern; die Auslieferung erfolgt ggf. über ein Content-Delivery-Netzwerk. Mit den eingesetzten Dienstleistern bestehen Auftragsverarbeitungsverträge nach Art. 28 DSGVO.</p>"]);
 
+  // ---- Toter Link (404) korrigieren: Blauer Anton ist auf der neuen Antonhaus-Website umgezogen – nur exakt die alte URL ----
+  await query(`UPDATE gastro SET link='https://antonhaus.at/blauer-anton' WHERE link='https://www.antonhaus.at/blaueranton'`);
+
   // ---- Impressum: Bildnachweis ergänzen (nur wenn noch nicht vorhanden) ----
   const bildnachweis = `<h3>Bildnachweis</h3><p>Fotos der Unterkünfte und Gastronomiebetriebe: von den jeweiligen Inhabern bereitgestellt bzw. von deren Websites (Nutzung mit Genehmigung; die Inhaber sind für die Weitergabe verantwortlich). Stimmungs- und Themenbilder (Berge, Café, Veranstaltungen u. a.): Unsplash (unsplash.com), kostenlos und kommerziell nutzbar gemäß Unsplash-Lizenz. Vallüla-Titelbild: Robinhood50 / Wikimedia Commons, CC BY-SA 4.0. Restliche Grafiken: FS Creative &amp; Canva.</p>`;
   await query(`UPDATE content SET value = value || $1 WHERE key='impressum_html' AND value NOT LIKE '%Bildnachweis%'`, [bildnachweis]);
@@ -3109,6 +2825,7 @@ const db = { pool, query, init, getAllContent, setContent };
 const express = require("express");
 const beds24 = require("./beds24");
 const partnerapi = require("./partnerapi");
+const platform = require("./platform");
 
 const app = express();
 app.disable("x-powered-by");
@@ -3236,7 +2953,18 @@ app.get("/img", async (req, res) => {
     const t = setTimeout(() => ctrl.abort(), 12000);
     let r;
     try {
-      r = await fetch(url, { signal: ctrl.signal, redirect: "follow", headers: { accept: "image/*" } });
+      // Weiterleitungen selbst verfolgen und jedes Ziel erneut prüfen (sonst SSRF über Redirect auf interne Adressen).
+      let target = url;
+      for (let hop = 0; hop < 4; hop++) {
+        r = await fetch(target, { signal: ctrl.signal, redirect: "manual", headers: { accept: "image/*" } });
+        if (r.status < 300 || r.status >= 400) break;
+        const loc = r.headers.get("location");
+        if (!loc) break;
+        const next = new URL(loc, target);
+        if ((next.protocol !== "https:" && next.protocol !== "http:") || !(await hostIsPublic(next.hostname))) return res.status(400).end();
+        target = next.toString();
+        r = null;
+      }
     } finally {
       clearTimeout(t);
     }
@@ -3597,30 +3325,78 @@ function seoLandingPage(c, opts) {
     active: kind === "gastro" ? "/gastronomie" : "/unterkuenfte",
     body,
     content: c,
-    seo: { canonical, description, keywords, jsonLd, robots: items.length ? "index,follow" : "noindex,follow" },
+    seo: { canonical, description: trimDesc(description), keywords, jsonLd, robots: items.length ? "index,follow" : "noindex,follow" },
   });
 }
 
-// Full, crawlable accommodation detail page.
+// Full, crawlable accommodation detail page with booking box (dates/guests pop-ups, live price,
+// availability calendar for platform houses, hand-over to the platform booking page).
 function accDetailPage(c, row, rooms, req) {
+  const plat = c.__plat || null; // { info, connected, platform } from the route
+  const info = plat && plat.info;
+  const unit = info && info.units && info.units.length === 1 ? info.units[0] : null;
   const imgs = [row.image, ...parseGallery(row.gallery)].filter((u) => u && u.length > 5).filter((v, i, a) => a.indexOf(v) === i);
   const main = imgs[0] || "";
+  const shown = imgs.slice(0, 5);
   const gallery = imgs.length
-    ? `<div class="detail-gallery">
-        <div class="dg-main" style="${imgStyle(main, row.name)}"></div>
-        ${imgs.length > 1 ? `<div class="dg-thumbs">${imgs.slice(0, 6).map((u) => `<div class="dg-th" style="background-image:url('${esc(pimg(u))}')"></div>`).join("")}</div>` : ""}
-      </div>`
+    ? `<div class="dx-gal n${shown.length}">${shown
+        .map((u, i) => `<button type="button" class="g${i}" data-lb="${i}" aria-label="Foto ${i + 1} von ${imgs.length} vergrößern"><img src="${esc(pimg(u))}" alt="${esc(row.name)} – Foto ${i + 1}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async"></button>`)
+        .join("")}${imgs.length > 1 ? `<button type="button" class="dx-all" data-lb="0">Alle ${imgs.length} Fotos</button>` : ""}</div>`
     : "";
   const feats = parseFeatures(row.features);
   const featHTML = feats.length
-    ? `<div class="detail-feats">${feats.map((k) => `<span class="fi">${FEATURE_ICON[k]} ${esc(FEATURE_LABEL[k])}</span>`).join("")}</div>`
+    ? `<h2>Ausstattung</h2><div class="dx-feats">${feats.map((k) => `<span>${FEATURE_ICON[k]} ${esc(FEATURE_LABEL[k])}</span>`).join("")}</div>`
     : "";
-  const roomHTML = rooms.length
-    ? `<h2 style="font-size:24px;margin:26px 0 12px">Zimmer</h2><ul class="detail-rooms">${rooms
+  const roomHTML = rooms.length > 1
+    ? `<h2>Zimmer &amp; Wohnungen</h2><ul class="detail-rooms">${rooms
         .map((r) => `<li><strong>${esc(r.name || i18n.tjs("Zimmer"))}</strong>${r.max_guests ? ` · bis ${r.max_guests} Gäste` : ""}</li>`)
         .join("")}</ul>`
     : "";
-  const web = row.link ? `<a class="btn btn-ghost" href="${esc(row.link)}" target="_blank" rel="noopener">Zur Website ↗</a>` : "";
+  // Beschreibung: lange Fassung von der Plattform (mit Absätzen), sonst Admin-Text.
+  const longDesc = (unit && unit.description) || (info && info.profile && info.profile.description) || row.description || "";
+  const descHTML = longDesc
+    .split(/\n{2,}|\r\n\r\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => `<p>${esc(p)}</p>`)
+    .join("");
+  const highlights = (info && info.page && Array.isArray(info.page.highlights) ? info.page.highlights : []).slice(0, 6);
+  const facts = [];
+  const cap = Math.max(row.max_guests || 0, ...rooms.map((r) => r.max_guests || 0), unit ? unit.maxGuests || 0 : 0);
+  if (cap) facts.push(["Gäste", `bis ${cap} Personen`]);
+  if (unit && unit.sizeM2) facts.push(["Größe", `${String(unit.sizeM2).replace(".", ",")} m²`]);
+  if (unit && unit.bedrooms) facts.push(["Schlafzimmer", String(unit.bedrooms)]);
+  if (unit && unit.bathrooms) facts.push(["Bäder", String(unit.bathrooms)]);
+  if (info && info.settings && info.settings.checkInFrom) facts.push(["Check-in", `${info.settings.checkInFrom}${info.settings.checkInUntil ? "–" + info.settings.checkInUntil : ""} Uhr`]);
+  if (info && info.settings && info.settings.checkOutUntil) facts.push(["Check-out", `bis ${info.settings.checkOutUntil} Uhr`]);
+  const factsHTML = facts.length ? `<div class="dx-facts">${facts.map(([k, v]) => `<div><b>${esc(k)}</b><span>${esc(v)}</span></div>`).join("")}</div>` : "";
+  const cancel = info && info.rules && info.rules.cancellation ? `<h2>Storno &amp; Bedingungen</h2><p class="dx-small" style="font-size:15px">${esc(info.rules.cancellation)}</p>` : "";
+
+  const connected = !!(plat && plat.connected);
+  const isPlat = !!(plat && plat.platform);
+  const prefill = c.__prefill || {};
+  const web = row.link ? `<a class="btn btn-ghost" href="${esc(safeUrl(row.link))}" target="_blank" rel="noopener" style="width:100%;justify-content:center">Zur Website der Unterkunft ↗</a>` : "";
+  const box = connected
+    ? `<aside class="bx" id="bx" data-id="${row.id}" data-platform="${isPlat ? 1 : 0}" data-connected="1" data-max="${cap || 0}" aria-label="Verfügbarkeit &amp; Buchung">
+        <div class="bx-price" id="bxPrice">${plat.fromPrice ? `ab <b>${esc(eur(plat.fromPrice))}</b> / Nacht` : "Live-Preis für deine Reisedaten"}</div>
+        <form class="bx-fields vsb-bind" id="bxForm" onsubmit="return false">
+          <button type="button" class="vsb-f" data-open="dates" aria-haspopup="dialog"><span class="l">Reisedaten</span><span class="v ph" data-v="dates">Anreise – Abreise</span></button>
+          <button type="button" class="vsb-f" data-open="guests" aria-haspopup="dialog"><span class="l">Gäste</span><span class="v" data-v="guests">2 Erwachsene</span></button>
+          ${stayHidden(prefill)}
+        </form>
+        <div id="bxOut" aria-live="polite"></div>
+        <a class="btn btn-primary bx-cta" id="bxCta" role="button">Reisedaten wählen</a>
+        <p class="bx-note">${isPlat ? "Gebucht wird direkt beim Gastgeber über die sichere VALUERO-Buchungsseite – mit allen Bedingungen &amp; Zahlungsoptionen auf einen Blick." : "Sichere Buchung über VALUERO – direkt beim Gastgeber."}</p>
+        ${row.link && !isPlat ? `<a class="dt-web" href="${esc(safeUrl(row.link))}" target="_blank" rel="noopener" style="justify-content:center">Zur Website ↗</a>` : ""}
+      </aside>`
+    : `<aside class="bx" aria-label="Preise &amp; Buchung">
+        <h3 style="font-size:22px">Preise &amp; Buchung</h3>
+        <p class="dx-small">Diese Unterkunft bucht ihr direkt über die Website des Gastgebers – dort findet ihr aktuelle Preise und freie Termine.</p>
+        ${web}
+      </aside>`;
+  const calSection = isPlat
+    ? `<h2>Belegung &amp; Reisedaten</h2><div class="dx-cal"><div id="dxCal" class="rp-inline"><p class="dx-small">Belegung wird geladen …</p></div></div>`
+    : "";
   const trail = [
     { name: i18n.t("Home"), href: "/" },
     { name: i18n.t("Unterkünfte"), href: "/unterkuenfte" },
@@ -3628,42 +3404,41 @@ function accDetailPage(c, row, rooms, req) {
   ];
   const title = `${row.name}${row.location ? " – " + row.location : ""} | VALUERO`;
   const desc = trimDesc(row.description || `${row.name} im Montafon`);
+  const meta = [row.type, row.location ? "📍 " + row.location : "", cap ? `bis ${cap} Gäste` : ""].filter(Boolean);
   const body = `
-  <section class="page-hero">
+  <section class="page-hero" style="padding-bottom:22px">
     <div class="container">
       ${breadcrumbsHTML(trail)}
-      <div class="eyebrow">${esc(row.type || "Unterkunft")}${row.location ? " · " + esc(row.location) : ""}</div>
       <h1>${esc(row.name)}</h1>
-      ${row.rating ? `<p class="rating" style="color:var(--gold);font-weight:600">★ ${esc(row.rating)}</p>` : ""}
+      <p class="dx-small" style="font-size:16px;margin-top:8px">${meta.map(esc).join(" · ")}${row.rating ? ` · <span style="color:var(--gold);font-weight:600">★ ${esc(row.rating)}</span>` : ""}</p>
     </div>
   </section>
-  <section class="section" style="padding-top:30px"><div class="container">
+  <section class="section" style="padding-top:22px"><div class="container">
     ${gallery}
-    <div class="detail-cols">
-      <div class="detail-main">
-        <p class="lead" style="font-size:19px;color:var(--muted);margin-bottom:18px">${esc(row.description)}</p>
+    <div class="dx-cols">
+      <div class="dx-main">
+        ${factsHTML}
+        ${highlights.length ? `<ul class="dx-high" style="margin-top:18px">${highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
+        <h2>Über die Unterkunft</h2>
+        <div class="dx-desc">${descHTML}</div>
         ${featHTML}
         ${roomHTML}
+        ${calSection}
+        ${cancel}
       </div>
-      <aside class="detail-cta">
-        <h3>Jetzt buchen</h3>
-        <p class="muted" style="font-size:14px;margin:6px 0 14px">Reisedaten wählen und ${row.beds24_property_id ? "direkt online buchen" : "Verfügbarkeit prüfen"}.</p>
-        <a class="btn btn-primary" href="/unterkuenfte?ort=${encodeURIComponent(row.location || "")}" style="width:100%;justify-content:center">Verfügbarkeit &amp; Preise</a>
-        <div style="margin-top:10px">${web}</div>
-      </aside>
+      ${box}
     </div>
   </div></section>
-  <div class="detail-mobilecta">
-    <a class="btn btn-primary" href="/unterkuenfte?ort=${encodeURIComponent(row.location || "")}">Verfügbarkeit &amp; Preise</a>
-    ${row.link ? `<a class="btn btn-ghost" href="${esc(row.link)}" target="_blank" rel="noopener">Website</a>` : ""}
-  </div>
-  <script>document.body.classList.add('has-mobilecta');</script>
+  ${connected ? `<div class="dx-mbar" id="dxMbar"><div class="pp">${plat.fromPrice ? `ab <b>${esc(eur(plat.fromPrice))}</b> / Nacht` : "<b>Verfügbarkeit prüfen</b>"}</div><a class="btn btn-primary" role="button">Reisedaten wählen</a></div><script>document.body.classList.add('has-dxbar');</script>` : ""}
+  <script>window.__DX_IMGS=${JSON.stringify(imgs.map(pimg)).replace(/</g, "\\u003c")};</script>
   ${relatedHTML("Weitere Unterkünfte", (c.__related || []).map((r) => ({ href: accHref(r), label: r.name })))}`;
   return layout({
     title,
     active: "/unterkuenfte",
     body,
     content: c,
+    bookingUI: true,
+    extraScript: BUI_ASSETS.detail,
     seo: {
       canonical: absUrl(req, accHref(row)),
       description: desc,
@@ -3681,7 +3456,7 @@ function eventDetailPage(c, ev, req) {
     { name: i18n.t("Veranstaltungen"), href: "/veranstaltungen" },
     { name: ev.name, href: eventHref(ev) },
   ];
-  const web = ev.website ? `<a class="btn btn-primary" href="${esc(ev.website)}" target="_blank" rel="noopener">Zur Veranstaltung ↗</a>` : "";
+  const web = safeUrl(ev.website) ? `<a class="btn btn-primary" href="${esc(safeUrl(ev.website))}" target="_blank" rel="noopener">Zur Veranstaltung ↗</a>` : "";
   const iso = dateISO(ev.event_date) || parseGermanDate(ev.date_text);
   const isoEnd = dateISO(ev.event_end_date);
   const extra = ev.event_date ? ev.date_text || "" : "";
@@ -3749,6 +3524,13 @@ Object.keys(FSC_FILES).forEach((p) => app.get(p, (req, res) => {
   res.type(FSC_FILES[p][0]).send(FSC_FILES[p][1]);
 }));
 
+app.get("/assets/:file", (req, res, next) => {
+  const f = BUI_FILES.files[req.params.file];
+  if (!f) return next();
+  res.set("Cache-Control", req.query.v === BUI_FILES.v ? "public, max-age=31536000, immutable" : "public, max-age=300");
+  res.type(f[0]).send(f[1]);
+});
+
 app.get("/", async (req, res, next) => {
   try {
     const c = await db.getAllContent();
@@ -3761,18 +3543,7 @@ app.get("/", async (req, res, next) => {
 app.get("/unterkuenfte", async (req, res, next) => {
   try {
     const c = await db.getAllContent();
-    c.__prefill = {
-      checkin: req.query.checkin || "",
-      checkout: req.query.checkout || "",
-      guests: req.query.guests || "",
-      adults: req.query.adults || "",
-      children: req.query.children || "",
-      childrenAges: []
-        .concat(req.query.childAge || [])
-        .concat(String(req.query.childrenAges || "").split(","))
-        .map((x) => parseInt(x, 10))
-        .filter((n) => Number.isFinite(n) && n >= 0),
-    };
+    c.__prefill = stayFromQuery(req.query);
     const items = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
     c.__seo = {
       canonical: absUrl(req, "/unterkuenfte"),
@@ -3879,7 +3650,7 @@ app.post("/veranstaltungen/einreichen", async (req, res, next) => {
       date_text: String(b.date_text || "").slice(0, 80),
       event_date: eventDate,
       event_end_date: eventEnd,
-      website: String(b.website || "").slice(0, 300),
+      website: safeUrl(String(b.website || "").slice(0, 300)),
       submitter: String(b.submitter || "").slice(0, 200),
     };
     await db.query(
@@ -3993,119 +3764,166 @@ function publicAcc(row, connected, rooms) {
     badge: row.badge || "",
     image: pimg(row.image || ""),
     images: images.map(pimg),
-    link: row.link || "",
+    link: safeUrl(row.link),
     features: featureKeys,
     featureLabels: featureKeys.map((k) => ({ key: k, label: FEATURE_LABEL[k], icon: FEATURE_ICON[k] })),
     maxGuests: capacity,
     roomCount: (rooms || []).length,
     connected: !!connected,
+    url: accHref(row),
   };
 }
 
-// GET /api/search — accommodations + live price/availability for dates & filters.
+// ---- Reisedaten/Gäste aus der Query lesen (gemeinsam für Suche, Detail, Preis) ----
+function stayFromQuery(q) {
+  const childrenAges = []
+    .concat(q.childAge || [])
+    .concat(String(q.childrenAges || "").split(","))
+    .map((x) => parseInt(x, 10))
+    .filter((n) => Number.isFinite(n) && n >= 0 && n < 18)
+    .slice(0, 8);
+  const adults = Math.min(20, Math.max(1, parseInt(q.adults, 10) || parseInt(q.guests, 10) || 2));
+  const checkin = validDate(q.checkin) ? q.checkin : "";
+  const checkout = validDate(q.checkout) ? q.checkout : "";
+  const datesValid = !!(checkin && checkout && beds24.nights(checkin, checkout) > 0 && checkin >= platform.addDays(platform.todayVienna(), -1));
+  return { checkin: datesValid ? checkin : "", checkout: datesValid ? checkout : "", adults, childrenAges, guests: adults + childrenAges.length, datesValid };
+}
+
+const cheapest = (rooms) => (rooms || []).filter((r) => r.offer && r.offer.available).sort((a, b) => a.offer.total - b.offer.total)[0] || null;
+
+// ---- VALUERO-Partner-Plattform: Kalender, Regeln, Live-Preis, Alternativtermine, Übergabe-Link ----
+async function platformOffer(row, p, stay, { suggest = true } = {}) {
+  const lang = i18n.getLang();
+  const base = publicAcc(row, true, []);
+  let cal = null;
+  try {
+    cal = await platform.calendar(p, stay.guests);
+  } catch (e) {
+    // 404 = Haus pausiert / Online-Buchung aus → wie ein Eintrag ohne Buchung behandeln (Website-Link)
+    if (e.status === 404 || e.status === 423) return { ...base, connected: false, offer: null, rooms: [] };
+    console.error("Plattform-Kalender", row.name, e.message);
+  }
+  const today = platform.todayVienna();
+  const acc = {
+    ...base,
+    platform: true,
+    fromPrice: cal ? platform.fromPrice(cal) : null,
+    rules: cal
+      ? platform.rulesFor(cal, stay.datesValid ? platform.addDays(stay.checkin, -14) : today, stay.datesValid ? platform.addDays(stay.checkout, 14) : platform.addDays(today, 365))
+      : null,
+    bookUrl: platform.bookingUrl(p, stay, lang),
+    suggestions: [],
+  };
+  if (!stay.datesValid) return { ...acc, offer: null, rooms: [] };
+  let data;
+  try {
+    data = await platform.quote(p, stay);
+  } catch (e) {
+    console.error("Plattform-Preis", row.name, e.message);
+    return { ...acc, offer: { error: true, available: false }, rooms: [] };
+  }
+  const rooms = data.rooms || [];
+  const cap = Math.max(row.max_guests || 0, ...rooms.map((r) => r.maxGuests || 0), 0);
+  if (cap) acc.maxGuests = cap;
+  const best = cheapest(rooms);
+  const offer = best ? best.offer : (rooms[0] && rooms[0].offer) || { available: false, reason: "" };
+  if (!best && suggest && cal && !(cap && stay.guests > cap)) {
+    const cands = platform.suggestStays(cal, stay, 4).slice(0, 3);
+    const priced = await Promise.all(
+      cands.map(async (s) => {
+        try {
+          const b = cheapest((await platform.quote(p, { ...stay, ...s })).rooms);
+          return b ? { ...s, total: b.offer.total, currency: b.offer.currency || "EUR", bookUrl: platform.bookingUrl(p, { ...stay, ...s }, lang) } : null;
+        } catch (e) {
+          return null;
+        }
+      })
+    );
+    acc.suggestions = priced.filter(Boolean).slice(0, 2);
+  }
+  return { ...acc, offer, rooms };
+}
+
+// Partner-API-Angebote (eigene Buchungs-App, z. B. Antonhaus) kurz zwischenspeichern.
+function partnerOfferCached(row, stay) {
+  const key = ["papi", row.id, row.api_url, stay.checkin, stay.checkout, stay.adults, stay.childrenAges.join(",")].join("|");
+  return platform.cached(key, 3 * 60e3, () => partnerapi.getOffer(row, stay));
+}
+
+// Ein Eintrag inkl. Preis/Verfügbarkeit – Plattform-Haus, eigene Partner-API, Beds24 oder nur Website.
+// Gibt null zurück, wenn die Gästezahl die Kapazität übersteigt.
+async function accOffer(row, stay, opts) {
+  const p = platform.of(row);
+  if (p) {
+    const r = await platformOffer(row, p, stay, opts);
+    if (stay.guests && r.maxGuests && stay.guests > r.maxGuests && !(opts && opts.keepAll)) return null;
+    return r;
+  }
+  if (partnerapi.hasApi(row)) {
+    let roomOffers = [];
+    if (stay.datesValid) {
+      try {
+        const data = await partnerOfferCached(row, stay);
+        roomOffers = (data.rooms || []).map((r) => ({
+          roomId: r.roomId, name: r.name, maxGuests: r.maxGuests, size: r.size || null, floor: r.floor || "",
+          bedrooms: r.bedrooms || null, bathrooms: r.bathrooms || null, description: r.description || "",
+          features: Array.isArray(r.features) ? r.features : [], offer: r.offer,
+        }));
+      } catch (e) {
+        console.error("Partner API error", row.name, e.message);
+        roomOffers = [{ roomId: "", name: "", maxGuests: 0, offer: { error: true, available: false } }];
+      }
+    }
+    const cap = Math.max(row.max_guests || 0, ...roomOffers.map((r) => r.maxGuests || 0), 0);
+    if (stay.guests && cap && stay.guests > cap && !(opts && opts.keepAll)) return null;
+    const best = cheapest(roomOffers);
+    const acc = publicAcc(row, true, roomOffers.map((r) => ({ max_guests: r.maxGuests })));
+    return { ...acc, offer: best ? best.offer : (roomOffers[0] && roomOffers[0].offer) || null, rooms: roomOffers.filter((r) => r.roomId) };
+  }
+  const rooms = await getRooms(db, row);
+  const connected = accConnected(row, rooms);
+  const acc = publicAcc(row, connected, rooms);
+  if (stay.guests && acc.maxGuests && stay.guests > acc.maxGuests && !(opts && opts.keepAll)) return null;
+  let roomOffers = [];
+  if (stay.datesValid && connected) {
+    const eligible = rooms.filter((room) => !(stay.guests && room.max_guests && stay.guests > room.max_guests));
+    roomOffers = await Promise.all(
+      eligible.map(async (room) => {
+        let offer = null;
+        try {
+          offer = await beds24.getStayOffer(db, row, room, stay.checkin, stay.checkout, stay.guests || 2);
+        } catch (e) {
+          console.error("Beds24 offer error", acc.name, room.name, e.message);
+          offer = { error: true, available: false };
+        }
+        return { roomId: room.beds24_room_id || String(room.id), name: room.name, maxGuests: room.max_guests, offer };
+      })
+    );
+  }
+  const best = cheapest(roomOffers);
+  return { ...acc, offer: best ? best.offer : (roomOffers[0] && roomOffers[0].offer) || null, rooms: roomOffers };
+}
+
+// GET /api/search — alle Unterkünfte inkl. Live-Preis/Verfügbarkeit für Reisedaten & Gäste.
+// Weiche Filter (Ort/Typ/Ausstattung/Preis) laufen im Browser, damit knappe Treffer sichtbar bleiben.
 app.get("/api/search", async (req, res, next) => {
   try {
-    const { checkin, checkout } = req.query;
-    const childrenAges = String(req.query.childrenAges || "")
-      .split(",")
-      .map((x) => parseInt(x, 10))
-      .filter((n) => Number.isFinite(n) && n >= 0);
-    const adultsEff = Math.max(1, parseInt(req.query.adults, 10) || parseInt(req.query.guests, 10) || 2);
-    let guests = Math.max(0, parseInt(req.query.guests, 10) || 0);
-    if (!guests) guests = adultsEff + childrenAges.length;
-    const wantFeatures = String(req.query.features || "")
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-    const type = String(req.query.type || "").toLowerCase();
-    const loc = String(req.query.loc || "").toLowerCase();
-    const priceMax = parseInt(req.query.priceMax, 10) || 0;
-    const datesValid = validDate(checkin) && validDate(checkout) && beds24.nights(checkin, checkout) > 0;
-
+    const stay = stayFromQuery(req.query);
     const rows = (await db.query("SELECT * FROM accommodations ORDER BY sort, id")).rows;
-    // Price every accommodation concurrently (partner APIs + Beds24 in parallel)
-    // instead of one after another — this is the main search-latency win.
-    async function processRow(row) {
-      // --- External partner booking API (own pricing logic per accommodation) ---
-      if (partnerapi.hasApi(row)) {
-        // Soft filters (type/location/features/price) are applied client-side so
-        // near-misses can still be shown greyed-out; here we only price & cap-check.
-        let roomOffers = [];
-        if (datesValid) {
-          try {
-            const data = await partnerapi.getOffer(row, { checkin, checkout, adults: adultsEff, childrenAges });
-            roomOffers = (data.rooms || []).map((r) => ({
-              roomId: r.roomId,
-              name: r.name,
-              maxGuests: r.maxGuests,
-              size: r.size || null,
-              floor: r.floor || "",
-              bedrooms: r.bedrooms || null,
-              bathrooms: r.bathrooms || null,
-              description: r.description || "",
-              features: Array.isArray(r.features) ? r.features : [],
-              offer: r.offer,
-            }));
-          } catch (e) {
-            console.error("Partner API error", row.name, e.message);
-            roomOffers = [{ roomId: "", name: "", maxGuests: 0, offer: { error: true, available: false } }];
-          }
-        }
-        const cap = Math.max(row.max_guests || 0, ...roomOffers.map((r) => r.maxGuests || 0), 0);
-        if (guests && cap && guests > cap) return null;
-        const best = roomOffers.filter((r) => r.offer && r.offer.available).sort((a, b) => a.offer.total - b.offer.total)[0];
-        const topOffer = best ? best.offer : (roomOffers[0] && roomOffers[0].offer) || null;
-        const acc = publicAcc(row, true, roomOffers.map((r) => ({ max_guests: r.maxGuests })));
-        return { ...acc, offer: topOffer, rooms: roomOffers.filter((r) => r.roomId) };
-      }
-      const rooms = await getRooms(db, row);
-      const connected = accConnected(row, rooms);
-      const acc = publicAcc(row, connected, rooms);
-      // Soft filters (type/location/features/price) run client-side (see above);
-      // guests capacity stays a hard server filter.
-      if (guests && acc.maxGuests && guests > acc.maxGuests) return null;
-
-      // Price each room for the stay (rooms priced concurrently); headline = cheapest available room.
-      let roomOffers = [];
-      if (datesValid && connected) {
-        const eligible = rooms.filter((room) => !(guests && room.max_guests && guests > room.max_guests));
-        roomOffers = await Promise.all(
-          eligible.map(async (room) => {
-            let offer = null;
-            try {
-              offer = await beds24.getStayOffer(db, row, room, checkin, checkout, guests || 2);
-            } catch (e) {
-              console.error("Beds24 offer error", acc.name, room.name, e.message);
-              offer = { error: true, available: false };
-            }
-            return { roomId: room.beds24_room_id || String(room.id), name: room.name, maxGuests: room.max_guests, offer };
-          })
-        );
-      }
-      let best = null;
-      for (const ro of roomOffers) {
-        if (ro.offer && ro.offer.available && (!best || ro.offer.total < best.offer.total)) best = ro;
-      }
-      const topOffer = best
-        ? best.offer
-        : (roomOffers.find((r) => r.offer && r.offer.available) || {}).offer ||
-          (roomOffers[0] && roomOffers[0].offer) ||
-          null;
-      return { ...acc, offer: topOffer, rooms: roomOffers };
-    }
-    const results = (await Promise.all(rows.map(processRow))).filter(Boolean);
-    // Beds24-connected accommodations always rank first (a small advantage),
-    // then available, then original order.
-    results.sort((a, b) => {
-      const cn = (x) => (x.connected ? 0 : 1);
-      const av = (x) => (x.offer && x.offer.available ? 0 : 1);
-      return cn(a) - cn(b) || av(a) - av(b);
-    });
+    const results = (await Promise.all(rows.map((row) => accOffer(row, stay).catch((e) => {
+      console.error("Suche", row.name, e.message);
+      return publicAcc(row, false, []);
+    })))).filter(Boolean);
+    const rank = (x) => (x.offer && x.offer.available ? 0 : x.connected ? 1 : 2);
+    results.sort((a, b) => rank(a) - rank(b));
+    res.set("Cache-Control", "no-store");
     res.json({
-      checkin: datesValid ? checkin : null,
-      checkout: datesValid ? checkout : null,
-      nights: datesValid ? beds24.nights(checkin, checkout) : 0,
-      guests: guests || null,
+      checkin: stay.checkin || null,
+      checkout: stay.checkout || null,
+      nights: stay.datesValid ? beds24.nights(stay.checkin, stay.checkout) : 0,
+      adults: stay.adults,
+      childrenAges: stay.childrenAges,
+      guests: stay.guests,
       count: results.length,
       results,
     });
@@ -4114,51 +3932,40 @@ app.get("/api/search", async (req, res, next) => {
   }
 });
 
-// GET /api/quote/:id — fresh price for one accommodation + stay.
-app.get("/api/quote/:id", async (req, res, next) => {
+// GET /api/quote/:id — Preis & Verfügbarkeit einer Unterkunft (Detailseite).
+app.get("/api/quote/:id", async (req, res) => {
   try {
-    const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [req.params.id])).rows[0];
+    const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [parseInt(req.params.id, 10) || 0])).rows[0];
     if (!row) return res.status(404).json({ ok: false, error: "Unterkunft nicht gefunden." });
-    const { checkin, checkout } = req.query;
-    const guests = Math.max(1, parseInt(req.query.guests, 10) || 2);
-    if (!validDate(checkin) || !validDate(checkout) || beds24.nights(checkin, checkout) < 1)
-      return res.status(400).json({ ok: false, error: "Bitte gültige An- und Abreise wählen." });
-    const rooms = await getRooms(db, row);
-    const connected = accConnected(row, rooms);
-    const acc = publicAcc(row, connected, rooms);
-    if (!connected) return res.json({ ok: true, connected: false, acc, offer: null, rooms: [] });
-    const roomOffers = [];
-    for (const room of rooms) {
-      let offer = null;
-      try {
-        offer = await beds24.getStayOffer(db, row, room, checkin, checkout, guests);
-      } catch (e) {
-        offer = { error: true, available: false };
-      }
-      roomOffers.push({ roomId: room.beds24_room_id || String(room.id), name: room.name, maxGuests: room.max_guests, offer });
-    }
-    const best = roomOffers.filter((r) => r.offer && r.offer.available).sort((a, b) => a.offer.total - b.offer.total)[0];
-    res.json({ ok: true, connected: true, acc, offer: best ? best.offer : null, rooms: roomOffers });
+    const stay = stayFromQuery(req.query);
+    const acc = await accOffer(row, stay, { keepAll: true });
+    res.set("Cache-Control", "no-store");
+    res.json({ ok: true, nights: stay.datesValid ? beds24.nights(stay.checkin, stay.checkout) : 0, acc });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message || "Preis konnte nicht geladen werden." });
+    console.error("Preis", e.message);
+    res.status(500).json({ ok: false, error: "Preis konnte nicht geladen werden." });
   }
 });
 
-// GET /api/calendar/:id — per-day availability & price for the date picker.
-app.get("/api/calendar/:id", async (req, res, next) => {
+// GET /api/calendar/:id — Belegung pro Tag für den Datumsauswahl-Dialog (Plattform-Häuser inkl. Anreisetage/Mindestaufenthalt).
+app.get("/api/calendar/:id", async (req, res) => {
   try {
-    const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [req.params.id])).rows[0];
+    const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [parseInt(req.params.id, 10) || 0])).rows[0];
     if (!row) return res.status(404).json({ ok: false, error: "Unterkunft nicht gefunden." });
+    res.set("Cache-Control", "private, max-age=120");
+    const p = platform.of(row);
+    if (p) {
+      const cal = await platform.calendar(p, stayFromQuery(req.query).guests);
+      return res.json({ ok: true, platform: true, days: platform.compactCalendar(cal), rules: platform.rulesFor(cal, platform.todayVienna(), platform.addDays(platform.todayVienna(), 365)) });
+    }
     const from = validDate(req.query.from) ? req.query.from : new Date().toISOString().slice(0, 10);
-    const to = validDate(req.query.to)
-      ? req.query.to
-      : new Date(Date.now() + 180 * 86400000).toISOString().slice(0, 10);
+    const to = validDate(req.query.to) ? req.query.to : new Date(Date.now() + 180 * 86400000).toISOString().slice(0, 10);
     const rooms = await getRooms(db, row);
     const room = rooms.find((r) => String(r.beds24_room_id || r.id) === String(req.query.roomId)) || rooms[0];
-    const cal = room ? await beds24.getCalendar(db, row, room, from, to) : [];
-    res.json({ ok: true, connected: accConnected(row, rooms), calendar: cal });
+    const cal = room && accConnected(row, rooms) && !partnerapi.hasApi(row) ? await beds24.getCalendar(db, row, room, from, to) : [];
+    res.json({ ok: true, platform: false, connected: accConnected(row, rooms), calendar: cal });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message || "Kalender konnte nicht geladen werden." });
+    res.status(e.status === 404 ? 404 : 500).json({ ok: false, error: "Kalender konnte nicht geladen werden." });
   }
 });
 
@@ -4169,6 +3976,8 @@ app.post("/api/book", async (req, res, next) => {
     const id = parseInt(b.accId, 10) || 0;
     const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [id])).rows[0];
     if (!row) return res.status(404).json({ ok: false, error: "Unterkunft nicht gefunden." });
+    // Plattform-Häuser werden auf der Buchungsseite der Plattform gebucht (Bedingungen, Zahlung, Bestätigung).
+    if (platform.of(row)) return res.status(400).json({ ok: false, error: "Bitte über die Buchungsseite der Unterkunft buchen." });
 
     // --- External partner booking API path (own pricing/booking logic) ---
     if (partnerapi.hasApi(row)) {
@@ -4287,7 +4096,7 @@ function defaultAccFaqs() {
 }
 
 app.get("/robots.txt", (req, res) => {
-  res.type("text/plain").send(`User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${absUrl(req, "/sitemap.xml")}\n`);
+  res.type("text/plain").send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: ${absUrl(req, "/sitemap.xml")}\n`);
 });
 
 app.get("/sitemap.xml", async (req, res, next) => {
@@ -4453,9 +4262,26 @@ app.get("/unterkunft/:id/:slug?", async (req, res, next) => {
     const row = (await db.query("SELECT * FROM accommodations WHERE id=$1", [parseInt(req.params.id, 10) || 0])).rows[0];
     if (!row) return next();
     const correct = slugify(row.name);
-    if (req.params.slug !== correct) return res.redirect(301, `/unterkunft/${row.id}/${correct}`);
+    if (req.params.slug !== correct) {
+      const qi = req.originalUrl.indexOf("?");
+      return res.redirect(301, `/unterkunft/${row.id}/${correct}` + (qi > -1 ? req.originalUrl.slice(qi) : ""));
+    }
     const c = await db.getAllContent();
     const rooms = (await db.query("SELECT * FROM rooms WHERE accommodation_id=$1 ORDER BY sort, id", [row.id])).rows;
+    c.__prefill = stayFromQuery(req.query);
+    const p = platform.of(row);
+    if (p) {
+      // Profil + Kalender (für „ab"-Preis) parallel; gecacht – bei Ausfall bleibt die Seite trotzdem vollständig.
+      const [info, cal] = await Promise.all([
+        platform.info(p).catch((e) => (e.status === 404 ? "off" : null)),
+        platform.calendar(p, c.__prefill.guests).catch(() => null),
+      ]);
+      c.__plat = info === "off" ? { connected: false } : { platform: true, connected: true, info, fromPrice: cal ? platform.fromPrice(cal) : null };
+    } else {
+      const r = await getRooms(db, row);
+      c.__plat = { platform: false, connected: accConnected(row, r) || partnerapi.hasApi(row) };
+    }
+    if (Object.keys(req.query).length) res.set("X-Robots-Tag", "noindex, follow"); // Varianten mit Reisedaten nicht indexieren (canonical zeigt auf die Basis-URL)
     c.__related = (await db.query("SELECT * FROM accommodations WHERE id<>$1 ORDER BY sort, id LIMIT 6", [row.id])).rows;
     res.send(accDetailPage(c, row, rooms, req));
   } catch (e) { next(e); }
@@ -4478,11 +4304,23 @@ app.get("/admin/login", (req, res) => {
   if (auth.isAuthed(req)) return res.redirect("/admin");
   res.send(A.loginPage(req.query.e ? "Falsches Passwort." : ""));
 });
+// Brute-Force-Schutz: max. 10 Fehlversuche pro IP in 15 Minuten.
+const LOGIN_FAILS = new Map();
 app.post("/admin/login", (req, res) => {
+  // letzter X-Forwarded-For-Eintrag stammt vom Proxy (Railway) und ist nicht vom Client fälschbar
+  const ip = String(req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",").pop().trim();
+  const now = Date.now();
+  const rec = LOGIN_FAILS.get(ip);
+  if (rec && rec.until > now && rec.n >= 10) return res.status(429).send(A.loginPage("Zu viele Versuche – bitte in 15 Minuten erneut probieren."));
   if (auth.checkPassword(req.body.password)) {
+    LOGIN_FAILS.delete(ip);
     auth.issueCookie(res);
     return res.redirect("/admin");
   }
+  const r = rec && rec.until > now ? rec : { n: 0, until: now + 15 * 60e3 };
+  r.n++;
+  LOGIN_FAILS.set(ip, r);
+  if (LOGIN_FAILS.size > 5000) LOGIN_FAILS.clear();
   res.redirect("/admin/login?e=1");
 });
 app.get("/admin/logout", (req, res) => {
@@ -4665,17 +4503,86 @@ app.post("/admin/webdesign", async (req, res, next) => {
 });
 
 // ---- 404 + error ----
-app.use((req, res) => res.status(404).send('Nicht gefunden – <a href="/">zur Startseite</a>'));
+app.use(async (req, res) => {
+  res.status(404);
+  if (req.path.startsWith("/api/") || req.path.startsWith("/admin")) return res.send('Nicht gefunden – <a href="/">zur Startseite</a>');
+  try {
+    const c = await db.getAllContent();
+    res.send(
+      layout({
+        title: "Seite nicht gefunden | VALUERO",
+        active: "",
+        content: c,
+        seo: { robots: "noindex,follow" },
+        body: `<section class="page-hero"><div class="container"><div class="eyebrow">404</div><h1>Diese Seite gibt es nicht (mehr).</h1><p>Vielleicht findest du hier, was du suchst:</p><div class="hero-actions" style="margin-top:22px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-primary" href="/unterkuenfte">Unterkünfte</a><a class="btn btn-ghost" href="/veranstaltungen">Veranstaltungen</a><a class="btn btn-ghost" href="/">Startseite</a></div></div></section>`,
+      })
+    );
+  } catch (e) {
+    res.send('Nicht gefunden – <a href="/">zur Startseite</a>');
+  }
+});
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send("Serverfehler. Bitte später erneut versuchen.");
 });
 
 const PORT = process.env.PORT || 3000;
+// ---- Automatischer Abgleich mit VALUERO Partner (partner.valuero.at) ----
+// Häuser, die dort freigeschaltet sind (Modul „valuero.at-Listing“), erscheinen hier automatisch –
+// inkl. Buchungs-API für Live-Preise & Direktbuchung. Env: PARTNER_URL + VALUERO_SYNC_TOKEN.
+// Neu angelegt wird nur, was es noch nicht gibt; manuelle Admin-Änderungen an Texten/Bildern bleiben erhalten.
+async function syncPartnerListings() {
+  const base = (process.env.PARTNER_URL || "").replace(/\/+$/, "");
+  const tok = process.env.VALUERO_SYNC_TOKEN || "";
+  if (!base || !tok) return;
+  try {
+    const r = await fetch(base + "/api/valuero/listings", { headers: { "x-sync-token": tok, accept: "application/json" }, signal: AbortSignal.timeout(20000) });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const { listings = [] } = await r.json();
+    const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    for (const l of listings) {
+      if (!l || !/^[A-Za-z0-9_-]+$/.test(String(l.slug || ""))) continue;
+      let ex = (await db.query("SELECT id FROM accommodations WHERE partner_slug=$1", [l.slug])).rows[0];
+      if (!ex) {
+        // Bereits manuell angelegtes Haus (gleicher Name, noch nicht verknüpft) übernehmen statt doppelt anzulegen.
+        const cand = (await db.query("SELECT id, name FROM accommodations WHERE COALESCE(partner_slug,'')=''")).rows;
+        ex = cand.find((r) => norm(r.name) && norm(r.name) === norm(l.name));
+        if (ex) {
+          await db.query("UPDATE accommodations SET partner_slug=$2 WHERE id=$1", [ex.id, l.slug]);
+          console.log("VALUERO Partner: bestehendes Haus verknüpft –", ex.name, "→", l.slug);
+        }
+      }
+      if (ex) {
+        await db.query(
+          `UPDATE accommodations SET api_url=$2, api_key=$3,
+             link = CASE WHEN COALESCE(link,'')='' THEN $4 ELSE link END,
+             image = CASE WHEN COALESCE(image,'')='' THEN $5 ELSE image END,
+             gallery = CASE WHEN COALESCE(gallery,'')='' THEN $6 ELSE gallery END,
+             features = CASE WHEN COALESCE(features,'')='' THEN $7 ELSE features END,
+             max_guests = CASE WHEN COALESCE(max_guests,0)=0 THEN $8 ELSE max_guests END
+           WHERE id=$1`,
+          [ex.id, l.apiUrl, l.apiKey, l.website, l.image, (l.gallery || []).join("\n"), (l.features || []).join(","), l.maxGuests || 0]
+        );
+      } else {
+        await db.query(
+          `INSERT INTO accommodations (name, description, location, type, link, image, gallery, features, max_guests, api_url, api_key, partner_slug, sort)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,(SELECT COALESCE(MAX(sort),0)+1 FROM accommodations))`,
+          [l.name, l.description || "", l.location || "", l.type || "Ferienwohnung", l.website || "", l.image || "", (l.gallery || []).join("\n"), (l.features || []).join(","), l.maxGuests || 0, l.apiUrl, l.apiKey, l.slug]
+        );
+        console.log("VALUERO Partner: neues Haus übernommen –", l.name);
+      }
+    }
+  } catch (e) {
+    console.error("Partner-Abgleich:", e.message);
+  }
+}
+
 function start() {
   db.init()
     .then(() => {
       app.listen(PORT, () => console.log("VALUERO läuft auf Port " + PORT));
+      syncPartnerListings();
+      setInterval(syncPartnerListings, 60 * 60 * 1000);
     })
     .catch((e) => {
       console.error("DB-Init fehlgeschlagen:", e);
@@ -4684,5 +4591,5 @@ function start() {
     });
 }
 if (require.main === module) start();
-module.exports = { app, V, A, db, auth, start };
+module.exports = { app, V, A, db, auth, start, syncPartnerListings };
 
