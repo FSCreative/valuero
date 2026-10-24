@@ -69,7 +69,11 @@ const BOOKING_CSS = String.raw`
 .rp-d:focus-visible{outline:none}
 .rp-d:focus-visible span{box-shadow:inset 0 0 0 2px var(--accent)}
 .rp-d:disabled{cursor:default;color:#b7bdb8}
-.rp-d.busy:not(.start):not(.end) span{text-decoration:line-through;color:#b7bdb8}
+.rp-d.busy:not(.start):not(.end):not(.h-in) span{text-decoration:line-through;color:#b7bdb8}
+/* halbe An-/Abreisetage: h-in = ab hier belegt (unten rechts), h-out = bis hier belegt (oben links) */
+.rp-d.h-in:not(.start):not(.end) span{background:linear-gradient(to bottom right,transparent calc(50% - .75px),#d3d9d1 calc(50% - .75px) calc(50% + .75px),#ececec calc(50% + .75px))}
+.rp-d.h-out:not(.start):not(.end) span{background:linear-gradient(to bottom right,#ececec calc(50% - .75px),#d3d9d1 calc(50% - .75px) calc(50% + .75px),transparent calc(50% + .75px))}
+.rp-d.h-in:not(.start):not(.end):disabled span{color:#9aa39d}
 .rp-d.noarr:not(.in):not(.end) span{color:#9aa39d;font-weight:500}
 .rp-d.in{background:#e6efe9}
 .rp-d.start{background:linear-gradient(90deg,transparent 50%,#e6efe9 50%)}
@@ -81,6 +85,7 @@ const BOOKING_CSS = String.raw`
 .rp-hint{display:flex;gap:10px;align-items:flex-start;background:#f6f1e4;border:1px solid #eadfc4;border-radius:14px;padding:10px 14px;font-size:14px;margin-bottom:12px}
 .rp-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:12px}
 .rp-legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line)}
+.rp-legend i.half{background:linear-gradient(to bottom right,#ececec 50%,#fff 50%)}
 .rp-status{font-size:14px;color:var(--muted);margin:4px 0 10px;min-height:20px}
 .rp-status b{color:var(--ink)}
 .rp-inline .rp-months{gap:34px}
@@ -382,7 +387,7 @@ const PICKER_JS = String.raw`
   }
 
   // ---------- calendar (shared by dialog + inline) ----------
-  // avail: {map:{iso:{f,a,x,m,p,u}}, rules} | null
+  // avail: {map:{iso:{f,a,x,m,p,u,h}}, rules} | null  (h: 1 = Anreisetag einer Buchung, 2 = Abreisetag einer Buchung → halb belegt)
   function Calendar(host,o){
     var st={ci:o.checkin||'',co:o.checkout||'',view:null};
     var av=o.avail||null,t0=today();
@@ -411,11 +416,14 @@ const PICKER_JS = String.raw`
         else if(picking){dis=!canArrive(s);if(av&&info&&info.f&&!info.a)cls+=' noarr'}
         else{dis=!(canDepart(s)||canArrive(s)||s===st.ci)}
         if(av&&info&&!info.f&&s>=t0)cls+=' busy';
+        var half=av&&info&&s>=t0&&s<=maxDay?info.h:0,tip='';
+        if(half===1){cls+=' h-in';tip=T('Ab dieser Nacht belegt – Abreise möglich')}
+        else if(half===2){cls+=' h-out';tip=T('Bis hier belegt – Anreise möglich')}
         if(s===st.ci)cls+=' start';if(s===st.co)cls+=' end';
         if(st.ci&&st.co&&s>st.ci&&s<st.co)cls+=' in';
         if(s===t0)cls+=' today';
         var price=av&&info&&info.f&&info.p&&!dis?'<small>'+Math.round(info.p)+'</small>':'';
-        h+='<button type="button" class="'+cls+'" data-d="'+s+'"'+(dis?' disabled':'')+' aria-label="'+esc(fmt(s,true))+'"'+(s===st.ci||s===st.co?' aria-pressed="true"':'')+'><span>'+k+price+'</span></button>';
+        h+='<button type="button" class="'+cls+'" data-d="'+s+'"'+(dis?' disabled':'')+(tip?' title="'+esc(tip)+'"':'')+' aria-label="'+esc(fmt(s,true)+(tip?', '+tip:''))+'"'+(s===st.ci||s===st.co?' aria-pressed="true"':'')+'><span>'+k+price+'</span></button>';
       }
       return h+'</div></div>';
     }
@@ -439,7 +447,7 @@ const PICKER_JS = String.raw`
         +'<div class="rp-status" aria-live="polite">'+status()+'</div>'
         +'<div class="rp-nav"><button type="button" class="pv" aria-label="'+esc(T('Vorheriger Monat'))+'"'+(canPrev?'':' disabled')+'>‹</button><button type="button" class="nx" aria-label="'+esc(T('Nächster Monat'))+'"'+(canNext?'':' disabled')+'>›</button></div>'
         +'<div class="rp-months">'+monthsHTML()+'</div>'
-        +(av?'<div class="rp-legend"><span><i style="background:#fff"></i>'+esc(T('frei'))+'</span><span><i style="background:#eee;text-decoration:line-through"></i>'+esc(T('belegt'))+'</span>'+(hint?'<span><i style="background:#f6f1e4"></i>'+esc(T('grau: keine Anreise möglich'))+'</span>':'')+'</div>':'');
+        +(av?'<div class="rp-legend"><span><i style="background:#fff"></i>'+esc(T('frei'))+'</span><span><i style="background:#eee;text-decoration:line-through"></i>'+esc(T('belegt'))+'</span><span><i class="half"></i>'+esc(T('An-/Abreisetag'))+'</span>'+(hint?'<span><i style="background:#f6f1e4"></i>'+esc(T('grau: keine Anreise möglich'))+'</span>':'')+'</div>':'');
       host.querySelector('.pv').onclick=function(){st.view=add(st.view,-1).slice(0,7)+'-01';render()};
       host.querySelector('.nx').onclick=function(){st.view=add(st.view,32).slice(0,7)+'-01';render()};
       Array.prototype.forEach.call(host.querySelectorAll('.rp-d:not(:disabled)'),function(b){b.onclick=function(){pick(b.getAttribute('data-d'))}});

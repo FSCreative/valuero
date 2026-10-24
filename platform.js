@@ -218,10 +218,14 @@ function suggestStays(cal, { checkin, checkout }, max) {
 }
 
 // Compact calendar for the browser date picker (only what it needs).
+// h = half day (changeover, like Booking.com/Airbnb): 1 = a booking starts here (night taken, night before free →
+// lower-right half booked, departure possible), 2 = a booking ends here (night before taken → upper-left half booked).
+// The night before comes from the platform (prevAnyFree, also for the first day) or from the previous entry.
 function compactCalendar(cal) {
   const unitIds = Object.keys(((cal || [])[0] || {}).units || {});
-  return (cal || []).map((d) => ({
+  return (cal || []).map((d, i, all) => ({
     d: d.date,
+    h: halfOf(d, all[i - 1]),
     f: d.bookable && d.anyFree ? 1 : 0, // free (at least one unit)
     a: d.arrivalOk ? 1 : 0,
     x: d.departureOk ? 1 : 0,
@@ -229,6 +233,13 @@ function compactCalendar(cal) {
     p: d.minPrice || null,
     u: unitIds.length > 1 ? unitIds.map((u) => (d.units[u] && d.units[u].free ? 1 : 0)).join("") : undefined,
   }));
+}
+
+function halfOf(d, prev) {
+  const prevFree = d.prevAnyFree != null ? !!d.prevAnyFree : prev && prev.date ? !!prev.anyFree : true;
+  if (!d.anyFree && prevFree) return 1;
+  if (d.anyFree && d.bookable && !prevFree) return 2;
+  return undefined;
 }
 
 module.exports = { of, cached, info, calendar, quote, bookingUrl, rulesFor, fromPrice, suggestStays, compactCalendar, isISO, addDays, diffDays, todayVienna, _cache: CACHE };
