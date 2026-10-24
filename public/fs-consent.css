@@ -235,6 +235,12 @@
   .fsc-actions { margin-top: 8px; gap: 6px; }
   .fsc-root .fsc-btn { padding: 8px 12px; font-size: 14px; }
   .fsc-links { margin: 6px 0 0; font-size: 11.5px; }
+  /* Text links, „Verstanden“ rechts daneben – verdeckt so kaum Inhalt (z. B. die Suche) */
+  .fsc-view:not(:has(.fsc-cat)) { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; align-items: center; }
+  .fsc-view:not(:has(.fsc-cat)) > * { grid-column: 1; }
+  .fsc-view:not(:has(.fsc-cat)) > .fsc-actions { grid-column: 2; grid-row: 1 / span 3; margin: 0; }
+  .fsc-view:not(:has(.fsc-cat)) .fsc-btn { min-height: 44px; padding: 8px 18px; width: auto; }
+  .fsc-links a { display: inline-block; padding: 4px 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -208,7 +208,6 @@ const BOOKING_CSS = String.raw`
   .dx-mbar .btn{white-space:nowrap;flex:0 0 auto;padding:12px 18px}
   body.has-dxbar{padding-bottom:76px}
 }
-@media(max-width:720px){.dx-mbar{bottom:calc(58px + env(safe-area-inset-bottom))}body.has-dxbar{padding-bottom:140px}}
 /* Lightbox */
 .lb{position:fixed;inset:0;z-index:210;background:rgba(10,14,12,.94);display:none;align-items:center;justify-content:center}
 .lb.open{display:flex}
@@ -216,6 +215,111 @@ const BOOKING_CSS = String.raw`
 .lb button{position:absolute;background:rgba(255,255,255,.14);color:#fff;border:0;width:48px;height:48px;border-radius:999px;font-size:24px;cursor:pointer}
 .lb .x{top:16px;right:16px}.lb .p{left:16px;top:50%;margin-top:-24px}.lb .n{right:16px;top:50%;margin-top:-24px}
 .lb .c{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:#fff;font-size:14px}
+/* ---- Handy & Tablet: Werkzeugleiste (Filter/Sortieren), Filter als Bottom-Sheet ---- */
+.rs-bar,.fp-foot{display:none}
+.vm-f:empty{display:none}
+.vm-opts{display:flex;flex-direction:column;gap:8px;padding:4px 0 8px}
+.vm-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 16px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);font:inherit;font-size:16px;font-weight:600;color:var(--ink);text-align:left;cursor:pointer}
+.vm-opt.on{border-color:var(--accent);background:#f1f7f3;color:var(--accent-d)}
+.vm-opt.on::after{content:"✓";font-weight:800}
+@media(max-width:900px){
+  .rs-wrap{display:flex;flex-direction:column}
+  .rs-intro{order:2;margin:30px 0 0!important;font-size:14.5px}
+  .rs-bar{display:flex;gap:10px;position:sticky;top:74px;z-index:30;margin:0 -24px 14px;padding:10px 24px;background:rgba(244,241,234,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .rs-bar-btn{flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 14px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-weight:600;font-size:15px;cursor:pointer;box-shadow:var(--shadow-sm)}
+  .rs-bar-btn svg{width:18px;height:18px;flex:0 0 auto}
+  .rs-bar-btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rs-bar-btn.on{border-color:var(--accent);color:var(--accent-d)}
+  .rs-badge{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--accent);color:#fff;font-size:12.5px;font-weight:700}
+  .rs-badge[hidden]{display:none}
+  .fp-sortgroup{display:none}
+  .filters-panel{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:120;max-height:88vh;max-height:88dvh;padding:0;gap:0;border:0;border-radius:22px 22px 0 0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-shadow:0 -20px 50px -20px rgba(0,0,0,.45);transform:translateY(105%);visibility:hidden;transition:transform .32s cubic-bezier(.22,.61,.36,1),visibility 0s linear .32s}
+  .filters-panel.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.22,.61,.36,1)}
+  .filters-panel .fp-close{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:10px 12px 10px 20px;background:var(--surface);border-bottom:1px solid var(--line);font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:21px;font-weight:600}
+  .filters-panel .fp-close button{width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:22px;line-height:1;cursor:pointer;color:var(--ink)}
+  .filters-panel .fp-group{padding:16px 20px 4px;border-top:1px solid var(--line)}
+  .filters-panel .fp-sortgroup+.fp-group{border-top:0}
+  .filters-panel .pill{min-height:44px;padding:0 16px;font-size:14.5px}
+  .filters-panel .chk{min-height:44px;font-size:15px}
+  .filters-panel .chk input{width:20px;height:20px}
+  .price-range input[type=range]{height:44px}
+  .fp-foot{display:flex;position:sticky;bottom:0;z-index:2;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:var(--surface);border-top:1px solid var(--line)}
+  .fp-foot .vm-link{min-height:44px}
+  .fp-foot .vm-ok{flex:1 1 auto;min-height:50px;padding:0 16px;font-size:16px;white-space:nowrap}
+  .filters-backdrop{position:fixed;inset:0;background:rgba(16,23,19,.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:110}
+  .filters-backdrop.open{opacity:1;pointer-events:auto}
+  .results-col{min-width:0}
+  .bx{scroll-margin-top:84px}
+}
+@media(min-width:901px){.filters-panel .fp-close{display:none}}
+@media(max-width:900px){.rs-bar{top:58px}}
+@media(max-width:720px){.rs-section{padding-top:14px!important}}
+@media(max-width:480px){.rs-bar{margin:0 -18px 14px;padding:10px 18px}}
+
+/* ---- Handy: Ergebniskarten, Pop-ups, Kalender ---- */
+@media(max-width:680px){
+  .rs-head{margin-bottom:10px}
+  .rs-count{font-size:14.5px;color:var(--muted)}
+  .rs-grid{gap:18px}
+  .rc-body{padding:16px}
+  .rc h3{font-size:19px}
+  .rc h3 a{display:block;padding:12px 0;margin:-12px 0}
+  .rc-price{flex-direction:column;align-items:stretch;gap:12px}
+  .rc-act{width:100%}
+  .rc-act .rc-btn{flex:1 1 0;min-height:48px;font-size:15px}
+  .rc-alt button{min-height:48px;align-items:center}
+  .vsb-f{min-height:58px}
+  .vsb-go{min-height:52px;font-size:16px}
+  .bx{padding:18px}
+}
+@media(max-width:640px){
+  .vm-h{padding:10px 10px 10px 18px}
+  .vm-h h2{font-size:20px}
+  .vm-x{width:44px;height:44px}
+  .vm-b{padding:0 16px 14px;overscroll-behavior:contain}
+  .vm-box.sm .vm-b{padding-top:6px}
+  .vm-b:has(+ .vm-f:empty){padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  .vm-f{padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+  .vm-ok{min-height:48px;padding:12px 26px;font-size:16px}
+  .vm-link{min-height:44px}
+  .gs-step button{width:44px;height:44px}
+  .gs-ages select{min-height:44px;font-size:16px}
+  .rp-nav button{width:44px;height:44px}
+  .rp-status{min-height:44px}
+  /* Pop-up-Kalender am Handy: Monate untereinander zum Scrollen, Hinweis bleibt oben stehen */
+  .rp-scroll .rp-status{position:sticky;top:0;z-index:3;margin:0 -16px 6px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line);font-size:15px;line-height:1.45}
+  .rp-scroll .rp-hint{margin-top:12px}
+  .rp-scroll .rp-nav{display:none}
+  .rp-scroll .rp-months{grid-template-columns:1fr;gap:20px}
+  .rp-scroll .rp-m h3{text-align:left;font-size:17px;margin:4px 0 6px}
+  .dx-cal{padding:12px 10px}
+}
+
+/* ---- Detailseite am Handy: wischbare Galerie, Buchungsleiste über der Tab-Leiste ---- */
+.dx-galwrap{position:relative;margin-bottom:28px}
+.dx-gal{margin-bottom:0}
+.dx-gal .gx,.dx-count{display:none}
+@media(max-width:720px){
+  .dx-galwrap{margin:0 -24px 22px}
+  .dx-gal,.dx-gal.n1,.dx-gal.n2,.dx-gal.n3,.dx-gal.n4,.dx-gal.n5{display:flex;gap:0;border-radius:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain}
+  .dx-gal::-webkit-scrollbar{display:none}
+  .dx-gal button,.dx-gal .gx,.dx-gal .g3,.dx-gal .g4{display:block;flex:0 0 100%;width:100%;height:auto;aspect-ratio:4/3;max-height:60vh;scroll-snap-align:start;scroll-snap-stop:always;grid-row:auto;grid-column:auto;cursor:pointer}
+  .dx-gal button:hover img{transform:none}
+  .dx-all{right:12px;bottom:12px;min-height:44px;font-size:13.5px}
+  .dx-count{display:block;position:absolute;left:12px;bottom:12px;background:rgba(12,20,15,.66);color:#fff;font-size:13px;font-weight:600;padding:7px 12px;border-radius:999px;pointer-events:none}
+  .dx-main h2{font-size:23px;margin-top:26px}
+}
+@media(max-width:900px){
+  .dx-mbar{bottom:calc(var(--tabbar-h,60px) + env(safe-area-inset-bottom));padding:8px 12px 8px 16px;min-height:66px}
+  .dx-mbar .pp{flex:1 1 auto;min-width:0;min-height:48px;background:none;border:0;padding:2px 0;font:inherit;font-size:12.5px;line-height:1.3;color:var(--muted);text-align:left;cursor:pointer}
+  .dx-mbar .pp b{font-size:18px;white-space:nowrap}
+  .dx-mbar .pp span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dx-mbar .pp u{text-decoration:underline;text-underline-offset:2px;color:var(--ink)}
+  .dx-mbar .btn{min-height:48px;padding:0 18px}
+  body.has-dxbar{padding-bottom:calc(var(--tabbar-h,60px) + 74px + env(safe-area-inset-bottom))}
+}
+@media(max-width:480px){.dx-galwrap{margin:0 -18px 22px}}
+.lb .c{bottom:calc(20px + env(safe-area-inset-bottom))}
 `;
 
 // ---------------------------------------------------------------------------
@@ -283,7 +387,8 @@ const PICKER_JS = String.raw`
     var st={ci:o.checkin||'',co:o.checkout||'',view:null};
     var av=o.avail||null,t0=today();
     var maxDay=av&&av.last?av.last:add(t0,730);
-    var first=st.ci||t0;st.view=first.slice(0,7)+'-01';
+    // o.scroll (Handy-Pop-up): Monate ab heute untereinander zum Scrollen statt Blättern
+    var first=o.scroll?t0:(st.ci||t0);st.view=first.slice(0,7)+'-01';
     function day(s){return av?av.map[s]:null}
     function unitFreeRun(ci,co){ // all nights free in one unit?
       if(!av)return true;var d0=day(ci);if(!d0)return false;var n=nights(ci,co);
@@ -320,15 +425,20 @@ const PICKER_JS = String.raw`
       if(!st.co){var d0=day(st.ci),mn=d0&&d0.m>1?d0.m:0;return '<b>'+esc(fmt(st.ci))+'</b> → '+T('Wähle dein Abreisedatum.')+(mn?' ('+T('mind. {n} Nächte',{n:mn})+')':'')}
       var n=nights(st.ci,st.co);return '<b>'+esc(fmtRange(st.ci,st.co))+'</b> · '+T(n===1?'{n} Nacht':'{n} Nächte',{n:n});
     }
+    function monthsHTML(){
+      if(!o.scroll)return monthHTML(st.view)+monthHTML(add(st.view,32).slice(0,7)+'-01');
+      var h='',m=st.view;for(var i=0;i<12&&m.slice(0,7)<=maxDay.slice(0,7);i++){h+=monthHTML(m);m=add(m,32).slice(0,7)+'-01'}return h;
+    }
     function render(){
       var v2=add(st.view,32).slice(0,7)+'-01';
       var canPrev=st.view>t0.slice(0,7)+'-01';
       var canNext=v2.slice(0,7)<maxDay.slice(0,7);
       var hint=av&&av.rules?hintText(av.rules):'';
+      if(o.scroll)host.classList.add('rp-scroll');
       host.innerHTML=(hint&&o.showHint!==false?'<div class="rp-hint"><span aria-hidden="true">📅</span><span>'+esc(hint)+(av.rules.arrivalDays&&av.rules.arrivalDays.length?' – '+esc(T('nicht wählbare Tage sind ausgegraut.')):'')+'</span></div>':'')
         +'<div class="rp-status" aria-live="polite">'+status()+'</div>'
         +'<div class="rp-nav"><button type="button" class="pv" aria-label="'+esc(T('Vorheriger Monat'))+'"'+(canPrev?'':' disabled')+'>‹</button><button type="button" class="nx" aria-label="'+esc(T('Nächster Monat'))+'"'+(canNext?'':' disabled')+'>›</button></div>'
-        +'<div class="rp-months">'+monthHTML(st.view)+monthHTML(v2)+'</div>'
+        +'<div class="rp-months">'+monthsHTML()+'</div>'
         +(av?'<div class="rp-legend"><span><i style="background:#fff"></i>'+esc(T('frei'))+'</span><span><i style="background:#eee;text-decoration:line-through"></i>'+esc(T('belegt'))+'</span>'+(hint?'<span><i style="background:#f6f1e4"></i>'+esc(T('grau: keine Anreise möglich'))+'</span>':'')+'</div>':'');
       host.querySelector('.pv').onclick=function(){st.view=add(st.view,-1).slice(0,7)+'-01';render()};
       host.querySelector('.nx').onclick=function(){st.view=add(st.view,32).slice(0,7)+'-01';render()};
@@ -340,11 +450,11 @@ const PICKER_JS = String.raw`
       else if(st.ci&&!st.co&&canDepart(s))st.co=s;
       else if(canArrive(s)){st.ci=s;st.co=''}
       render();
-      var b=host.querySelector('[data-d="'+s+'"]');if(b)b.focus();
+      var b=host.querySelector('[data-d="'+s+'"]');if(b)b.focus(o.scroll?{preventScroll:true}:undefined);
       if(o.onChange)o.onChange(st.ci,st.co);
     }
     render();
-    return {get:function(){return {checkin:st.ci,checkout:st.co}},set:function(ci,co){st.ci=ci||'';st.co=co||'';if(ci)st.view=ci.slice(0,7)+'-01';render()},clear:function(){st.ci='';st.co='';render();if(o.onChange)o.onChange('','')}};
+    return {get:function(){return {checkin:st.ci,checkout:st.co}},set:function(ci,co){st.ci=ci||'';st.co=co||'';if(ci&&!o.scroll)st.view=ci.slice(0,7)+'-01';render()},clear:function(){st.ci='';st.co='';render();if(o.onChange)o.onChange('','')}};
   }
 
   function openDates(o){
@@ -353,8 +463,10 @@ const PICKER_JS = String.raw`
       '<div class="sum"></div><div class="acts"><button type="button" class="vm-link clr">'+esc(T('Löschen'))+'</button><button type="button" class="vm-ok">'+esc(T('Übernehmen'))+'</button></div>');
     var sum=md.el.querySelector('.sum'),ok=md.el.querySelector('.vm-ok');
     function upd(ci,co){ok.disabled=!(ci&&co)&&!!ci;sum.innerHTML=ci&&co?'<b>'+esc(T(nights(ci,co)===1?'{n} Nacht':'{n} Nächte',{n:nights(ci,co)}))+'</b>':''}
-    var cal=Calendar(md.el.querySelector('.rp'),{checkin:o.checkin,checkout:o.checkout,avail:o.avail,onChange:upd});
+    var scroll=!!(window.matchMedia&&window.matchMedia('(max-width:640px)').matches);
+    var cal=Calendar(md.el.querySelector('.rp'),{checkin:o.checkin,checkout:o.checkout,avail:o.avail,onChange:upd,scroll:scroll});
     upd(o.checkin,o.checkout);
+    if(scroll&&o.checkin){var sel=md.el.querySelector('[data-d="'+o.checkin+'"]'),vb=md.el.querySelector('.vm-b');if(sel&&vb)vb.scrollTop=Math.max(0,sel.getBoundingClientRect().top-vb.getBoundingClientRect().top-140)}
     md.el.querySelector('.clr').onclick=function(){cal.clear()};
     ok.onclick=function(){var v=cal.get();md.close();if(o.onApply)o.onApply(v.checkin&&v.checkout?v.checkin:'',v.checkin&&v.checkout?v.checkout:'')};
   }
@@ -420,14 +532,56 @@ const SEARCH_JS = String.raw`
   function cur(){return V.readForm(form)}
   function qs(v){var p=[];if(v.checkin&&v.checkout){p.push('checkin='+v.checkin,'checkout='+v.checkout)}p.push('adults='+v.adults);if(v.ages.length)p.push('childrenAges='+v.ages.join(','));return p.join('&')}
 
-  // ---- Filter-Panel (unverändert bedienbar) ----
+  var loaded=false;
+  // ---- Filter-Panel (Desktop: Seitenleiste, Handy/Tablet: Bottom-Sheet) ----
+  function refresh(){updFilterUi(null);if(loaded)render(last)}
   $$('.pills').forEach(function(p){p.addEventListener('click',function(e){var b=e.target.closest('.pill');if(!b)return;
     $$('.pill',p).forEach(function(x){x.classList.remove('active');x.setAttribute('aria-pressed','false')});b.classList.add('active');b.setAttribute('aria-pressed','true');
-    flt[p.getAttribute('data-group')]=b.getAttribute('data-val');render(last)})});
-  $$('.f-feat').forEach(function(ch){ch.addEventListener('change',function(){flt.features=$$('.f-feat').filter(function(x){return x.checked}).map(function(x){return x.value});render(last)})});
+    flt[p.getAttribute('data-group')]=b.getAttribute('data-val');refresh()})});
+  $$('.f-feat').forEach(function(ch){ch.addEventListener('change',function(){flt.features=$$('.f-feat').filter(function(x){return x.checked}).map(function(x){return x.value});refresh()})});
   var price=$('#f-price');
-  if(price)price.addEventListener('input',function(){var v=parseInt(price.value,10);flt.priceMax=v>=parseInt(price.max,10)?0:v;$('#priceLbl').textContent=flt.priceMax?T('bis {p} / Nacht',{p:euro(flt.priceMax)}):T('egal');render(last)});
-  var sort=$('#f-sort');if(sort)sort.addEventListener('change',function(){flt.sort=sort.value;render(last)});
+  function priceLbl(){$('#priceLbl').textContent=flt.priceMax?T('bis {p} / Nacht',{p:euro(flt.priceMax)}):T('egal')}
+  if(price)price.addEventListener('input',function(){var v=parseInt(price.value,10);flt.priceMax=v>=parseInt(price.max,10)?0:v;priceLbl();refresh()});
+  var SORTS=[['best','Empfohlen'],['price-asc','Preis: aufsteigend'],['price-desc','Preis: absteigend']];
+  var sort=$('#f-sort');if(sort)sort.addEventListener('change',function(){setSort(sort.value)});
+  function sortLabel(){for(var i=0;i<SORTS.length;i++)if(SORTS[i][0]===flt.sort)return T(SORTS[i][1]);return T('Empfohlen')}
+  function setSort(v){flt.sort=v;if(sort)sort.value=v;var l=$('#sortLbl');if(l)l.textContent=sortLabel();if(loaded)render(last)}
+
+  // Handy/Tablet: „Filter“-Knopf mit Anzahl aktiver Filter öffnet das Sheet, „Sortieren“ ein Pop-up.
+  var fp=$('#filtersPanel'),fbd=$('#filtersBackdrop'),fbtn=$('#filterToggle'),sbtn=$('#sortToggle'),fApply=$('#fltApply'),fpFocus=null;
+  function activeCount(){return (flt.type?1:0)+(flt.loc?1:0)+(flt.priceMax?1:0)+flt.features.length}
+  function updFilterUi(hits){
+    var n=activeCount(),b=$('#fltCount');if(b){b.textContent=n;b.hidden=!n}
+    if(fbtn){fbtn.classList.toggle('on',!!n);fbtn.setAttribute('aria-label',n?T('Filter ({n} aktiv)',{n:n}):T('Filter'))}
+    if(fApply&&hits!=null)fApply.textContent=hits?T(hits===1?'{n} Unterkunft anzeigen':'{n} Unterkünfte anzeigen',{n:hits}):T('Keine Treffer – Filter lockern');
+    else if(fApply&&!loaded)fApply.textContent=T('Ergebnisse anzeigen');
+  }
+  function fpKey(e){
+    if(e.key==='Escape'){closeF();return}
+    if(e.key==='Tab'){var f=$$('button:not(:disabled),input:not(:disabled),select',fp).filter(function(x){return x.offsetParent!==null});if(!f.length)return;var a=f[0],z=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}
+  }
+  function openF(){if(!fp)return;fpFocus=document.activeElement;fp.classList.add('open');fp.setAttribute('role','dialog');fp.setAttribute('aria-modal','true');
+    if(fbd)fbd.classList.add('open');document.body.style.overflow='hidden';document.addEventListener('keydown',fpKey);
+    setTimeout(function(){var x=$('#fltClose');if(x)x.focus()},60)}
+  function closeF(){if(!fp||!fp.classList.contains('open'))return;fp.classList.remove('open');fp.removeAttribute('role');fp.removeAttribute('aria-modal');
+    if(fbd)fbd.classList.remove('open');document.body.style.overflow='';document.removeEventListener('keydown',fpKey);if(fpFocus&&fpFocus.focus)fpFocus.focus()}
+  function resetFilters(){flt.type='';flt.loc='';flt.features=[];flt.priceMax=0;
+    $$('.pills').forEach(function(p){$$('.pill',p).forEach(function(x,i){x.classList.toggle('active',!i);x.setAttribute('aria-pressed',i?'false':'true')})});
+    $$('.f-feat').forEach(function(x){x.checked=false});
+    if(price){price.value=price.max;priceLbl()}
+    refresh()}
+  if(fbtn)fbtn.addEventListener('click',openF);
+  if(fbd)fbd.addEventListener('click',closeF);
+  var fClose=$('#fltClose');if(fClose)fClose.addEventListener('click',closeF);
+  var fReset=$('#fltReset');if(fReset)fReset.addEventListener('click',resetFilters);
+  if(fApply)fApply.addEventListener('click',function(){closeF();var t=$('.results-col');if(t)window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+window.scrollY-140),behavior:'smooth'})});
+  window.addEventListener('resize',function(){if(window.matchMedia&&!window.matchMedia('(max-width:900px)').matches)closeF()});
+  if(sbtn)sbtn.addEventListener('click',function(){
+    var md=V.modal(T('Sortieren nach'),'','<div class="vm-opts" role="radiogroup">'+SORTS.map(function(x){var on=x[0]===flt.sort;
+      return '<button type="button" role="radio" aria-checked="'+on+'" class="vm-opt'+(on?' on':'')+'" data-v="'+x[0]+'">'+esc(T(x[1]))+'</button>'}).join('')+'</div>','',true);
+    $$('.vm-opt',md.el).forEach(function(b){b.onclick=function(){md.close();setSort(b.getAttribute('data-v'))}});
+  });
 
   form.addEventListener('submit',function(e){e.preventDefault();run()});
   form.addEventListener('vb:change',run);
@@ -437,9 +591,9 @@ const SEARCH_JS = String.raw`
   function run(){
     var v=cur(),my=++seq;
     history.replaceState(null,'',(window.__BASE||'')+'/unterkuenfte?'+qs(v));
-    results.setAttribute('aria-busy','true');results.innerHTML=skeleton();
+    loaded=false;results.setAttribute('aria-busy','true');results.innerHTML=skeleton();
     $('#resCount').textContent=T('Suche läuft …');
-    fetch('/api/search?lang='+(window.__LANG||'de')+'&'+qs(v)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){if(my!==seq)return;last=d;render(d);openFromUrl()})
+    fetch('/api/search?lang='+(window.__LANG||'de')+'&'+qs(v)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){if(my!==seq)return;last=d;loaded=true;render(d);openFromUrl()})
       .catch(function(){if(my!==seq)return;results.innerHTML='<div class="rs-empty">'+T('Fehler beim Laden. Bitte erneut versuchen.')+' <button type="button" class="rc-btn ghost" id="retry">'+T('Erneut laden')+'</button></div>';var b=$('#retry');if(b)b.onclick=run})
       .then(function(){results.removeAttribute('aria-busy')});
   }
@@ -467,7 +621,7 @@ const SEARCH_JS = String.raw`
     if(hit.length)h+=hit.map(function(x){return card(x,false,v)}).join('');
     else h+='<div class="rs-empty">'+(all.length?T('Keine Unterkunft passt exakt zu deinen Filtern.'):T('Für {n} Gäste haben wir leider nichts gefunden. Probiere es mit weniger Personen.',{n:d.guests||''}))+'</div>';
     if(hit.length<3&&miss.length){h+='<div class="rs-near"><h3>'+T('Knapp außerhalb deiner Filter')+'</h3><p>'+T('Vielleicht trotzdem das Richtige?')+'</p></div>'+sortList(miss).map(function(x){return card(x,true,v)}).join('')}
-    results.innerHTML=h;bind();
+    results.innerHTML=h;bind();updFilterUi(hit.length);
   }
 
   function detailHref(x,v){return (window.__BASE||'')+x.url+'?'+qs(v)}
@@ -581,6 +735,9 @@ const DETAIL_JS = String.raw`
     lb.querySelector('img').src=imgs[li];lb.querySelector('.c').textContent=(li+1)+' / '+imgs.length;lb.classList.add('open');document.body.style.overflow='hidden';lb.querySelector('.x').focus()}
   function closeLb(){lb.classList.remove('open');document.body.style.overflow=''}
   $$('[data-lb]').forEach(function(b){b.onclick=function(){showLb(+b.getAttribute('data-lb'))}});
+  // Handy: Galerie ist ein wischbares Karussell – Zähler „2 / 7“ mitführen
+  var gal=$('#dxGal'),gcount=$('#dxCount');
+  if(gal&&gcount){var gt=null;gal.addEventListener('scroll',function(){if(gt)return;gt=requestAnimationFrame(function(){gt=null;var w=gal.clientWidth||1;gcount.textContent=(Math.round(gal.scrollLeft/w)+1)+' / '+imgs.length})},{passive:true})}
 
   // ---- Buchungsbox ----
   var bx=$('#bx');if(!bx)return;
@@ -594,6 +751,8 @@ const DETAIL_JS = String.raw`
   function setCta(label,href,disabled,onclick){cta.textContent=label;if(href){cta.setAttribute('href',href)}else cta.removeAttribute('href');cta.setAttribute('aria-disabled',disabled?'true':'false');cta.onclick=onclick||null;
     if(mbar){var mb=$('.btn',mbar);mb.textContent=label;if(href)mb.setAttribute('href',href);else mb.removeAttribute('href');mb.onclick=onclick||(href?null:function(e){e.preventDefault();openDates()});}}
   function setMbarPrice(h){if(mbar)$('.pp',mbar).innerHTML=h}
+  // Preis in der Handy-Leiste antippen: ohne Daten → Kalender, sonst zur Preisaufstellung springen
+  if(mbar)$('.pp',mbar).addEventListener('click',function(){var v=cur();if(!(v.checkin&&v.checkout)){openDates();return}bx.scrollIntoView({behavior:'smooth',block:'start'})});
   function openDates(){form.querySelector('[data-open=dates]').click()}
   function guestsShort(v){return T('{n} Erw.',{n:v.adults})+(v.ages.length?' + '+T('{n} Kind(er)',{n:v.ages.length}):'')}
 
@@ -620,7 +779,7 @@ const DETAIL_JS = String.raw`
       h+='<div class="r tot"><span>'+T('Gesamt')+' ('+T('{n} Nächte',{n:o.nights})+')</span><span>'+euro(o.total,o.currency)+'</span></div></div>';
       out.innerHTML=h;
       priceEl.innerHTML='<b>'+euro(o.total,o.currency)+'</b> '+T('gesamt');
-      setMbarPrice('<b>'+euro(o.total,o.currency)+'</b>'+esc(V.fmtRange(v.checkin,v.checkout))+' · '+guestsShort(v));
+      setMbarPrice('<b>'+euro(o.total,o.currency)+'</b><span>'+esc(T(o.nights===1?'{n} Nacht':'{n} Nächte',{n:o.nights}))+' · '+guestsShort(v)+'</span><span><u>'+esc(T('Preisdetails'))+'</u></span>');
       if(a.platform)setCta(T('Weiter zur Buchung'),a.bookUrl,false);
       else setCta(T('Jetzt buchen'),(window.__BASE||'')+'/unterkuenfte?'+qs(v)+'&book='+id,false);
       return;
@@ -631,7 +790,7 @@ const DETAIL_JS = String.raw`
     out.innerHTML=h2;
     $$('[data-ci]',out).forEach(function(b){b.onclick=function(){V.writeForm(form,{checkin:b.getAttribute('data-ci'),checkout:b.getAttribute('data-co')});load()}});
     setCta(T('Andere Daten wählen'),null,false,function(e){e.preventDefault();openDates()});
-    setMbarPrice('<b>'+esc(T('Nicht verfügbar'))+'</b>'+esc(V.fmtRange(v.checkin,v.checkout)));
+    setMbarPrice('<b>'+esc(T('Nicht verfügbar'))+'</b><span>'+esc(V.fmtRange(v.checkin,v.checkout))+'</span>');
   }
   form.addEventListener('vb:change',load);
   form.addEventListener('submit',function(e){e.preventDefault();load()});

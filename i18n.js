@@ -160,6 +160,8 @@ const UI = {
   "egal": ["any", "maakt niet uit"],
   "Ausstattung": ["Amenities", "Voorzieningen"],
   "Alle": ["All", "Alle"],
+  "Zurücksetzen": ["Reset", "Wissen"],
+  "Ergebnisse anzeigen": ["Show results", "Resultaten tonen"],
   "Ski-in-Ski-out Gaschurn": ["Ski-in/ski-out Gaschurn", "Ski-in-ski-out Gaschurn"],
   "Lädt…": ["Loading…", "Laden…"],
   "Lädt Unterkünfte…": ["Loading accommodations…", "Accommodaties laden…"],
@@ -375,6 +377,7 @@ const PARTS = [
 const RULES = [
   [/^(\d+) J\.$/, ["$1 yrs", "$1 jr."]],
   [/^· bis (\d+) Gäste$/, ["· up to $1 guests", "· max. $1 gasten"]],
+  [/^Bild (\d+)$/, ["Image $1", "Afbeelding $1"]],
 ];
 
 /* ------------------------------------------------------------------ */
@@ -525,6 +528,19 @@ const JS = {
   "Do": ["Th", "do"],
   "Fr": ["Fr", "vr"],
   "Sa": ["Sa", "za"],
+  // Handy: Filter-Sheet, Sortier-Pop-up, Buchungsleiste, Galerie
+  "Filter": ["Filters", "Filters"],
+  "Filter ({n} aktiv)": ["Filters ({n} active)", "Filters ({n} actief)"],
+  "Sortieren nach": ["Sort by", "Sorteren op"],
+  "Empfohlen": ["Recommended", "Aanbevolen"],
+  "Preis: aufsteigend": ["Price: low to high", "Prijs: oplopend"],
+  "Preis: absteigend": ["Price: high to low", "Prijs: aflopend"],
+  "Ergebnisse anzeigen": ["Show results", "Resultaten tonen"],
+  "{n} Unterkunft anzeigen": ["Show {n} accommodation", "{n} accommodatie tonen"],
+  "{n} Unterkünfte anzeigen": ["Show {n} accommodations", "{n} accommodaties tonen"],
+  "Keine Treffer – Filter lockern": ["No matches – loosen filters", "Geen resultaten – filters verruimen"],
+  "Preisdetails": ["Price details", "Prijsdetails"],
+  "Bild {n}": ["Image {n}", "Afbeelding {n}"],
 };
 
 /* Labels that come back from the JSON API (price breakdown, errors, feature labels …). */

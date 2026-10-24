@@ -389,7 +389,7 @@ html{-webkit-text-size-adjust:100%}
 *{-webkit-tap-highlight-color:transparent}
 .tabbar{display:none}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
-@media(max-width:720px){
+@media(max-width:900px){
   .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(255,255,255,.94);backdrop-filter:saturate(1.5) blur(16px);-webkit-backdrop-filter:saturate(1.5) blur(16px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -10px 26px -18px rgba(0,0,0,.5)}
   .tabbar .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--muted);font-size:10.5px;font-weight:600;text-decoration:none;border-radius:13px;transition:color .15s,background .15s,transform .1s}
   .tabbar .tab .ti,.tabbar .tab .ti svg{width:24px;height:24px;display:block}
@@ -399,7 +399,6 @@ html{-webkit-text-size-adjust:100%}
   .tabbar .tab:active{background:var(--surface-2);transform:scale(.93)}
   body{padding-bottom:calc(58px + env(safe-area-inset-bottom))}
   .to-top{bottom:calc(76px + env(safe-area-inset-bottom));right:14px}
-  .detail-mobilecta{bottom:calc(58px + env(safe-area-inset-bottom))}
   .footer{padding-bottom:26px}
   .bk-card:active,.ev-card:active,.card:active,.cat-card:active,.hub-col a:active{transform:scale(.985)}
 }
@@ -411,18 +410,6 @@ html{-webkit-text-size-adjust:100%}
   .bk-close.dt-close{top:12px;right:12px}
 }
 .bk-modal .grab{display:none}
-.filter-toggle{display:none}
-@media(max-width:900px){
-  .filter-toggle{display:inline-flex;align-items:center;gap:8px;position:sticky;top:74px;z-index:30;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:11px 20px;font-weight:600;font-size:15px;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);margin-bottom:14px;font-family:inherit}
-  .filters-panel{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:auto!important;max-width:none!important;max-height:84vh;height:auto;z-index:120;transform:translateY(110%)!important;transition:transform .34s cubic-bezier(.22,.61,.36,1)!important;border-radius:22px 22px 0 0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:6px;padding-bottom:calc(20px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(0,0,0,.45)}
-  .filters-panel::before{content:"";display:block;width:40px;height:5px;margin:2px auto 12px;border-radius:3px;background:var(--line)}
-  .filters-panel.open{transform:translateY(0)!important}
-  .filters-backdrop{position:fixed;inset:0;background:rgba(16,23,19,.5);opacity:0;pointer-events:none;transition:opacity .3s;z-index:110}
-  .filters-backdrop.open{opacity:1;pointer-events:auto}
-  .filters-panel .fp-close{display:flex;align-items:center;justify-content:space-between;font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:20px;margin-bottom:6px}
-  .filters-panel .fp-close button{background:none;border:0;font-size:26px;cursor:pointer;color:var(--muted)}
-}
-@media(min-width:901px){.filters-panel .fp-close{display:none}}
 /* ---- Events grid, date badges, gallery preview ---- */
 .ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
 .ev-grid-past{grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:16px;margin-top:16px}
@@ -484,14 +471,6 @@ html{-webkit-text-size-adjust:100%}
 .bk-card-muted{opacity:.66;filter:grayscale(.5);background:var(--surface-2)}
 .bk-card-muted:hover{opacity:1;filter:none}
 .bk-card-muted .off-badge{position:absolute;top:10px;right:10px;background:rgba(20,20,20,.72);color:#fff;font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;backdrop-filter:blur(2px)}
-/* sticky mobile CTA on accommodation detail pages */
-.detail-mobilecta{display:none}
-@media(max-width:820px){
-  .detail-cta{display:none}
-  .detail-mobilecta{display:flex;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px;box-shadow:0 -10px 30px -18px rgba(0,0,0,.4)}
-  .detail-mobilecta .btn{flex:1;justify-content:center}
-  body.has-mobilecta{padding-bottom:76px}
-}
 /* ===== kochdu.at ad banner ===== */
 .kochdu{position:relative;display:flex;align-items:center;gap:26px;overflow:hidden;border-radius:22px;padding:34px 38px;color:#fff;background:linear-gradient(120deg,#6645ef 0%,#8a5cff 46%,#5a38d6 100%);box-shadow:0 24px 50px -24px rgba(102,69,239,.65);text-decoration:none;transition:transform .25s,box-shadow .25s}
 .kochdu:hover{transform:translateY(-3px);box-shadow:0 32px 62px -22px rgba(102,69,239,.85)}
@@ -511,11 +490,113 @@ html{-webkit-text-size-adjust:100%}
 @keyframes kochduBob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
 @media(max-width:680px){.kochdu{flex-direction:column-reverse;text-align:center;padding:26px 22px}.kochdu p{max-width:none}.kochdu-chips{justify-content:center}.kochdu-scooter{font-size:70px}}
 @media(prefers-reduced-motion:reduce){.kochdu-glow,.kochdu-scooter{animation:none}}
-@media(max-width:900px){.booking-layout{grid-template-columns:1fr}.filters-panel{position:static}.booking-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.booking-layout{grid-template-columns:1fr}.booking-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.booking-grid{grid-template-columns:1fr}.bk-form{grid-template-columns:1fr}.searchbar{gap:8px;padding:10px}.searchbar .sf{flex:1 1 100%;border:1.5px solid var(--line);border-radius:14px;background:var(--surface-2);padding:10px 14px;min-height:58px;justify-content:center}.searchbar .sf:focus-within{border-color:var(--accent);background:var(--surface)}.searchbar .sf+.sf::before{display:none}.searchbar .sf label{font-size:11.5px;margin-bottom:3px}.searchbar .sf input,.searchbar .sf select{font-size:17px}.searchbar .sf-date{flex:1 1 46%!important}.searchbar .sf-date input{min-height:26px;-webkit-appearance:none;appearance:none}.searchbar .sf.go{padding:0;border:0;min-height:0}.searchbar .btn-search{width:100%;justify-content:center}}
 /* Make the date value clearly visible (never a bare grey placeholder) */
 .searchbar .sf-date input[type=date]{color:var(--ink);font-weight:700}
-.searchbar .sf-date input[type=date]::-webkit-calendar-picker-indicator{opacity:.85;cursor:pointer}
+.searchbar .sf-date input[type=date]::-webkit-calendar-picker-indicator{opacity:.85;cursor:pointer}/* ===== Handy (bis 720 px): Kopfzeile mit Sprachwahl, klare Tab-Leiste, kompakter Einstieg, große Tippflächen ===== */
+:root{--tabbar-h:60px}
+.lang-m{display:none}
+.dt-thumbs .th{padding:0;border:2px solid transparent;background-color:#dfe5de;background-size:cover;background-position:center}
+.edg-thumbs{padding:0;margin:0 0 22px;flex-wrap:wrap;gap:10px}
+.edg-thumbs .th{width:88px;height:64px;border-radius:10px;cursor:pointer}
+.rich{overflow-wrap:break-word}
+.foot-col a{overflow-wrap:anywhere}
+/* Schmale Desktops: Navigation ohne Umbruch in einer Zeile */
+@media(min-width:901px) and (max-width:1100px){.nav-inner{gap:12px}.nav-links{gap:14px}.nav-links a{white-space:nowrap;font-size:14px}.nav-links .lang-sw a{padding:5px 8px}.nav-links a.nav-cta{padding:10px 14px;font-size:13.5px}}
+@media(min-width:901px) and (max-width:1000px){.nav-links>a:first-child{display:none}.brand{font-size:21px}.nav-inner{padding:0 18px}}
+/* Kopfzeile + Tab-Leiste bis 900 px (darüber passt die volle Navigation nicht in eine Zeile) */
+@media(max-width:900px){
+  .nav-inner{height:58px;padding:0 10px 0 18px}
+  .nav-links{display:none}
+  .brand{font-size:21px;min-height:44px}
+  .brand-logo{height:30px}
+  .lang-m{display:inline-flex;padding:0;gap:0;flex:0 0 auto}
+  .lang-m a{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;font-size:13px}
+  .tabbar{height:calc(var(--tabbar-h) + env(safe-area-inset-bottom));padding:4px 4px env(safe-area-inset-bottom);align-items:stretch}
+  .tabbar .tab{justify-content:center;gap:3px;padding:2px 0;min-width:0;font-size:11px;border-radius:14px}
+  .tabbar .tab .ti{width:54px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:999px;transition:background .2s,color .2s}
+  .tabbar .tab .ti svg{width:22px;height:22px}
+  .tabbar .tab .tl{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tabbar .tab.active{color:var(--accent-d)}
+  .tabbar .tab.active .ti{background:rgba(31,106,73,.15);transform:none}
+  .tabbar .tab.active .tl{font-weight:800}
+  .tabbar .tab:active{background:transparent;transform:none}
+  .tabbar .tab:active .ti{background:var(--surface-2)}
+  .tabbar .tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom))}
+  .to-top{bottom:calc(var(--tabbar-h) + 14px + env(safe-area-inset-bottom))}
+  body.has-dxbar .to-top{display:none}
+}
+@media(min-width:561px) and (max-width:900px){body .fsc-root{padding-bottom:calc(var(--tabbar-h) + 12px + env(safe-area-inset-bottom,0px))}body.has-dxbar .fsc-root{padding-bottom:calc(var(--tabbar-h) + 82px + env(safe-area-inset-bottom,0px))}}
+@media(max-width:720px){
+  /* Startseite: Suche schon im ersten Bildschirm */
+  .hero-logo{display:none}
+  .hero .container{padding-top:20px;padding-bottom:60px}
+  .hero .eyebrow{font-size:10.5px;letter-spacing:.14em;padding:6px 12px;margin-bottom:12px}
+  .hero h1{font-size:clamp(30px,8.6vw,38px);line-height:1.06;max-width:none}
+  .hero p.lead{font-size:15.5px;line-height:1.5;margin-top:10px}
+  .hero .vsb{margin-top:16px}
+  .hero-actions{margin-top:14px;gap:10px}
+  .btn{min-height:48px;justify-content:center}
+  .page-hero{padding:26px 0 18px}
+  .page-hero h1{font-size:clamp(28px,8vw,36px)}
+  .page-hero p{font-size:16px;margin-top:10px}
+  .section-head{margin-bottom:24px}
+  .section-head p{font-size:16px}
+  .cat-card{min-height:230px}
+  .cat-card .cc-body{padding:20px}
+  .cat-card h3{font-size:24px}
+  .hub-grid{gap:24px}
+  .hub-col{display:flex;flex-wrap:wrap;gap:8px}
+  .hub-col h4{flex:0 0 100%;margin-bottom:2px}
+  .hub-col a{display:inline-flex;align-items:center;min-height:44px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:14px;line-height:1.25}
+  .link-cloud a{min-height:44px;display:inline-flex;align-items:center}
+  /* Brotkrumen am Handy: nur „‹ zurück“ zur übergeordneten Seite */
+  .crumbs{margin-bottom:6px}
+  .crumbs>span,.crumbs>a{display:none}
+  .crumbs>a:nth-last-child(3){display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;color:var(--accent-d)}
+  .crumbs>a:nth-last-child(3)::before{content:"‹";font-size:22px;line-height:1;margin-right:6px}
+  /* Gastronomie-Filter: wischbare Chip-Reihen statt großem Kasten */
+  .filters{padding:0;gap:14px;background:none;border:0;border-radius:0;margin-bottom:22px}
+  .filter-group{min-width:0;width:100%}
+  .filters .pills{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -24px;padding:2px 24px 4px}
+  .filters .pills::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto;min-height:44px;padding:0 16px;font-size:14px;display:inline-flex;align-items:center}
+  .card:hover,.bk-card:hover,.ev-card:hover{transform:none}
+  .card-body h3 a{display:block;padding:12px 0;margin:-12px 0}
+  .card-link{min-height:44px}
+  /* Formulare: 16 px verhindert das automatische Hineinzoomen auf iPhones */
+  input,select,textarea{font-size:16px}
+  .form-wrap .btn[type=submit]{width:100%}
+  /* Veranstaltungen: Detailfenster + Detailseite */
+  .dt-gallery .main{height:min(56vw,280px)}
+  .dt-thumbs{padding:10px 16px 0;scrollbar-width:none}
+  .dt-thumbs .th{width:64px;height:48px}
+  .dt-body{padding:16px 18px 22px}
+  .dt-head h3{font-size:22px;padding-right:44px}
+  .dt-close{width:44px;height:44px;font-size:24px}
+  .dt-actions .btn{flex:1 1 100%}
+  .edg-thumbs{flex-wrap:nowrap;overflow-x:auto;margin:0 -24px 20px;padding:0 24px}
+  .edg-thumbs .th{flex:0 0 auto;width:72px;height:54px}
+  .rich h2{font-size:24px}
+  .rich h3{font-size:18px}
+  .bk-modal .mh{padding:16px 16px 14px 20px}
+  .bk-close{width:44px;height:44px}
+  .form-actions .btn{flex:1 1 0}
+  /* Fußzeile: zwei Spalten, Links mit ausreichender Tippfläche */
+  .foot-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}
+  .foot-grid .foot-col:first-child{grid-column:1/-1}
+  .foot-col a{display:flex;align-items:center;min-height:44px;padding:6px 0;line-height:1.3}
+  .foot-col h4{margin-bottom:4px}
+  .foot-bottom .lang-sw a{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .foot-admin{min-height:44px;display:inline-flex;align-items:center;padding:0 16px}
+}
+@media(max-width:480px){
+  .filters .pills,.edg-thumbs{margin-left:-18px;margin-right:-18px;padding-left:18px;padding-right:18px}
+}
+/* Cookie-Hinweis über der Buchungsleiste der Detailseite */
+@media(max-width:560px){body.has-dxbar .fsc-root{padding-bottom:calc(var(--tabbar-h) + 82px + env(safe-area-inset-bottom,0px))}}
 `;
 
 const adminCSS = `
@@ -840,6 +921,7 @@ function nav(active, c) {
         ${i18n.switcherHTML()}
         <a class="nav-cta" href="/ueber-uns#anfrage">Partner werden</a>
       </nav>
+      ${i18n.switcherHTML("lang-m")}
       <button class="burger" id="burger" aria-label="Menü"><span></span><span></span><span></span></button>
     </div>
   </header>`;
@@ -856,11 +938,11 @@ function bottomNav(active) {
     info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
   };
   const tab = (href, icon, label) =>
-    `<a href="${href}" class="tab${active === href ? " active" : ""}"><span class="ti">${ICON[icon]}</span><span class="tl">${label}</span></a>`;
+    `<a href="${href}" class="tab${active === href ? " active" : ""}"${active === href ? ' aria-current="page"' : ""}><span class="ti">${ICON[icon]}</span><span class="tl">${label}</span></a>`;
   return `
   <nav class="tabbar" aria-label="Hauptnavigation">
     ${tab("/", "home", "Home")}
-    ${tab("/unterkuenfte", "bed", "Unterkünfte")}
+    ${tab("/unterkuenfte", "bed", { en: "Stays", nl: "Verblijf" }[i18n.getLang()] || "Unterkünfte")}
     ${tab("/gastronomie", "fork", "Gastro")}
     ${tab("/veranstaltungen", "cal", "Events")}
     ${tab("/ueber-uns", "info", "Über")}
@@ -948,13 +1030,6 @@ const SCRIPT = `
   var tt=document.getElementById('toTop');
   if(tt){window.addEventListener('scroll',function(){if(window.scrollY>500)tt.classList.add('show');else tt.classList.remove('show');},{passive:true});
     tt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});}
-  var ftBtn=document.querySelector('.filter-toggle'),fp=document.querySelector('.filters-panel'),bd=document.querySelector('.filters-backdrop');
-  if(ftBtn&&fp){
-    var openF=function(){fp.classList.add('open');if(bd)bd.classList.add('open');document.body.style.overflow='hidden';};
-    var closeF=function(){fp.classList.remove('open');if(bd)bd.classList.remove('open');document.body.style.overflow='';};
-    ftBtn.addEventListener('click',openF);if(bd)bd.addEventListener('click',closeF);
-    var fc=fp.querySelector('.fp-close button');if(fc)fc.addEventListener('click',closeF);
-  }
 })();
 </script>`;
 
@@ -1003,7 +1078,7 @@ ${ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}">` : ""}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <style>${publicCSS}</style>
 ${bookingUI ? `<link rel="stylesheet" href="${BUI_ASSETS.css}">` : ""}
-<link rel="stylesheet" href="/fs-consent.css?v=4">
+<link rel="stylesheet" href="/fs-consent.css?v=5">
 <script type="application/json" id="fs-consent-config">${JSON.stringify({ privacyUrl: i18n.localizePath("/datenschutz"), imprintUrl: i18n.localizePath("/impressum"), position: "bottom-right", tone: "du", lang: lang === "de" ? "de" : "en", categories: {}, text: lang === "de" ? "Nur technisch notwendige Cookies – kein Tracking, keine Werbung." : "Only technically necessary cookies – no tracking, no ads." }).replace(/</g, "\\u003c")}</script>
 ${i18n.clientBootstrap()}
 ${jsonLd}
@@ -1286,15 +1361,18 @@ function bookingToolPage(c, items) {
       ${searchBar(prefill)}
     </div>
   </section>
-  <section class="section" style="padding-top:34px">
-    <div class="container">
-      <p class="muted reveal" style="max-width:72ch;margin-bottom:24px">${esc(c.unterkuenfte_intro)}</p>
-      <button type="button" class="filter-toggle" id="filterToggle">⚙︎ Filter &amp; Sortierung</button>
-      <div class="filters-backdrop"></div>
+  <section class="section rs-section" style="padding-top:34px">
+    <div class="container rs-wrap">
+      <p class="muted reveal rs-intro" style="max-width:72ch;margin-bottom:24px">${esc(c.unterkuenfte_intro)}</p>
+      <div class="rs-bar">
+        <button type="button" class="rs-bar-btn" id="filterToggle" aria-haspopup="dialog" aria-controls="filtersPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span>Filter</span><span class="rs-badge" id="fltCount" hidden></span></button>
+        <button type="button" class="rs-bar-btn" id="sortToggle" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3.5 16.5 7 20l3.5-3.5M17 20V4M13.5 7.5 17 4l3.5 3.5"/></svg><span id="sortLbl">Empfohlen</span></button>
+      </div>
+      <div class="filters-backdrop" id="filtersBackdrop"></div>
       <div class="booking-layout">
-        <aside class="filters-panel">
-          <div class="fp-close">Filter<button type="button" aria-label="Schließen">×</button></div>
-          <div class="fp-group"><h4>Sortierung</h4>
+        <aside class="filters-panel" id="filtersPanel" aria-label="Filter">
+          <div class="fp-close"><span>Filter</span><button type="button" id="fltClose" aria-label="Schließen">×</button></div>
+          <div class="fp-group fp-sortgroup"><h4>Sortierung</h4>
             <select id="f-sort" class="fp-sort">
               <option value="best">Empfohlen</option>
               <option value="price-asc">Preis: aufsteigend</option>
@@ -1308,6 +1386,7 @@ function bookingToolPage(c, items) {
             <input type="range" id="f-price" min="0" max="800" step="20" value="800" aria-label="Höchstpreis pro Nacht"></div>
           </div>
           ${featChecks ? `<div class="fp-group"><h4>Ausstattung</h4>${featChecks}</div>` : ""}
+          <div class="fp-foot"><button type="button" class="vm-link" id="fltReset">Zurücksetzen</button><button type="button" class="vm-ok" id="fltApply">Ergebnisse anzeigen</button></div>
         </aside>
         <div class="results-col">
           <div class="rs-head">
@@ -1566,24 +1645,32 @@ function eventsPage(c, events, opts) {
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
   // ---- detail modal (gallery carousel + info + website link) ----
-  var ov=document.getElementById('evOverlay');
+  var ov=document.getElementById('evOverlay'),evImgs=[],evI=0,evFocus=null;
+  // Bild im Detailfenster wechseln (Vorschaubild antippen oder am Handy wischen)
+  function showEvImg(k){if(!evImgs.length)return;evI=(k+evImgs.length)%evImgs.length;document.getElementById('ev-main').style.backgroundImage="url('"+evImgs[evI]+"')";
+    $$('#ev-thumbs .th').forEach(function(x,j){x.classList.toggle('active',j===evI);x.setAttribute('aria-pressed',j===evI?'true':'false')});}
   function openEv(i){
     var e=EV[i];if(!e||!ov)return;
-    var imgs=e.images||[];
+    var imgs=e.images||[];evImgs=imgs;evI=0;
     var main=document.getElementById('ev-main');
     if(imgs.length){main.className='main';main.style.backgroundImage="url('"+imgs[0]+"')";}else{main.className='main noimg';main.style.backgroundImage='';}
     var th=document.getElementById('ev-thumbs');
-    if(imgs.length>1){th.style.display='';th.innerHTML=imgs.map(function(u,k){return '<div class="th'+(k===0?' active':'')+'" data-i="'+k+'" style="background-image:url(\\''+u+'\\')"></div>';}).join('');
-      $$('#ev-thumbs .th').forEach(function(t){t.addEventListener('click',function(){main.style.backgroundImage="url('"+imgs[+t.getAttribute('data-i')]+"')";$$('#ev-thumbs .th').forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});
+    if(imgs.length>1){th.style.display='';th.innerHTML=imgs.map(function(u,k){return '<button type="button" class="th'+(k===0?' active':'')+'" data-i="'+k+'" aria-pressed="'+(k===0?'true':'false')+'" aria-label="'+T('Bild {n}',{n:k+1})+'" style="background-image:url(\\''+u+'\\')"></button>';}).join('');
+      $$('#ev-thumbs .th').forEach(function(t){t.addEventListener('click',function(){showEvImg(+t.getAttribute('data-i'));});});
     }else{th.style.display='none';th.innerHTML='';}
     document.getElementById('ev-title').textContent=e.name;
     document.getElementById('ev-date').textContent=e.dateLabel||'';
     document.getElementById('ev-meta').innerHTML=(e.type?'<span class="chip">'+esc(e.type)+'</span>':'')+(e.location?'<span class="chip">\\ud83d\\udccd '+esc(e.location)+'</span>':'')+(e.dateText&&e.dateLabel!==e.dateText?'<span class="chip">\\ud83d\\udd53 '+esc(e.dateText)+'</span>':'');
     document.getElementById('ev-desc').textContent=e.description||'';
     document.getElementById('ev-actions').innerHTML=e.website?'<a class="btn btn-primary" href="'+esc(e.website)+'" target="_blank" rel="noopener">'+T('Zur Veranstaltung \\u2197')+'</a>':'';
+    evFocus=document.activeElement;
     ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+    var x=document.getElementById('ev-close');if(x)x.focus();
   }
-  function closeEv(){if(!ov)return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+  function closeEv(){if(!ov||!ov.classList.contains('open'))return;ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.body.style.overflow='';if(evFocus&&evFocus.focus)evFocus.focus();}
+  var evMain=document.getElementById('ev-main'),evSx=null;
+  if(evMain){evMain.addEventListener('touchstart',function(e){evSx=e.touches[0].clientX},{passive:true});
+    evMain.addEventListener('touchend',function(e){if(evSx==null)return;var dx=e.changedTouches[0].clientX-evSx;evSx=null;if(Math.abs(dx)>40&&evImgs.length>1)showEvImg(evI+(dx<0?1:-1));});}
   $$('.ev-card').forEach(function(card){
     function go(){openEv(parseInt(card.getAttribute('data-evidx'),10));}
     card.addEventListener('click',go);
@@ -3338,10 +3425,11 @@ function accDetailPage(c, row, rooms, req) {
   const imgs = [row.image, ...parseGallery(row.gallery)].filter((u) => u && u.length > 5).filter((v, i, a) => a.indexOf(v) === i);
   const main = imgs[0] || "";
   const shown = imgs.slice(0, 5);
+  // Desktop: Raster mit bis zu 5 Fotos. Handy: alle Fotos als wischbares Karussell (weitere Fotos nur dort sichtbar).
   const gallery = imgs.length
-    ? `<div class="dx-gal n${shown.length}">${shown
-        .map((u, i) => `<button type="button" class="g${i}" data-lb="${i}" aria-label="Foto ${i + 1} von ${imgs.length} vergrößern"><img src="${esc(pimg(u))}" alt="${esc(row.name)} – Foto ${i + 1}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async"></button>`)
-        .join("")}${imgs.length > 1 ? `<button type="button" class="dx-all" data-lb="0">Alle ${imgs.length} Fotos</button>` : ""}</div>`
+    ? `<div class="dx-galwrap"><div class="dx-gal n${shown.length}" id="dxGal">${imgs
+        .map((u, i) => `<button type="button" class="${i < 5 ? "g" + i : "gx"}" data-lb="${i}" aria-label="Foto ${i + 1} von ${imgs.length} vergrößern"><img src="${esc(pimg(u))}" alt="${esc(row.name)} – Foto ${i + 1}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async"></button>`)
+        .join("")}</div>${imgs.length > 1 ? `<button type="button" class="dx-all" data-lb="0">Alle ${imgs.length} Fotos</button><span class="dx-count" id="dxCount" aria-hidden="true">1 / ${imgs.length}</span>` : ""}</div>`
     : "";
   const feats = parseFeatures(row.features);
   const featHTML = feats.length
@@ -3429,7 +3517,7 @@ function accDetailPage(c, row, rooms, req) {
       ${box}
     </div>
   </div></section>
-  ${connected ? `<div class="dx-mbar" id="dxMbar"><div class="pp">${plat.fromPrice ? `ab <b>${esc(eur(plat.fromPrice))}</b> / Nacht` : "<b>Verfügbarkeit prüfen</b>"}</div><a class="btn btn-primary" role="button">Reisedaten wählen</a></div><script>document.body.classList.add('has-dxbar');</script>` : ""}
+  ${connected ? `<div class="dx-mbar" id="dxMbar"><button type="button" class="pp" data-goto="bx">${plat.fromPrice ? `ab <b>${esc(eur(plat.fromPrice))}</b> / Nacht` : "<b>Verfügbarkeit prüfen</b>"}</button><a class="btn btn-primary" role="button" href="#bx">Reisedaten wählen</a></div><script>document.body.classList.add('has-dxbar');</script>` : ""}
   <script>window.__DX_IMGS=${JSON.stringify(imgs.map(pimg)).replace(/</g, "\\u003c")};</script>
   ${relatedHTML("Weitere Unterkünfte", (c.__related || []).map((r) => ({ href: accHref(r), label: r.name })))}`;
   return layout({
@@ -3466,19 +3554,23 @@ function eventDetailPage(c, ev, req) {
   const gallery = imgs.length
     ? `<div class="dg-main" style="${imgStyle(imgs[0], ev.name)};max-width:820px;margin-bottom:14px" id="edg-main"></div>` +
       (imgs.length > 1
-        ? `<div class="dt-thumbs" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px">${imgs
+        ? `<div class="dt-thumbs edg-thumbs">${imgs
             .map(
               (u, i) =>
-                `<div class="th${i === 0 ? " active" : ""}" data-i="${i}" style="width:88px;height:64px;border-radius:10px;background-size:cover;background-position:center;cursor:pointer;background-image:url('${esc(
+                `<button type="button" class="th${i === 0 ? " active" : ""}" data-i="${i}" aria-pressed="${i === 0}" aria-label="Bild ${i + 1}" style="background-image:url('${esc(
                   pimg(u)
-                )}')"></div>`
+                )}')"></button>`
             )
             .join("")}</div>`
         : "")
     : "";
   const galleryScript =
     imgs.length > 1
-      ? `<script>(function(){var imgs=${JSON.stringify(imgs.map(pimg)).replace(/</g, "\\u003c")};var m=document.getElementById('edg-main');document.querySelectorAll('.dt-thumbs .th').forEach(function(t){t.addEventListener('click',function(){m.style.backgroundImage="url('"+imgs[+t.getAttribute('data-i')]+"')";document.querySelectorAll('.dt-thumbs .th').forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});})();</script>`
+      ? `<script>(function(){var imgs=${JSON.stringify(imgs.map(pimg)).replace(/</g, "\\u003c")};var m=document.getElementById('edg-main'),cur=0,sx=null,th=document.querySelectorAll('.dt-thumbs .th');
+  function show(k){cur=(k+imgs.length)%imgs.length;m.style.backgroundImage="url('"+imgs[cur]+"')";th.forEach(function(x,j){x.classList.toggle('active',j===cur);x.setAttribute('aria-pressed',j===cur?'true':'false')});}
+  th.forEach(function(t){t.addEventListener('click',function(){show(+t.getAttribute('data-i'));});});
+  m.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+  m.addEventListener('touchend',function(e){if(sx==null)return;var dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>40)show(cur+(dx<0?1:-1));});})();</script>`
       : "";
   const body = `
   <section class="page-hero">
