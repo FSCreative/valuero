@@ -62,7 +62,12 @@ img{max-width:100%;display:block}
 .brand{display:flex;align-items:center;gap:10px;font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-weight:600;font-size:24px;letter-spacing:.04em;color:#fff}
 .brand svg{width:34px;height:24px}
 .nav-links{display:flex;align-items:center;gap:28px}
-.nav-links a{font-size:15px;font-weight:500;color:#b6c2ba;position:relative;padding:4px 0;transition:color .2s}
+.nav-links a{font-size:15px;font-weight:500;color:#b6c2ba;position:relative;padding:4px 0;transition:color .2s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-links a svg{flex:0 0 auto;opacity:.8;transition:opacity .2s,transform .2s}
+.nav-links a:hover svg,.nav-links a.active svg{opacity:1}
+.nav-links a:hover svg{transform:translateY(-1px)}
+.nav-links a.nav-cta{gap:8px}
+.nav-links a.nav-cta svg{opacity:1}
 .nav-links a:hover,.nav-links a.active{color:#fff}
 .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--accent);border-radius:2px}
 .nav-links a.nav-cta{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;line-height:1;white-space:nowrap;background:var(--accent);color:#fff!important;padding:11px 22px;border-radius:999px;font-size:14px;font-weight:600;letter-spacing:.01em;box-shadow:0 6px 18px -8px rgba(47,110,82,.9);transition:background .2s,transform .2s,box-shadow .2s}
@@ -503,7 +508,9 @@ html{-webkit-text-size-adjust:100%}
 .rich{overflow-wrap:break-word}
 .foot-col a{overflow-wrap:anywhere}
 /* Schmale Desktops: Navigation ohne Umbruch in einer Zeile */
-@media(min-width:901px) and (max-width:1100px){.nav-inner{gap:12px}.nav-links{gap:14px}.nav-links a{white-space:nowrap;font-size:14px}.nav-links .lang-sw a{padding:5px 8px}.nav-links a.nav-cta{padding:10px 14px;font-size:13.5px}}
+@media(min-width:1101px) and (max-width:1380px){.nav-links{gap:18px}.nav-inner{gap:16px}}
+@media(min-width:901px) and (max-width:1100px){.nav-links a:not(.nav-cta) svg{display:none}.nav-links a.nav-cta svg{display:none}}
+@media(min-width:901px) and (max-width:1240px){.nav-inner{gap:12px}.nav-links{gap:14px}.nav-links a{white-space:nowrap;font-size:14px}.nav-links .lang-sw a{padding:5px 8px}.nav-links a.nav-cta{padding:10px 14px;font-size:13.5px}}
 @media(min-width:901px) and (max-width:1000px){.nav-links>a:first-child{display:none}.brand{font-size:21px}.nav-inner{padding:0 18px}}
 /* Kopfzeile + Tab-Leiste bis 900 px (darüber passt die volle Navigation nicht in eine Zeile) */
 @media(max-width:900px){
@@ -969,20 +976,21 @@ function brandMark(c, variant) {
 }
 
 function nav(active, c) {
-  const link = (href, label) =>
-    `<a href="${href}" class="${active === href ? "active" : ""}">${label}</a>`;
+  // gleiche Icons wie in der Tab-Leiste am Handy
+  const link = (href, label, ic) =>
+    `<a href="${href}" class="${active === href ? "active" : ""}"${active === href ? ' aria-current="page"' : ""}>${ICONS.icon(ic, { size: 17, stroke: active === href ? 2.1 : 1.8 })}<span>${label}</span></a>`;
   return `
   <header class="nav">
     <div class="nav-inner">
       ${brandMark(c)}
       <nav class="nav-links" id="navlinks">
-        ${link("/", "Home")}
-        ${link("/unterkuenfte", "Unterkünfte")}
-        ${link("/gastronomie", "Gastronomie")}
-        ${link("/veranstaltungen", "Veranstaltungen")}
-        ${link("/ueber-uns", "Über Valuero")}
+        ${link("/", "Home", "house")}
+        ${link("/unterkuenfte", "Unterkünfte", "bed-double")}
+        ${link("/gastronomie", "Gastronomie", "utensils")}
+        ${link("/veranstaltungen", "Veranstaltungen", "calendar-days")}
+        ${link("/ueber-uns", "Über Valuero", "info")}
         ${i18n.switcherHTML()}
-        <a class="nav-cta" href="/ueber-uns#anfrage">Partner werden</a>
+        <a class="nav-cta" href="/ueber-uns#anfrage">${ICONS.icon("handshake", { size: 17, stroke: 2 })}<span>Partner werden</span></a>
       </nav>
       ${i18n.switcherHTML("lang-m")}
       <button class="burger" id="burger" aria-label="Menü"><span></span><span></span><span></span></button>
