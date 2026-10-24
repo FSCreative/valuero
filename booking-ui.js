@@ -7,7 +7,11 @@
 //  * DETAIL_JS  : Detailseite /unterkunft/:id – Buchungsbox, Belegungskalender, Preisaufstellung, Galerie.
 // Alle Texte laufen über T() (i18n.js → JS-Tabelle), damit EN/NL mitübersetzt werden.
 // Wichtig: Inhalte sind String.raw – keine Backticks und kein Dollar-Klammer-Muster im Browser-Code verwenden.
+// Icons: icons.js (Lucide-Linien). Server-HTML nutzt icon(), die Browser-Skripte window.VI(name, opts) aus PICKER_JS.
 // ---------------------------------------------------------------------------
+const ICONS = require("./icons");
+// Icons, die die Browser-Skripte brauchen (alles andere kommt fertig vom Server, z. B. featureLabels[].icon).
+const CLIENT_ICONS = ["x", "chevron-left", "chevron-right", "minus", "plus", "map-pin", "calendar-days", "star", "external-link", "users", "house", "check", "images", "info", "arrow-right"];
 
 const BOOKING_CSS = String.raw`
 /* ---- Suchleiste (Pop-up-Auswahl statt nativer Felder) ---- */
@@ -38,7 +42,8 @@ const BOOKING_CSS = String.raw`
 .vm-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line)}
 .vm-h h2{font-size:22px}
 .vm-h .sub{font-size:13.5px;color:var(--muted);margin-top:2px}
-.vm-x{flex:0 0 auto;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:22px;line-height:1;cursor:pointer;color:var(--ink)}
+.vm-x{flex:0 0 auto;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:22px;line-height:1;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;padding:0;transition:background .15s,border-color .15s}
+.vm-x:hover{background:var(--surface-2);border-color:var(--ink)}
 .vm-b{padding:16px 22px;overflow:auto;-webkit-overflow-scrolling:touch;flex:1 1 auto}
 .vm-f{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;border-top:1px solid var(--line);background:var(--surface)}
 .vm-f .sum{font-size:14px;color:var(--muted)}
@@ -56,7 +61,8 @@ const BOOKING_CSS = String.raw`
 
 /* ---- Kalender ---- */
 .rp-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.rp-nav button{width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:18px;color:var(--ink)}
+.rp-nav button{width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:18px;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;padding:0;transition:background .15s,border-color .15s}
+.rp-nav button:hover:not(:disabled){background:var(--surface-2);border-color:var(--ink)}
 .rp-nav button:disabled{opacity:.3;cursor:default}
 .rp-months{display:grid;grid-template-columns:1fr 1fr;gap:28px}
 .rp-m h3{font-size:17px;text-align:center;margin:0 0 10px;font-family:inherit;font-weight:700}
@@ -82,12 +88,14 @@ const BOOKING_CSS = String.raw`
 .rp-d.start span,.rp-d.end span{background:var(--ink);color:#fff}
 .rp-d.start small,.rp-d.end small{color:rgba(255,255,255,.75)}
 .rp-d.today span::after{content:"";position:absolute;bottom:5px;width:4px;height:4px;border-radius:2px;background:var(--accent)}
-.rp-hint{display:flex;gap:10px;align-items:flex-start;background:#f6f1e4;border:1px solid #eadfc4;border-radius:14px;padding:10px 14px;font-size:14px;margin-bottom:12px}
+.rp-hint{display:flex;gap:10px;align-items:flex-start;background:#f6f1e4;border:1px solid #eadfc4;border-radius:14px;padding:10px 14px;font-size:14px;margin-bottom:12px;color:#5b4a22}
+.rp-hint .ic{width:18px;height:18px;margin-top:1px;color:#8a6d2b}
 .rp-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:12px}
 .rp-legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line)}
 .rp-legend i.half{background:linear-gradient(to bottom right,#ececec 50%,#fff 50%)}
 .rp-status{font-size:14px;color:var(--muted);margin:4px 0 10px;min-height:20px}
 .rp-status b{color:var(--ink)}
+.rp-status .rp-arr{margin:-2px 6px 0;color:var(--muted)}
 .rp-inline .rp-months{gap:34px}
 @media(max-width:640px){.rp-months{grid-template-columns:1fr;gap:18px}.rp-d{height:44px}.rp-d span{width:40px;height:40px}}
 
@@ -97,7 +105,8 @@ const BOOKING_CSS = String.raw`
 .gs-row .t b{display:block;font-size:16px}
 .gs-row .t span{font-size:13px;color:var(--muted)}
 .gs-step{display:flex;align-items:center;gap:12px}
-.gs-step button{width:38px;height:38px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-size:20px;line-height:1;cursor:pointer;color:var(--ink)}
+.gs-step button{width:38px;height:38px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-size:20px;line-height:1;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;padding:0;transition:border-color .15s,color .15s}
+.gs-step button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
 .gs-step button:disabled{opacity:.3;cursor:default}
 .gs-step output{min-width:22px;text-align:center;font-weight:700;font-size:17px}
 .gs-ages{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;padding:6px 0 4px}
@@ -119,12 +128,17 @@ const BOOKING_CSS = String.raw`
 .rc-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .rc h3{font-size:20px}
 .rc h3 a:hover{color:var(--accent)}
-.rc-rating{color:#a8873f;font-weight:600;font-size:14px;white-space:nowrap}
-.rc-meta{font-size:13.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px}
+.rc-rating{color:#a8873f;font-weight:600;font-size:14px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;margin-top:4px}
+.rc-rating .ic{width:15px;height:15px}
+.rc-meta{font-size:13.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+.rc-meta span{display:inline-flex;align-items:center;gap:5px}
+.rc-meta .ic{width:15px;height:15px;color:var(--accent)}
 .rc-rule{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;background:#f6f1e4;color:#6b5626;border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:600}
+.rc-rule .ic{width:14px;height:14px}
 .rc-desc{color:var(--muted);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .rc-feats{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--muted)}
-.rc-feats span{background:var(--surface-2);border-radius:999px;padding:3px 9px}
+.rc-feats span{background:var(--surface-2);border-radius:999px;padding:3px 10px 3px 8px;display:inline-flex;align-items:center;gap:5px;line-height:1.4}
+.rc-feats .ic{width:14px;height:14px;color:var(--accent)}
 .rc-price{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
 .rc-price .pp{font-size:13px;color:var(--muted);line-height:1.4;min-width:0}
 .rc-price .pp b{display:block;font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:24px;color:var(--ink);font-weight:600;line-height:1.15}
@@ -134,6 +148,7 @@ const BOOKING_CSS = String.raw`
 .rc-btn:hover{background:var(--accent-2)}
 .rc-btn.ghost{background:var(--surface);color:var(--ink);border:1.5px solid var(--line)}
 .rc-btn.ghost:hover{border-color:var(--ink);background:var(--surface)}
+.rc-btn .ic{width:16px;height:16px}
 .rc-alt{width:100%;display:flex;flex-direction:column;gap:6px}
 .rc-alt .lbl{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .rc-alt button{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
@@ -165,20 +180,28 @@ const BOOKING_CSS = String.raw`
 .dx-gal.n2 .g0{grid-row:auto}
 .dx-gal.n3{grid-template-columns:2fr 1fr}
 .dx-gal.n4 .g3{grid-column:2/4}
-.dx-all{position:absolute;right:14px;bottom:14px;background:rgba(255,255,255,.95);border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 6px 18px -8px rgba(0,0,0,.5)}
+.dx-all{position:absolute;right:14px;bottom:14px;background:rgba(255,255,255,.95);border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 6px 18px -8px rgba(0,0,0,.5);display:inline-flex;align-items:center;gap:7px;color:var(--ink)}
+.dx-all .ic{width:17px;height:17px}
 .dx-cols{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start}
 .dx-main h2{font-size:26px;margin:30px 0 12px}
 .dx-main h2:first-child{margin-top:0}
 .dx-desc p{margin:0 0 12px;color:#323b35;font-size:16.5px}
 .dx-high{list-style:none;padding:0;display:grid;gap:8px;margin:0 0 6px}
-.dx-high li{padding-left:28px;position:relative}
-.dx-high li::before{content:"✓";position:absolute;left:4px;color:var(--accent);font-weight:700}
+.dx-high li{display:flex;align-items:flex-start;gap:10px}
+.dx-high li .ic{width:18px;height:18px;margin-top:3px;color:var(--accent)}
 .dx-feats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
-.dx-feats span{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px}
-.dx-facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:6px}
-.dx-facts div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
-.dx-facts b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.dx-feats span{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.3}
+.dx-feats .ic{width:20px;height:20px;color:var(--accent)}
+.dx-facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;margin-bottom:6px}
+@media(max-width:480px){.dx-facts{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.dx-facts>div{padding:10px 11px;gap:9px}.dx-facts .fi{width:32px;height:32px;border-radius:9px}.dx-facts .fi .ic{width:18px;height:18px}.dx-facts span{font-size:14.5px}}
+.dx-facts>div{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.dx-facts .fi{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:#eaf2ed;color:var(--accent);display:flex;align-items:center;justify-content:center}
+.dx-facts .fi .ic{width:20px;height:20px}
+.dx-facts p{margin:0;min-width:0;line-height:1.35}
+.dx-facts b{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
 .dx-facts span{font-weight:600}
+.detail-rooms li{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
+.detail-rooms li .ic{width:18px;height:18px;color:var(--accent)}
 .dx-cal{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px 20px}
 .dx-small{font-size:14px;color:var(--muted)}
 .bx{position:sticky;top:92px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:14px}
@@ -192,7 +215,8 @@ const BOOKING_CSS = String.raw`
 .bx-lines .r{display:flex;justify-content:space-between;gap:12px}
 .bx-lines .r.tot{border-top:1px solid var(--line);padding-top:10px;margin-top:3px;font-weight:700;font-size:16px}
 .bx-msg{border-radius:14px;padding:12px 14px;font-size:14px;background:#fbefec;color:#7c2d22}
-.bx-msg.info{background:#f6f1e4;color:#5b4a22}
+.bx-msg.info{background:#f6f1e4;color:#5b4a22;display:flex;align-items:flex-start;gap:9px}
+.bx-msg.info .ic{width:18px;height:18px;margin-top:1px;color:#8a6d2b}
 .bx-cta{width:100%;justify-content:center;font-size:16px;padding:15px 20px}
 .bx-cta[aria-disabled=true]{opacity:.5;pointer-events:none}
 .bx-note{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.45}
@@ -217,7 +241,9 @@ const BOOKING_CSS = String.raw`
 .lb{position:fixed;inset:0;z-index:210;background:rgba(10,14,12,.94);display:none;align-items:center;justify-content:center}
 .lb.open{display:flex}
 .lb img{max-width:calc(100vw - 32px);max-height:calc(100vh - 120px);object-fit:contain;border-radius:8px}
-.lb button{position:absolute;background:rgba(255,255,255,.14);color:#fff;border:0;width:48px;height:48px;border-radius:999px;font-size:24px;cursor:pointer}
+.lb button{position:absolute;background:rgba(255,255,255,.14);color:#fff;border:0;width:48px;height:48px;border-radius:999px;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:background .15s}
+.lb button:hover{background:rgba(255,255,255,.26)}
+.lb button .ic{width:24px;height:24px}
 .lb .x{top:16px;right:16px}.lb .p{left:16px;top:50%;margin-top:-24px}.lb .n{right:16px;top:50%;margin-top:-24px}
 .lb .c{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:#fff;font-size:14px}
 /* ---- Handy & Tablet: Werkzeugleiste (Filter/Sortieren), Filter als Bottom-Sheet ---- */
@@ -226,7 +252,7 @@ const BOOKING_CSS = String.raw`
 .vm-opts{display:flex;flex-direction:column;gap:8px;padding:4px 0 8px}
 .vm-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 16px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);font:inherit;font-size:16px;font-weight:600;color:var(--ink);text-align:left;cursor:pointer}
 .vm-opt.on{border-color:var(--accent);background:#f1f7f3;color:var(--accent-d)}
-.vm-opt.on::after{content:"✓";font-weight:800}
+.vm-opt.on::after{content:"";flex:0 0 auto;width:20px;height:20px;background:currentColor;-webkit-mask:` + ICONS.cssUrl("check", 2.5) + String.raw` center/contain no-repeat;mask:` + ICONS.cssUrl("check", 2.5) + String.raw` center/contain no-repeat}
 @media(max-width:900px){
   .rs-wrap{display:flex;flex-direction:column}
   .rs-intro{order:2;margin:30px 0 0!important;font-size:14.5px}
@@ -241,7 +267,7 @@ const BOOKING_CSS = String.raw`
   .filters-panel{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:120;max-height:88vh;max-height:88dvh;padding:0;gap:0;border:0;border-radius:22px 22px 0 0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-shadow:0 -20px 50px -20px rgba(0,0,0,.45);transform:translateY(105%);visibility:hidden;transition:transform .32s cubic-bezier(.22,.61,.36,1),visibility 0s linear .32s}
   .filters-panel.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.22,.61,.36,1)}
   .filters-panel .fp-close{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:10px 12px 10px 20px;background:var(--surface);border-bottom:1px solid var(--line);font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:21px;font-weight:600}
-  .filters-panel .fp-close button{width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:22px;line-height:1;cursor:pointer;color:var(--ink)}
+  .filters-panel .fp-close button{width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:22px;line-height:1;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;padding:0}
   .filters-panel .fp-group{padding:16px 20px 4px;border-top:1px solid var(--line)}
   .filters-panel .fp-sortgroup+.fp-group{border-top:0}
   .filters-panel .pill{min-height:44px;padding:0 16px;font-size:14.5px}
@@ -328,9 +354,8 @@ const BOOKING_CSS = String.raw`
 `;
 
 // ---------------------------------------------------------------------------
-const PICKER_JS = String.raw`
-<script>
-(function(){
+const PICKER_JS = "\n<script>\n" + ICONS.clientLib(CLIENT_ICONS) + String.raw`(function(){
+  var VI=window.VI;
   var L=window.__LOCALE||'de-AT';
   function pad(n){return (n<10?'0':'')+n}
   function iso(d){return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate())}
@@ -369,7 +394,7 @@ const PICKER_JS = String.raw`
   function modal(title,sub,bodyHTML,footHTML,small){
     var m=document.createElement('div');m.className='vm';
     m.innerHTML='<div class="vm-box'+(small?' sm':'')+'" role="dialog" aria-modal="true" aria-label="'+esc(title)+'">'
-      +'<div class="vm-h"><div><h2>'+esc(title)+'</h2>'+(sub?'<div class="sub">'+sub+'</div>':'')+'</div><button type="button" class="vm-x" aria-label="'+esc(T('Schließen'))+'">×</button></div>'
+      +'<div class="vm-h"><div><h2>'+esc(title)+'</h2>'+(sub?'<div class="sub">'+sub+'</div>':'')+'</div><button type="button" class="vm-x" aria-label="'+esc(T('Schließen'))+'">'+VI('x',{size:20,stroke:2})+'</button></div>'
       +'<div class="vm-b">'+bodyHTML+'</div><div class="vm-f">'+footHTML+'</div></div>';
     document.body.appendChild(m);
     lastFocus=document.activeElement;
@@ -430,7 +455,7 @@ const PICKER_JS = String.raw`
     function status(){
       var r=av&&av.rules?hintText(av.rules):'';
       if(!st.ci)return T('Wähle dein Anreisedatum.');
-      if(!st.co){var d0=day(st.ci),mn=d0&&d0.m>1?d0.m:0;return '<b>'+esc(fmt(st.ci))+'</b> → '+T('Wähle dein Abreisedatum.')+(mn?' ('+T('mind. {n} Nächte',{n:mn})+')':'')}
+      if(!st.co){var d0=day(st.ci),mn=d0&&d0.m>1?d0.m:0;return '<b>'+esc(fmt(st.ci))+'</b>'+VI('arrow-right',{size:15,stroke:2,cls:'rp-arr'})+T('Wähle dein Abreisedatum.')+(mn?' ('+T('mind. {n} Nächte',{n:mn})+')':'')}
       var n=nights(st.ci,st.co);return '<b>'+esc(fmtRange(st.ci,st.co))+'</b> · '+T(n===1?'{n} Nacht':'{n} Nächte',{n:n});
     }
     function monthsHTML(){
@@ -443,9 +468,9 @@ const PICKER_JS = String.raw`
       var canNext=v2.slice(0,7)<maxDay.slice(0,7);
       var hint=av&&av.rules?hintText(av.rules):'';
       if(o.scroll)host.classList.add('rp-scroll');
-      host.innerHTML=(hint&&o.showHint!==false?'<div class="rp-hint"><span aria-hidden="true">📅</span><span>'+esc(hint)+(av.rules.arrivalDays&&av.rules.arrivalDays.length?' – '+esc(T('nicht wählbare Tage sind ausgegraut.')):'')+'</span></div>':'')
+      host.innerHTML=(hint&&o.showHint!==false?'<div class="rp-hint">'+VI('calendar-days')+'<span>'+esc(hint)+(av.rules.arrivalDays&&av.rules.arrivalDays.length?' – '+esc(T('nicht wählbare Tage sind ausgegraut.')):'')+'</span></div>':'')
         +'<div class="rp-status" aria-live="polite">'+status()+'</div>'
-        +'<div class="rp-nav"><button type="button" class="pv" aria-label="'+esc(T('Vorheriger Monat'))+'"'+(canPrev?'':' disabled')+'>‹</button><button type="button" class="nx" aria-label="'+esc(T('Nächster Monat'))+'"'+(canNext?'':' disabled')+'>›</button></div>'
+        +'<div class="rp-nav"><button type="button" class="pv" aria-label="'+esc(T('Vorheriger Monat'))+'"'+(canPrev?'':' disabled')+'>'+VI('chevron-left',{size:20,stroke:2})+'</button><button type="button" class="nx" aria-label="'+esc(T('Nächster Monat'))+'"'+(canNext?'':' disabled')+'>'+VI('chevron-right',{size:20,stroke:2})+'</button></div>'
         +'<div class="rp-months">'+monthsHTML()+'</div>'
         +(av?'<div class="rp-legend"><span><i style="background:#fff"></i>'+esc(T('frei'))+'</span><span><i style="background:#eee;text-decoration:line-through"></i>'+esc(T('belegt'))+'</span><span><i class="half"></i>'+esc(T('An-/Abreisetag'))+'</span>'+(hint?'<span><i style="background:#f6f1e4"></i>'+esc(T('grau: keine Anreise möglich'))+'</span>':'')+'</div>':'');
       host.querySelector('.pv').onclick=function(){st.view=add(st.view,-1).slice(0,7)+'-01';render()};
@@ -484,7 +509,7 @@ const PICKER_JS = String.raw`
     var md=modal(T('Wer reist mit?'),max?esc(T('max. {n} Gäste',{n:max})):'','<div class="gs"></div>',
       '<div class="sum"></div><div class="acts"><button type="button" class="vm-ok">'+esc(T('Übernehmen'))+'</button></div>',true);
     var box=md.el.querySelector('.gs');
-    function row(key,t,s,v,min,mx){return '<div class="gs-row"><div class="t"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div><div class="gs-step"><button type="button" data-k="'+key+'" data-s="-1" aria-label="'+esc(T('weniger'))+' '+esc(t)+'"'+(v<=min?' disabled':'')+'>−</button><output aria-live="polite">'+v+'</output><button type="button" data-k="'+key+'" data-s="1" aria-label="'+esc(T('mehr'))+' '+esc(t)+'"'+(v>=mx?' disabled':'')+'>+</button></div></div>'}
+    function row(key,t,s,v,min,mx){return '<div class="gs-row"><div class="t"><b>'+esc(t)+'</b><span>'+esc(s)+'</span></div><div class="gs-step"><button type="button" data-k="'+key+'" data-s="-1" aria-label="'+esc(T('weniger'))+' '+esc(t)+'"'+(v<=min?' disabled':'')+'>'+VI('minus',{stroke:2})+'</button><output aria-live="polite">'+v+'</output><button type="button" data-k="'+key+'" data-s="1" aria-label="'+esc(T('mehr'))+' '+esc(t)+'"'+(v>=mx?' disabled':'')+'>'+VI('plus',{stroke:2})+'</button></div></div>'}
     function render(){
       var tot=a+ages.length,full=max&&tot>=max;
       var h=row('a',T('Erwachsene'),T('ab 18 Jahren'),a,1,full?a:20)+row('c',T('Kinder'),T('0 bis 17 Jahre'),ages.length,0,full?ages.length:8);
@@ -531,6 +556,7 @@ const SEARCH_JS = String.raw`
 <script>
 (function(){
   var V=window.VB;if(!V)return;
+  var VI=window.VI;
   var $=function(s,r){return (r||document).querySelector(s)};
   var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
   var esc=V.esc,euro=V.euro;
@@ -636,14 +662,14 @@ const SEARCH_JS = String.raw`
   function card(x,muted,v){
     var href=detailHref(x,v);
     var img=x.image?'<img src="'+esc(x.image)+'" alt="'+esc(x.name)+'" loading="lazy" decoding="async">':'';
-    var meta=[];if(x.location)meta.push('📍 '+esc(x.location));if(x.type)meta.push(esc(x.type));if(x.maxGuests)meta.push(esc(T('bis {n} Gäste',{n:x.maxGuests})));
+    var meta=[];if(x.location)meta.push(VI('map-pin',{size:15})+esc(x.location));if(x.type)meta.push(VI('house',{size:15})+esc(x.type));if(x.maxGuests)meta.push(VI('users',{size:15})+esc(T('bis {n} Gäste',{n:x.maxGuests})));
     var rule=x.rules?V.hintText(x.rules):'';
-    var feats=(x.featureLabels||[]).slice(0,4).map(function(f){return '<span>'+f.icon+' '+esc(T(f.label))+'</span>'}).join('');
+    var feats=(x.featureLabels||[]).slice(0,4).map(function(f){return '<span>'+(f.icon||'')+esc(T(f.label))+'</span>'}).join('');
     return '<article class="rc'+(muted?' rc-muted':'')+'">'
       +'<a class="rc-img" href="'+href+'" tabindex="-1" aria-hidden="true">'+img+(x.badge?'<span class="rc-badge">'+esc(x.badge)+'</span>':'')+(muted?'<span class="rc-off">'+T('außerhalb der Filter')+'</span>':'')+'</a>'
-      +'<div class="rc-body"><div class="rc-top"><h3><a href="'+href+'">'+esc(x.name)+'</a></h3>'+(x.rating?'<span class="rc-rating">★ '+esc(x.rating)+'</span>':'')+'</div>'
+      +'<div class="rc-body"><div class="rc-top"><h3><a href="'+href+'">'+esc(x.name)+'</a></h3>'+(x.rating?'<span class="rc-rating">'+VI('star',{size:15,fill:1})+esc(x.rating)+'</span>':'')+'</div>'
       +'<div class="rc-meta">'+meta.map(function(m){return '<span>'+m+'</span>'}).join('')+'</div>'
-      +(rule?'<span class="rc-rule">📅 '+esc(rule)+'</span>':'')
+      +(rule?'<span class="rc-rule">'+VI('calendar-days',{size:14})+esc(rule)+'</span>':'')
       +(x.description?'<p class="rc-desc">'+esc(x.description)+'</p>':'')
       +(feats?'<div class="rc-feats">'+feats+'</div>':'')
       +priceBox(x,v,href)+'</div></article>';
@@ -653,7 +679,7 @@ const SEARCH_JS = String.raw`
     var o=x.offer,hasDates=!!(v.checkin&&v.checkout);
     if(!x.connected){
       return '<div class="rc-price"><div class="pp">'+T('Preise & Buchung auf der Website der Unterkunft')+'</div><div class="rc-act">'
-        +(x.link?'<a class="rc-btn ghost" href="'+esc(x.link)+'" target="_blank" rel="noopener">'+T('Zur Website ↗')+'</a>':'')+'<a class="rc-btn" href="'+href+'">'+T('Details')+'</a></div></div>';}
+        +(x.link?'<a class="rc-btn ghost" href="'+esc(x.link)+'" target="_blank" rel="noopener">'+T('Zur Website')+VI('external-link',{size:16})+'</a>':'')+'<a class="rc-btn" href="'+href+'">'+T('Details')+'</a></div></div>';}
     if(!hasDates){
       return '<div class="rc-price"><div class="pp">'+(x.fromPrice?T('ab {p} / Nacht',{p:'<b>'+euro(x.fromPrice)+'</b>'}):T('Live-Preis für deine Reisedaten'))+'</div><div class="rc-act"><button type="button" class="rc-btn" data-dates="1">'+T('Reisedaten wählen')+'</button></div></div>';}
     if(!o||o.error)return '<div class="rc-price"><div class="pp">'+T('Preis gerade nicht abrufbar.')+'</div><div class="rc-act"><a class="rc-btn ghost" href="'+href+'">'+T('Details')+'</a></div></div>';
@@ -729,13 +755,14 @@ const DETAIL_JS = String.raw`
 <script>
 (function(){
   var V=window.VB;if(!V)return;
+  var VI=window.VI;
   var $=function(s,r){return (r||document).querySelector(s)};
   var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
   var esc=V.esc,euro=V.euro;
   // ---- Galerie / Lightbox ----
   var imgs=window.__DX_IMGS||[],lb=null,li=0;
   function showLb(i){li=(i+imgs.length)%imgs.length;if(!lb){lb=document.createElement('div');lb.className='lb';lb.setAttribute('role','dialog');lb.setAttribute('aria-modal','true');
-      lb.innerHTML='<img alt=""><button type="button" class="x" aria-label="'+esc(T('Schließen'))+'">×</button><button type="button" class="p" aria-label="'+esc(T('Vorheriges Bild'))+'">‹</button><button type="button" class="n" aria-label="'+esc(T('Nächstes Bild'))+'">›</button><div class="c"></div>';
+      lb.innerHTML='<img alt=""><button type="button" class="x" aria-label="'+esc(T('Schließen'))+'">'+VI('x',{size:24,stroke:2})+'</button><button type="button" class="p" aria-label="'+esc(T('Vorheriges Bild'))+'">'+VI('chevron-left',{size:26,stroke:2})+'</button><button type="button" class="n" aria-label="'+esc(T('Nächstes Bild'))+'">'+VI('chevron-right',{size:26,stroke:2})+'</button><div class="c"></div>';
       document.body.appendChild(lb);lb.querySelector('.x').onclick=closeLb;lb.querySelector('.p').onclick=function(){showLb(li-1)};lb.querySelector('.n').onclick=function(){showLb(li+1)};
       lb.addEventListener('click',function(e){if(e.target===lb)closeLb()});
       document.addEventListener('keydown',function(e){if(!lb||!lb.classList.contains('open'))return;if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')showLb(li-1);if(e.key==='ArrowRight')showLb(li+1)});
@@ -768,7 +795,7 @@ const DETAIL_JS = String.raw`
     var v=cur();syncUrl();
     if(inlineCal)inlineCal.set(v.checkin,v.checkout);
     if(!(v.checkin&&v.checkout)){
-      out.innerHTML=availData&&availData.rules&&V.hintText(availData.rules)?'<div class="bx-msg info">📅 '+esc(V.hintText(availData.rules))+'</div>':'';
+      out.innerHTML=availData&&availData.rules&&V.hintText(availData.rules)?'<div class="bx-msg info">'+VI('calendar-days')+'<span>'+esc(V.hintText(availData.rules))+'</span></div>':'';
       setCta(T('Reisedaten wählen'),null,false,function(e){e.preventDefault();openDates()});
       setMbarPrice(fromPrice?T('ab {p} / Nacht',{p:'<b>'+euro(fromPrice)+'</b>'}):'<b>'+esc(T('Verfügbarkeit prüfen'))+'</b>');
       return;

@@ -1,6 +1,9 @@
 // VALUERO — gebündelte App (öffentliche Website + Admin-CMS). Auto-generiert.
 const i18n = require("./i18n");
 const bookingUi = require("./booking-ui");
+// Einheitliches Linien-Icon-Set (Lucide-Pfade, Inline-SVG, currentColor) – siehe icons.js.
+const ICONS = require("./icons");
+const icon = ICONS.icon;
 // Styles + Skripte der Unterkunftssuche als cachebare Dateien (statt bei jedem Seitenaufruf inline).
 const BUI_FILES = (() => {
   const strip = (s) => s.replace(/^\s*<script>/, "").replace(/<\/script>\s*$/, "");
@@ -239,7 +242,6 @@ textarea{resize:vertical;min-height:90px}
 .searchbar .sf.go{flex:0 0 auto;padding:5px;align-items:stretch;justify-content:stretch}
 .searchbar .sf.go::before{display:none}
 .searchbar .btn-search{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:0;border-radius:15px;padding:0 30px;font-weight:600;font-size:15.5px;cursor:pointer;white-space:nowrap;min-height:56px;font-family:inherit;transition:background .2s,transform .2s;box-shadow:0 10px 22px -12px rgba(31,106,73,.9)}
-.searchbar .btn-search::before{content:"\\1F50D";font-size:15px}
 .searchbar .btn-search:hover{background:var(--accent-2);transform:translateY(-1px)}
 .hero .searchbar{margin-top:28px;max-width:820px}
 .searchbar .child-ages{border-top:1px solid var(--line);margin-top:2px;padding:10px 18px 4px}
@@ -354,8 +356,6 @@ textarea{resize:vertical;min-height:90px}
 .faq-item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 18px}
 .faq-item summary{cursor:pointer;font-weight:600;padding:14px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary::after{content:"+";font-size:22px;color:var(--accent);font-weight:400}
-.faq-item[open] summary::after{content:"–"}
 .faq-item p{color:var(--muted);padding:0 0 16px;margin:0;line-height:1.6}
 .link-cloud{display:flex;flex-wrap:wrap;gap:9px}
 .link-cloud a{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-size:14px;font-weight:500;color:var(--ink);transition:.15s}
@@ -443,7 +443,7 @@ html{-webkit-text-size-adjust:100%}
 .ev-bigdate{font-size:17px;font-weight:700;color:var(--accent);margin:2px 0 10px}
 .ev-prev{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
 .ev-prev .evp{position:relative;width:88px;height:66px;border-radius:11px;background-size:cover;background-position:center;box-shadow:0 4px 10px -4px rgba(0,0,0,.45)}
-.ev-prev .evp button{position:absolute;top:-8px;right:-8px;width:23px;height:23px;border-radius:50%;border:2px solid #fff;background:#c0392b;color:#fff;font-size:13px;line-height:1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.ev-prev .evp button{position:absolute;top:-8px;right:-8px;width:23px;height:23px;border-radius:50%;border:2px solid #fff;background:#c0392b;color:#fff;font-size:13px;line-height:1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:0}
 .ev-prev .evp .star{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.55);color:#ffd94a;font-size:11px;padding:1px 5px;border-radius:6px}
 @media(max-width:680px){.ev-grid{grid-template-columns:1fr}.ev-grid-past{grid-template-columns:1fr 1fr;gap:12px}}
 /* ---- Search loading screen (minimalist tap game) ---- */
@@ -552,11 +552,10 @@ html{-webkit-text-size-adjust:100%}
   .hub-col h4{flex:0 0 100%;margin-bottom:2px}
   .hub-col a{display:inline-flex;align-items:center;min-height:44px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:14px;line-height:1.25}
   .link-cloud a{min-height:44px;display:inline-flex;align-items:center}
-  /* Brotkrumen am Handy: nur „‹ zurück“ zur übergeordneten Seite */
+  /* Brotkrumen am Handy: nur „zurück“ (Chevron-Icon) zur übergeordneten Seite */
   .crumbs{margin-bottom:6px}
   .crumbs>span,.crumbs>a{display:none}
   .crumbs>a:nth-last-child(3){display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;color:var(--accent-d)}
-  .crumbs>a:nth-last-child(3)::before{content:"‹";font-size:22px;line-height:1;margin-right:6px}
   /* Gastronomie-Filter: wischbare Chip-Reihen statt großem Kasten */
   .filters{padding:0;gap:14px;background:none;border:0;border-radius:0;margin-bottom:22px}
   .filter-group{min-width:0;width:100%}
@@ -597,6 +596,49 @@ html{-webkit-text-size-adjust:100%}
 }
 /* Cookie-Hinweis über der Buchungsleiste der Detailseite */
 @media(max-width:560px){body.has-dxbar .fsc-root{padding-bottom:calc(var(--tabbar-h) + 82px + env(safe-area-inset-bottom,0px))}}
+/* ===== Icons (icons.js: Lucide-Linien, currentColor) ===== */
+.ic{display:inline-block;flex:0 0 auto;vertical-align:middle;overflow:visible}
+.btn .ic{width:18px;height:18px;margin:-2px 0}
+.btn .ic-arrow-right,.card-link .ic,.cc-arrow .ic,.ev-open .ic,.kochdu-btn .ic{transition:transform .2s ease}
+.btn:hover .ic-arrow-right,.card:hover .card-link .ic,.cat-card:hover .cc-arrow .ic,.ev-card:hover .ev-open .ic,.kochdu:hover .kochdu-btn .ic{transform:translateX(3px)}
+.btn:hover .ic-external-link{transform:translate(1px,-1px)}
+.chip{display:inline-flex;align-items:flex-start;gap:5px;line-height:1.35;border-radius:14px;max-width:100%;min-width:0;overflow-wrap:anywhere}
+.chip .ic{width:14px;height:14px;margin-top:1px;color:var(--accent)}
+.dt-meta .chip .ic{margin-top:2px}
+.card-meta .chip .ic{color:var(--accent)}
+.rating{display:inline-flex;align-items:center;gap:5px}
+.rating .ic,.ic-star.rt{width:15px;height:15px;color:var(--gold)}
+.card-link .ic,.ev-open .ic{width:16px;height:16px}
+.ev-open{display:inline-flex;align-items:center;gap:6px}
+.cat-card .cc-arrow .ic{width:17px;height:17px}
+.meta-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
+.meta-line>span{display:inline-flex;align-items:center;gap:6px}
+.meta-line .ic{width:17px;height:17px;color:var(--accent)}
+.meta-line .rt-wrap{display:inline-flex;align-items:center;gap:5px;color:var(--gold);font-weight:600}
+.meta-line .rt-wrap .ic{color:var(--gold)}
+.ev-loc{display:inline-flex;align-items:center;gap:7px}
+.ev-loc .ic{width:19px;height:19px;color:var(--accent)}
+.crumbs .sep{opacity:.55;line-height:0}
+.crumbs .sep .ic{width:13px;height:13px}
+.to-top .ic{width:22px;height:22px}
+.bk-close{display:inline-flex;align-items:center;justify-content:center}
+.bk-close .ic{width:22px;height:22px}
+.bk-close:hover{color:var(--ink)}
+.dt-close{color:var(--ink)}
+.dt-close .ic{width:20px;height:20px}
+.chk .ic{width:17px;height:17px;color:var(--accent)}
+.foot-col a.fc-ic{display:flex;align-items:center;gap:9px}
+.foot-col a.fc-ic .ic{width:16px;height:16px;color:#7fbf9c}
+.dt-web .ic{width:16px;height:16px}
+.faq-item summary::after{content:"";flex:0 0 auto;width:20px;height:20px;background:var(--accent);-webkit-mask:${ICONS.cssUrl("chevron-down")} center/contain no-repeat;mask:${ICONS.cssUrl("chevron-down")} center/contain no-repeat;transition:transform .2s ease}
+.faq-item[open] summary::after{content:"";transform:rotate(180deg)}
+.kochdu-rot{display:inline-flex;align-items:center;gap:7px;vertical-align:bottom}
+.kochdu-rot .ic{width:20px;height:20px}
+.kochdu-btn .ic{width:18px;height:18px}
+.kochdu-scooter{width:118px;height:118px;border-radius:50%;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;color:#fff}
+.kochdu-scooter .ic{width:64px;height:64px}
+@media(max-width:680px){.kochdu-scooter{width:92px;height:92px}.kochdu-scooter .ic{width:50px;height:50px}}
+@media(max-width:720px){.crumbs>a:nth-last-child(3)::before{content:"";width:18px;height:18px;margin-right:4px;background:currentColor;-webkit-mask:${ICONS.cssUrl("chevron-left")} center/contain no-repeat;mask:${ICONS.cssUrl("chevron-left")} center/contain no-repeat}}
 `;
 
 const adminCSS = `
@@ -676,6 +718,22 @@ a{color:var(--accent);text-decoration:none}
 .btn-remove:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
 @media(max-width:760px){.room-row{flex-wrap:wrap}.room-row .fr{flex:1 1 100%!important}.btn-remove{width:100%}}
 @media(max-width:760px){.sidebar{display:none}.main{padding:20px}.fr.two,.stat-grid,.feature-grid{grid-template-columns:1fr 1fr}}
+/* Icons (icons.js) */
+.ic{display:inline-block;flex:0 0 auto;vertical-align:middle}
+.sidebar nav a .nl{display:inline-flex;align-items:center;gap:11px}
+.sidebar nav a .ic{width:18px;height:18px;opacity:.9}
+.sidebar .foot a{display:inline-flex;align-items:center;gap:8px;padding:3px 0}
+.sidebar .foot .ic{width:16px;height:16px}
+.btn .ic{width:16px;height:16px}
+.feat span{display:inline-flex;align-items:center;gap:9px}
+.feat .ic{width:17px;height:17px;color:var(--accent)}
+.feat input:not(:checked)+span .ic{color:var(--muted)}
+.btn-remove{display:inline-flex;align-items:center;justify-content:center}
+.btn-remove .ic{width:18px;height:18px}
+.saved{display:flex;align-items:center;gap:9px;background:#1c3326;color:#5cbf8c;border:1px solid #2f6e52;padding:12px 16px;border-radius:10px;margin-bottom:18px}
+.saved .ic{width:18px;height:18px}
+.beds-badge .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.beds-badge.off .dot{background:transparent;box-shadow:inset 0 0 0 1.5px currentColor}
 `;
 
 
@@ -708,71 +766,76 @@ function esc(s) {
 // Booking-tool feature set (booking.com-style filters), grouped into logical
 // categories. The admin ticks which apply to each accommodation; guests filter
 // by them on the Unterkünfte page. Keys are stable — never rename existing ones.
+// Icons: Schlüssel → Icon-Name steht zentral in icons.js (FEATURE_ICONS).
 const FEATURE_CATEGORIES = [
   { cat: "Beliebt", items: [
-    { key: "wifi", label: "WLAN", icon: "📶" },
-    { key: "parking", label: "Parkplatz", icon: "🅿️" },
-    { key: "pets", label: "Haustiere erlaubt", icon: "🐾" },
-    { key: "family", label: "Familienfreundlich", icon: "👨‍👩‍👧" },
-    { key: "nonsmoking", label: "Nichtraucher", icon: "🚭" },
-    { key: "longstay", label: "Langzeit möglich", icon: "🗓️" },
+    { key: "wifi", label: "WLAN" },
+    { key: "parking", label: "Parkplatz" },
+    { key: "pets", label: "Haustiere erlaubt" },
+    { key: "family", label: "Familienfreundlich" },
+    { key: "nonsmoking", label: "Nichtraucher" },
+    { key: "longstay", label: "Langzeit möglich" },
   ] },
   { cat: "Küche & Verpflegung", items: [
-    { key: "kitchen", label: "Küche", icon: "🍳" },
-    { key: "dishwasher", label: "Geschirrspüler", icon: "🍽️" },
-    { key: "coffee", label: "Kaffeemaschine", icon: "☕" },
-    { key: "oven", label: "Backofen", icon: "🔥" },
-    { key: "microwave", label: "Mikrowelle", icon: "🍲" },
-    { key: "breakfast", label: "Frühstück", icon: "🥐" },
+    { key: "kitchen", label: "Küche" },
+    { key: "dishwasher", label: "Geschirrspüler" },
+    { key: "coffee", label: "Kaffeemaschine" },
+    { key: "oven", label: "Backofen" },
+    { key: "microwave", label: "Mikrowelle" },
+    { key: "breakfast", label: "Frühstück" },
   ] },
   { cat: "Wellness & Freizeit", items: [
-    { key: "sauna", label: "Sauna", icon: "🧖" },
-    { key: "steam", label: "Dampfbad", icon: "💨" },
-    { key: "wellness", label: "Wellness / Spa", icon: "💆" },
-    { key: "pool", label: "Pool", icon: "🏊" },
-    { key: "whirlpool", label: "Whirlpool", icon: "🛁" },
-    { key: "fitness", label: "Fitnessraum", icon: "🏋️" },
+    { key: "sauna", label: "Sauna" },
+    { key: "steam", label: "Dampfbad" },
+    { key: "wellness", label: "Wellness / Spa" },
+    { key: "pool", label: "Pool" },
+    { key: "whirlpool", label: "Whirlpool" },
+    { key: "fitness", label: "Fitnessraum" },
   ] },
   { cat: "Lage & Aussicht", items: [
-    { key: "ski", label: "Ski In & Out", icon: "🎿" },
-    { key: "skiroom", label: "Skiraum", icon: "⛷️" },
-    { key: "mountainview", label: "Bergblick", icon: "⛰️" },
-    { key: "central", label: "Zentrale Lage", icon: "📍" },
-    { key: "quiet", label: "Ruhige Lage", icon: "🤫" },
-    { key: "garden", label: "Garten", icon: "🌳" },
+    { key: "ski", label: "Ski In & Out" },
+    { key: "skiroom", label: "Skiraum" },
+    { key: "mountainview", label: "Bergblick" },
+    { key: "central", label: "Zentrale Lage" },
+    { key: "quiet", label: "Ruhige Lage" },
+    { key: "garden", label: "Garten" },
   ] },
   { cat: "Außenbereich", items: [
-    { key: "balcony", label: "Balkon / Terrasse", icon: "🌄" },
-    { key: "bbq", label: "Grillplatz", icon: "🍖" },
-    { key: "sunloungers", label: "Liegestühle", icon: "🌞" },
+    { key: "balcony", label: "Balkon / Terrasse" },
+    { key: "terrace", label: "Terrasse" },
+    { key: "bbq", label: "Grillplatz" },
+    { key: "sunloungers", label: "Liegestühle" },
   ] },
   { cat: "Komfort & Technik", items: [
-    { key: "tv", label: "TV", icon: "📺" },
-    { key: "smarttv", label: "Smart-TV", icon: "🖥️" },
-    { key: "aircon", label: "Klimaanlage", icon: "❄️" },
-    { key: "heating", label: "Heizung", icon: "🌡️" },
-    { key: "fireplace", label: "Kamin", icon: "🔥" },
-    { key: "washer", label: "Waschmaschine", icon: "🧺" },
-    { key: "dryer", label: "Trockner", icon: "🌀" },
-    { key: "hairdryer", label: "Föhn", icon: "💇" },
-    { key: "safe", label: "Safe", icon: "🔒" },
+    { key: "tv", label: "TV" },
+    { key: "smarttv", label: "Smart-TV" },
+    { key: "aircon", label: "Klimaanlage" },
+    { key: "heating", label: "Heizung" },
+    { key: "fireplace", label: "Kamin" },
+    { key: "bathtub", label: "Badewanne" },
+    { key: "washer", label: "Waschmaschine" },
+    { key: "dryer", label: "Trockner" },
+    { key: "hairdryer", label: "Föhn" },
+    { key: "safe", label: "Safe" },
   ] },
   { cat: "Parken & Anreise", items: [
-    { key: "garage", label: "Tiefgarage", icon: "🚗" },
-    { key: "freeparking", label: "Kostenlose Parkplätze", icon: "🆓" },
-    { key: "evcharge", label: "E-Ladestation", icon: "🔌" },
+    { key: "garage", label: "Tiefgarage" },
+    { key: "freeparking", label: "Kostenlose Parkplätze" },
+    { key: "evcharge", label: "E-Ladestation" },
+    { key: "bikeroom", label: "Fahrradraum" },
   ] },
   { cat: "Familie & Barrierefreiheit", items: [
-    { key: "crib", label: "Kinderbett", icon: "🍼" },
-    { key: "highchair", label: "Hochstuhl", icon: "🪑" },
-    { key: "playground", label: "Spielplatz", icon: "🛝" },
-    { key: "accessible", label: "Barrierefrei", icon: "♿" },
-    { key: "elevator", label: "Aufzug", icon: "🛗" },
+    { key: "crib", label: "Kinderbett" },
+    { key: "highchair", label: "Hochstuhl" },
+    { key: "playground", label: "Spielplatz" },
+    { key: "accessible", label: "Barrierefrei" },
+    { key: "elevator", label: "Aufzug" },
   ] },
 ];
 const FEATURES = FEATURE_CATEGORIES.flatMap((c) => c.items);
 const FEATURE_LABEL = Object.fromEntries(FEATURES.map((f) => [f.key, f.label]));
-const FEATURE_ICON = Object.fromEntries(FEATURES.map((f) => [f.key, f.icon]));
+// Ausstattungs-Icon als Inline-SVG (Standard 16 px für Chips; Größe per CSS anpassbar).
+const FEATURE_ICON = Object.fromEntries(FEATURES.map((f) => [f.key, ICONS.featureIcon(f.key, { size: 16 })]));
 
 // Parse a stored feature string ("wifi,sauna" or "wifi|sauna") into keys.
 function parseFeatures(str) {
@@ -930,21 +993,15 @@ function nav(active, c) {
 // App-style bottom tab bar (mobile only). Icons are inline SVG so they inherit
 // the active colour and stay crisp. Highlights the current section.
 function bottomNav(active) {
-  const ICON = {
-    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>',
-    bed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8v12M3 12h18v8M21 12v8M7 12V9.5a1.5 1.5 0 0 1 1.5-1.5H21"/><circle cx="7.5" cy="12" r="0" /></svg>',
-    fork: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 4 0V3M8 10v11M17 3c-1.5 0-2.5 1.8-2.5 4.5S15.5 12 17 12s2.5-1.8 2.5-4.5S18.5 3 17 3zM17 12v9"/></svg>',
-    cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>',
-    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
-  };
-  const tab = (href, icon, label) =>
-    `<a href="${href}" class="tab${active === href ? " active" : ""}"${active === href ? ' aria-current="page"' : ""}><span class="ti">${ICON[icon]}</span><span class="tl">${label}</span></a>`;
+  // Aktiver Tab: etwas kräftigere Linie, damit er sich auch ohne Farbe abhebt.
+  const tab = (href, name, label) =>
+    `<a href="${href}" class="tab${active === href ? " active" : ""}"${active === href ? ' aria-current="page"' : ""}><span class="ti">${icon(name, { size: 22, stroke: active === href ? 2.1 : 1.8 })}</span><span class="tl">${label}</span></a>`;
   return `
   <nav class="tabbar" aria-label="Hauptnavigation">
-    ${tab("/", "home", "Home")}
-    ${tab("/unterkuenfte", "bed", { en: "Stays", nl: "Verblijf" }[i18n.getLang()] || "Unterkünfte")}
-    ${tab("/gastronomie", "fork", "Gastro")}
-    ${tab("/veranstaltungen", "cal", "Events")}
+    ${tab("/", "house", "Home")}
+    ${tab("/unterkuenfte", "bed-double", { en: "Stays", nl: "Verblijf" }[i18n.getLang()] || "Unterkünfte")}
+    ${tab("/gastronomie", "utensils", "Gastro")}
+    ${tab("/veranstaltungen", "calendar-days", "Events")}
     ${tab("/ueber-uns", "info", "Über")}
   </nav>`;
 }
@@ -993,8 +1050,8 @@ function footer(c) {
         </div>
         <div class="foot-col">
           <h4>Kontakt</h4>
-          <a href="mailto:${esc(c.contact_email)}">${esc(c.contact_email)}</a>
-          <a href="https://www.fs-creative.at" target="_blank" rel="noopener">www.fs-creative.at</a>
+          <a class="fc-ic" href="mailto:${esc(c.contact_email)}">${icon("mail", { size: 16 })}${esc(c.contact_email)}</a>
+          <a class="fc-ic" href="https://www.fs-creative.at" target="_blank" rel="noopener">${icon("globe", { size: 16 })}www.fs-creative.at</a>
         </div>
       </div>
       <div class="foot-bottom">
@@ -1087,7 +1144,7 @@ ${nav(active, content)}
 ${body}
 ${footer(content)}
 ${bottomNav(active)}
-<button class="to-top" id="toTop" aria-label="Nach oben scrollen">↑</button>
+<button class="to-top" id="toTop" aria-label="Nach oben scrollen">${icon("arrow-up", { size: 22, stroke: 2 })}</button>
 ${SCRIPT}
 ${bookingUI ? `<script src="${BUI_ASSETS.js}"></script>` : ""}
 ${extraScript || ""}
@@ -1108,7 +1165,7 @@ function homePage(c, req) {
       <div class="cc-body">
         <h3>${title}</h3>
         <p>${esc(text)}</p>
-        <span class="cc-arrow">Entdecken →</span>
+        <span class="cc-arrow">Entdecken${icon("arrow-right", { size: 17, stroke: 2 })}</span>
       </div>
     </a>`;
   const body = `
@@ -1125,8 +1182,8 @@ function homePage(c, req) {
       <p class="lead">${esc(c.home_hero_sub)}</p>
       ${searchBar({})}
       <div class="hero-actions">
-        <a class="btn btn-ghost" href="/unterkuenfte">Alle Unterkünfte ansehen</a>
-        <a class="btn btn-ghost" href="/veranstaltungen">Veranstaltungen</a>
+        <a class="btn btn-ghost" href="/unterkuenfte">${icon("bed-double")}Alle Unterkünfte ansehen</a>
+        <a class="btn btn-ghost" href="/veranstaltungen">${icon("calendar-days")}Veranstaltungen</a>
       </div>
     </div>
   </section>
@@ -1202,17 +1259,17 @@ function listingCard(item, isGastro) {
     </div>
     <div class="card-body">
       <h3>${title}</h3>
-      ${item.rating ? `<div class="rating">★ ${esc(item.rating)}</div>` : ""}
+      ${item.rating ? `<div class="rating">${icon("star", { size: 15, fill: true })}${esc(item.rating)}</div>` : ""}
       <p class="desc">${esc(item.description)}</p>
       <div class="card-meta">
-        ${item.location ? `<span class="chip">${esc(item.location)}</span>` : ""}
+        ${item.location ? `<span class="chip">${icon("map-pin", { size: 14 })}${esc(item.location)}</span>` : ""}
         ${item.type ? `<span class="chip">${esc(item.type)}</span>` : ""}
       </div>
       ${
         item.link
           ? `<div class="card-foot"><a class="card-link" href="${esc(
               safeUrl(item.link)
-            )}" target="_blank" rel="noopener">Direkt buchen →</a></div>`
+            )}" target="_blank" rel="noopener">Direkt buchen${icon("external-link", { size: 16 })}</a></div>`
           : ""
       }
     </div>
@@ -1290,7 +1347,7 @@ function searchBar(prefill) {
     <button type="button" class="vsb-f vsb-dates" data-open="dates" aria-haspopup="dialog"><span class="l">Reisedaten</span><span class="v ph" data-v="dates">Anreise – Abreise</span></button>
     <button type="button" class="vsb-f vsb-guests" data-open="guests" aria-haspopup="dialog"><span class="l">Gäste</span><span class="v" data-v="guests">2 Erwachsene</span></button>
     ${stayHidden(prefill)}
-    <button class="vsb-go" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Suchen</button>
+    <button class="vsb-go" type="submit">${icon("search", { size: 18, stroke: 2.25 })}Suchen</button>
   </form>`;
 }
 
@@ -1302,7 +1359,7 @@ function bookingOverlayHTML() {
       <div class="grab" aria-hidden="true"></div>
       <div class="mh">
         <div><h3 id="bk-title">Buchung</h3><div class="es">Sichere Buchung über VALUERO</div></div>
-        <button class="bk-close" id="bk-close" aria-label="Schließen">×</button>
+        <button class="bk-close" id="bk-close" aria-label="Schließen">${icon("x", { size: 22, stroke: 2 })}</button>
       </div>
       <div class="mb">
         <div id="bk-rooms"></div>
@@ -1349,7 +1406,7 @@ function bookingToolPage(c, items) {
     const present = c.items.filter((f) => presentKeys.has(f.key));
     if (!present.length) return "";
     return `<div class="fp-subgroup"><h5>${esc(c.cat)}</h5>${present
-      .map((f) => `<label class="chk"><input type="checkbox" class="f-feat" value="${f.key}"> ${f.icon} ${esc(f.label)}</label>`)
+      .map((f) => `<label class="chk"><input type="checkbox" class="f-feat" value="${f.key}">${FEATURE_ICON[f.key]}<span>${esc(f.label)}</span></label>`)
       .join("")}</div>`;
   }).join("");
   const body = `
@@ -1365,13 +1422,13 @@ function bookingToolPage(c, items) {
     <div class="container rs-wrap">
       <p class="muted reveal rs-intro" style="max-width:72ch;margin-bottom:24px">${esc(c.unterkuenfte_intro)}</p>
       <div class="rs-bar">
-        <button type="button" class="rs-bar-btn" id="filterToggle" aria-haspopup="dialog" aria-controls="filtersPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span>Filter</span><span class="rs-badge" id="fltCount" hidden></span></button>
-        <button type="button" class="rs-bar-btn" id="sortToggle" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3.5 16.5 7 20l3.5-3.5M17 20V4M13.5 7.5 17 4l3.5 3.5"/></svg><span id="sortLbl">Empfohlen</span></button>
+        <button type="button" class="rs-bar-btn" id="filterToggle" aria-haspopup="dialog" aria-controls="filtersPanel">${icon("sliders-horizontal", { size: 18, stroke: 2 })}<span>Filter</span><span class="rs-badge" id="fltCount" hidden></span></button>
+        <button type="button" class="rs-bar-btn" id="sortToggle" aria-haspopup="dialog">${icon("arrow-down-wide-narrow", { size: 18, stroke: 2 })}<span id="sortLbl">Empfohlen</span></button>
       </div>
       <div class="filters-backdrop" id="filtersBackdrop"></div>
       <div class="booking-layout">
         <aside class="filters-panel" id="filtersPanel" aria-label="Filter">
-          <div class="fp-close"><span>Filter</span><button type="button" id="fltClose" aria-label="Schließen">×</button></div>
+          <div class="fp-close"><span>Filter</span><button type="button" id="fltClose" aria-label="Schließen">${icon("x", { size: 20, stroke: 2 })}</button></div>
           <div class="fp-group fp-sortgroup"><h4>Sortierung</h4>
             <select id="f-sort" class="fp-sort">
               <option value="best">Empfohlen</option>
@@ -1412,19 +1469,22 @@ function bookingToolPage(c, items) {
 
 // Interactive ad banner for the delivery partner kochdu.at (Gastronomie page).
 function kochduBanner() {
+  // Wechselnde Speisen: Icon + Wort (Wörter laufen über T() für EN/NL).
+  const dishes = [["Pizza", "pizza"], ["Burger", "hamburger"], ["Döner", "sandwich"], ["Sushi", "fish"], ["Pasta", "soup"], ["Griechisch", "salad"]];
+  const dishJson = JSON.stringify(dishes.map(([w, n]) => [w, icon(n, { size: 20, stroke: 2 })])).replace(/</g, "\\u003c");
   return `
   <a class="kochdu reveal" href="https://www.kochdu.at" target="_blank" rel="noopener sponsored" aria-label="Zu kochdu.at – Essen bestellen im Montafon">
     <div class="kochdu-glow"></div>
     <div class="kochdu-txt">
       <span class="kochdu-eyebrow">Anzeige · Liefer-Partner</span>
       <h2>Lieber liefern lassen?</h2>
-      <p>Bestell dein Essen online im Montafon – <b>Lieferung oder Abholung</b> bei lokalen Restaurants. <span class="kochdu-rot" id="kochduRot">Pizza 🍕</span></p>
+      <p>Bestell dein Essen online im Montafon – <b>Lieferung oder Abholung</b> bei lokalen Restaurants. <span class="kochdu-rot" id="kochduRot">${icon(dishes[0][1], { size: 20, stroke: 2 })}<span>${dishes[0][0]}</span></span></p>
       <div class="kochdu-chips"><span>Gaschurn</span><span>St. Gallenkirch</span><span>Partenen</span><span>Gortipohl</span></div>
-      <span class="kochdu-btn">Jetzt bei kochdu.at bestellen →</span>
+      <span class="kochdu-btn">Jetzt bei kochdu.at bestellen${icon("arrow-right", { size: 18, stroke: 2.25 })}</span>
     </div>
-    <div class="kochdu-art"><span class="kochdu-scooter">🛵</span></div>
+    <div class="kochdu-art"><span class="kochdu-scooter">${icon("motorbike", { size: 64, stroke: 1.5 })}</span></div>
   </a>
-  <script>(function(){var el=document.getElementById('kochduRot');if(!el)return;var w=['Pizza 🍕','Burger 🍔','Döner 🌯','Sushi 🍣','Pasta 🍝','Griechisch 🥙'].map(function(x){return T(x)});var i=0;setInterval(function(){i=(i+1)%w.length;el.style.opacity='0';setTimeout(function(){el.textContent=w[i];el.style.opacity='1';},200);},2200);})();</script>`;
+  <script>(function(){var el=document.getElementById('kochduRot');if(!el)return;var w=${dishJson};var i=0;setInterval(function(){i=(i+1)%w.length;el.style.opacity='0';setTimeout(function(){el.innerHTML=w[i][1]+'<span></span>';el.lastChild.textContent=T(w[i][0]);el.style.opacity='1';},200);},2200);})();</script>`;
 }
 
 function listingPage(c, items, kind) {
@@ -1530,10 +1590,10 @@ function eventsPage(c, events, opts) {
           : ""
       }
       <p class="ev-desc">${esc(e.description)}</p>
-      <div class="ev-meta">${e.location ? `<span class="chip">📍 ${esc(e.location)}</span>` : ""}${
-    e.website ? `<span class="chip">🔗 Website</span>` : ""
+      <div class="ev-meta">${e.location ? `<span class="chip">${icon("map-pin", { size: 14 })}${esc(e.location)}</span>` : ""}${
+    e.website ? `<span class="chip">${icon("globe", { size: 14 })}Website</span>` : ""
   }</div>
-      <span class="ev-open">Details ansehen →</span>
+      <span class="ev-open">Details ansehen${icon("arrow-right", { size: 16, stroke: 2 })}</span>
     </div>
   </article>`;
   const upHtml = upcoming.map((e, i) => evCard(e, i, false)).join("");
@@ -1640,6 +1700,7 @@ function eventsPage(c, events, opts) {
 <script>
 (function(){
   var EV=${evJson};
+  var IC=${JSON.stringify({ pin: icon("map-pin", { size: 14 }), clock: icon("clock", { size: 14 }), ext: icon("external-link", { size: 18 }), x: icon("x", { size: 14, stroke: 2.5 }) }).replace(/</g, "\\u003c")};
   var $=function(s){return document.querySelector(s)};
   var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -1660,9 +1721,9 @@ function eventsPage(c, events, opts) {
     }else{th.style.display='none';th.innerHTML='';}
     document.getElementById('ev-title').textContent=e.name;
     document.getElementById('ev-date').textContent=e.dateLabel||'';
-    document.getElementById('ev-meta').innerHTML=(e.type?'<span class="chip">'+esc(e.type)+'</span>':'')+(e.location?'<span class="chip">\\ud83d\\udccd '+esc(e.location)+'</span>':'')+(e.dateText&&e.dateLabel!==e.dateText?'<span class="chip">\\ud83d\\udd53 '+esc(e.dateText)+'</span>':'');
+    document.getElementById('ev-meta').innerHTML=(e.type?'<span class="chip">'+esc(e.type)+'</span>':'')+(e.location?'<span class="chip">'+IC.pin+esc(e.location)+'</span>':'')+(e.dateText&&e.dateLabel!==e.dateText?'<span class="chip">'+IC.clock+esc(e.dateText)+'</span>':'');
     document.getElementById('ev-desc').textContent=e.description||'';
-    document.getElementById('ev-actions').innerHTML=e.website?'<a class="btn btn-primary" href="'+esc(e.website)+'" target="_blank" rel="noopener">'+T('Zur Veranstaltung \\u2197')+'</a>':'';
+    document.getElementById('ev-actions').innerHTML=e.website?'<a class="btn btn-primary" href="'+esc(e.website)+'" target="_blank" rel="noopener">'+esc(T('Zur Veranstaltung'))+IC.ext+'</a>':'';
     evFocus=document.activeElement;
     ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
     var x=document.getElementById('ev-close');if(x)x.focus();
@@ -1684,7 +1745,7 @@ function eventsPage(c, events, opts) {
   function sync(){
     if(iField)iField.value=pics[0]||'';
     if(gField)gField.value=pics.slice(1).join('\\n');
-    if(prev){prev.innerHTML=pics.map(function(u,k){return '<div class="evp" style="background-image:url(\\''+u+'\\')">'+(k===0?'<span class="star">'+T('Titel')+'</span>':'')+'<button type="button" data-k="'+k+'" aria-label="'+T('Bild entfernen')+'">\\u00d7</button></div>';}).join('');
+    if(prev){prev.innerHTML=pics.map(function(u,k){return '<div class="evp" style="background-image:url(\\''+u+'\\')">'+(k===0?'<span class="star">'+T('Titel')+'</span>':'')+'<button type="button" data-k="'+k+'" aria-label="'+T('Bild entfernen')+'">'+IC.x+'</button></div>';}).join('');
       $$('#evprev .evp button').forEach(function(b){b.addEventListener('click',function(){pics.splice(+b.getAttribute('data-k'),1);sync();});});}
   }
   function addFile(file){var r=new FileReader();r.onload=function(ev){var img=new Image();img.onload=function(){var max=1400,w=img.width,h=img.height;if(w>max){h=h*max/w;w=max;}var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);pics.push(cv.toDataURL('image/jpeg',0.82));sync();};img.src=ev.target.result;};r.readAsDataURL(file);}
@@ -1707,7 +1768,7 @@ function evDetailOverlayHTML() {
   <div class="bk-overlay" id="evOverlay" aria-hidden="true">
     <div class="bk-modal dt-modal" role="dialog" aria-modal="true" aria-labelledby="ev-title">
       <div class="grab" aria-hidden="true"></div>
-      <button class="bk-close dt-close" id="ev-close" aria-label="Schließen">×</button>
+      <button class="bk-close dt-close" id="ev-close" aria-label="Schließen">${icon("x", { size: 20, stroke: 2 })}</button>
       <div class="dt-gallery"><div class="main" id="ev-main"></div><div class="dt-thumbs" id="ev-thumbs"></div></div>
       <div class="dt-body">
         <div class="dt-head"><h3 id="ev-title"></h3></div>
@@ -1744,7 +1805,7 @@ function aboutPage(c) {
         <p>Du betreibst eine Unterkunft oder Gastronomie im Montafon? Werde Teil von Valuero.</p>
         <div class="hero-actions"><a class="btn btn-primary" href="mailto:${esc(
           c.contact_email
-        )}?subject=Anfrage%20Valuero%20Partner">Jetzt anfragen</a></div>
+        )}?subject=Anfrage%20Valuero%20Partner">${icon("mail")}Jetzt anfragen</a></div>
       </div>
       <div class="about-block reveal">
         <div>
@@ -1794,8 +1855,8 @@ const V = { esc, homePage, listingPage, eventsPage, aboutPage, legalPage, FAVICO
 // Admin area HTML rendering.
 
 function shell({ title, active, body, pendingCount }) {
-  const link = (href, label, badge) =>
-    `<a href="${href}" class="${active === href ? "active" : ""}">${label}${
+  const link = (href, label, badge, ic) =>
+    `<a href="${href}" class="${active === href ? "active" : ""}"><span class="nl">${icon(ic, { size: 18 })}${label}</span>${
       badge ? `<span class="badge">${badge}</span>` : ""
     }</a>`;
   return `<!doctype html><html lang="de"><head>
@@ -1807,15 +1868,15 @@ function shell({ title, active, body, pendingCount }) {
     <div class="logo">VALUERO</div>
     <div class="sub">Admin-Bereich</div>
     <nav>
-      ${link("/admin", "Übersicht")}
-      ${link("/admin/unterkuenfte", "Unterkünfte")}
-      ${link("/admin/gastronomie", "Gastronomie")}
-      ${link("/admin/veranstaltungen", "Veranstaltungen", pendingCount)}
-      ${link("/admin/webdesign", "Webdesign")}
+      ${link("/admin", "Übersicht", 0, "layout-dashboard")}
+      ${link("/admin/unterkuenfte", "Unterkünfte", 0, "bed-double")}
+      ${link("/admin/gastronomie", "Gastronomie", 0, "utensils")}
+      ${link("/admin/veranstaltungen", "Veranstaltungen", pendingCount, "calendar-days")}
+      ${link("/admin/webdesign", "Webdesign", 0, "palette")}
     </nav>
     <div class="foot">
-      <a href="/" target="_blank">↗ Website ansehen</a><br>
-      <a href="/admin/logout">Abmelden</a>
+      <a href="/" target="_blank">${icon("external-link", { size: 16 })}Website ansehen</a><br>
+      <a href="/admin/logout">${icon("log-out", { size: 16 })}Abmelden</a>
     </div>
   </aside>
   <main class="main">${body}</main>
@@ -1878,11 +1939,11 @@ function dashboard(counts) {
     <div class="stat"><div class="n">${counts.pending}</div><div class="l">Zur Freigabe</div></div>
   </div>
   <div class="form-card">
-    <h3 style="font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:20px;margin-bottom:10px">Willkommen, Simon 👋</h3>
+    <h3 style="font-family:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype",Palatino,"Times New Roman",serif;font-size:20px;margin-bottom:10px">Willkommen, Simon</h3>
     <p class="hint" style="font-size:14px;line-height:1.7">Hier verwaltest du alle Inhalte deiner Valuero-Website. Lege Unterkünfte, Gastro-Partner und Veranstaltungen an, bearbeite oder lösche sie. Eingereichte Veranstaltungen erscheinen unter „Veranstaltungen“ und gehen erst nach deiner Freigabe online. Unter „Webdesign“ änderst du alle Texte und Bilder der einzelnen Seiten.</p>
     ${
       counts.pending
-        ? `<p style="margin-top:14px"><a class="btn btn-primary btn-sm" href="/admin/veranstaltungen">${counts.pending} Veranstaltung(en) freigeben →</a></p>`
+        ? `<p style="margin-top:14px"><a class="btn btn-primary btn-sm" href="/admin/veranstaltungen">${counts.pending} Veranstaltung(en) freigeben${icon("arrow-right", { size: 16, stroke: 2 })}</a></p>`
         : ""
     }
   </div>`;
@@ -1923,7 +1984,7 @@ function entryList(kind, label, items, pendingCount) {
     })
     .join("");
   const body = `
-  <div class="page-title"><h1>${label}</h1><a class="btn btn-primary" href="${base}/new">+ Neu anlegen</a></div>
+  <div class="page-title"><h1>${label}</h1><a class="btn btn-primary" href="${base}/new">${icon("plus", { size: 16, stroke: 2.25 })}Neu anlegen</a></div>
   <div class="cards-list">${rows || `<p class="hint">Noch keine Einträge.</p>`}</div>`;
   return shell({ title: label, active: base, body, pendingCount });
 }
@@ -1949,7 +2010,7 @@ function eventGalleryEditor(it) {
       <style>
         .evadmin .ev-prev{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0}
         .evadmin .evp{position:relative;width:112px;height:82px;border-radius:10px;background-size:cover;background-position:center;background-color:var(--surface-2,#eee);box-shadow:0 3px 8px -3px rgba(0,0,0,.4)}
-        .evadmin .evp .rm{position:absolute;top:-8px;right:-8px;width:23px;height:23px;border-radius:50%;border:2px solid #fff;background:#c0392b;color:#fff;font-size:12px;line-height:1;cursor:pointer;padding:0}
+        .evadmin .evp .rm{position:absolute;top:-8px;right:-8px;width:23px;height:23px;border-radius:50%;border:2px solid #fff;background:#c0392b;color:#fff;font-size:12px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
         .evadmin .evp .mk{position:absolute;bottom:5px;left:5px;background:rgba(0,0,0,.62);color:#fff;border:0;font-size:10px;padding:2px 7px;border-radius:6px;cursor:pointer}
         .evadmin .evp .star{position:absolute;bottom:5px;left:5px;background:#1f6a49;color:#fff;font-size:10px;padding:2px 7px;border-radius:6px}
         .evadmin .ev-empty{color:var(--muted,#888);font-size:13px;margin:6px 0}
@@ -1958,10 +2019,10 @@ function eventGalleryEditor(it) {
       <input type="hidden" name="gallery" id="ev_gallery" value="">
       <div class="ev-prev" id="ev_admin_prev"></div>
       <input type="file" accept="image/*" id="ev_admin_add" multiple>
-      <span class="hint">Erstes Bild = Titelbild. „Titel“ holt ein Bild nach vorne, „×“ löscht es. Neue Bilder oben hinzufügen (mehrere möglich).</span>
+      <span class="hint">Erstes Bild = Titelbild. „Titel“ holt ein Bild nach vorne, das rote X löscht es. Neue Bilder oben hinzufügen (mehrere möglich).</span>
     </div>
     <script>(function(){
-      var pics=${json};
+      var pics=${json},XI=${JSON.stringify(icon("x", { size: 12, stroke: 2.75 })).replace(/</g, "\\u003c")};
       var iF=document.getElementById('ev_image'),gF=document.getElementById('ev_gallery'),prev=document.getElementById('ev_admin_prev'),add=document.getElementById('ev_admin_add');
       // Preview external images through our own /img proxy (DSGVO + CSP);
       // the stored value in the hidden field stays the original URL.
@@ -1971,7 +2032,7 @@ function eventGalleryEditor(it) {
       function sync(){
         iF.value=pics[0]||'';gF.value=pics.slice(1).join('\\n');
         if(!pics.length){prev.innerHTML='<div class="ev-empty">Noch keine Bilder – unten hinzufügen.</div>';return;}
-        prev.innerHTML=pics.map(function(u,k){return '<div class="evp" style="background-image:url(\\''+disp(u)+'\\')">'+(k===0?'<span class="star">Titel</span>':'<button type="button" class="mk" data-k="'+k+'">Titel</button>')+'<button type="button" class="rm" data-k="'+k+'" aria-label="Löschen">\\u00d7</button></div>';}).join('');
+        prev.innerHTML=pics.map(function(u,k){return '<div class="evp" style="background-image:url(\\''+disp(u)+'\\')">'+(k===0?'<span class="star">Titel</span>':'<button type="button" class="mk" data-k="'+k+'">Titel</button>')+'<button type="button" class="rm" data-k="'+k+'" aria-label="Löschen">'+XI+'</button></div>';}).join('');
         Array.prototype.forEach.call(prev.querySelectorAll('.rm'),function(b){b.addEventListener('click',function(){pics.splice(+b.getAttribute('data-k'),1);sync();});});
         Array.prototype.forEach.call(prev.querySelectorAll('.mk'),function(b){b.addEventListener('click',function(){var k=+b.getAttribute('data-k');var x=pics.splice(k,1)[0];pics.unshift(x);sync();});});
       }
@@ -1996,7 +2057,7 @@ function roomRow(r) {
     <div class="fr" style="margin:0;flex:.7"><label>Max. Gäste</label><input type="number" min="0" name="room_max_guests" value="${esc(
       r.max_guests ? r.max_guests : ""
     )}"></div>
-    <button type="button" class="btn-remove" title="Zimmer entfernen" aria-label="Zimmer entfernen">×</button>
+    <button type="button" class="btn-remove" title="Zimmer entfernen" aria-label="Zimmer entfernen">${icon("x", { size: 18, stroke: 2 })}</button>
   </div>`;
 }
 
@@ -2010,8 +2071,8 @@ function accBookingFields(it) {
   const connected =
     String(it.beds24_property_id || "").trim() && rooms.some((r) => String(r.beds24_room_id || "").trim());
   const badge = connected
-    ? `<span class="beds-badge on">● Beds24 verbunden – Live-Buchung aktiv</span>`
-    : `<span class="beds-badge off">○ Keine API – zeigt „Preise siehe Website"</span>`;
+    ? `<span class="beds-badge on"><i class="dot"></i>Beds24 verbunden – Live-Buchung aktiv</span>`
+    : `<span class="beds-badge off"><i class="dot"></i>Keine API – zeigt „Preise siehe Website"</span>`;
   const roomRows = (rooms.length ? rooms : [{}]).map(roomRow).join("");
   const featBoxes = FEATURE_CATEGORIES.map((c) =>
     `<div class="feat-cat"><h5>${esc(c.cat)}</h5><div class="feature-grid">${c.items
@@ -2019,21 +2080,21 @@ function accBookingFields(it) {
         const on = sel.includes(f.key);
         return `<label class="feat"><input type="checkbox" name="features" value="${f.key}" ${
           on ? "checked" : ""
-        }><span>${f.icon} ${esc(f.label)}</span></label>`;
+        }><span>${ICONS.featureIcon(f.key, { size: 17 })}${esc(f.label)}</span></label>`;
       })
       .join("")}</div></div>`
   ).join("");
   const apiOn = String(it.api_url || "").trim();
   const plat = platform.of(it);
   const platInfo = plat
-    ? `<div class="section-sep">VALUERO Partner <span class="beds-badge on">● verknüpft: ${esc(plat.slug)}</span></div>
+    ? `<div class="section-sep">VALUERO Partner <span class="beds-badge on"><i class="dot"></i>verknüpft: ${esc(plat.slug)}</span></div>
     <p class="hint" style="margin:-6px 0 14px">Preise, Belegungskalender, Anreiseregeln und Buchung kommen automatisch von der Plattform. Gäste buchen auf <a href="${esc(plat.base)}/b/${esc(plat.slug)}" target="_blank" rel="noopener">${esc(plat.base.replace(/^https?:\/\//, ""))}/b/${esc(plat.slug)}</a> (Reisedaten werden übergeben). Die Felder unten werden beim stündlichen Abgleich gesetzt.</p>`
     : "";
   return `${platInfo}
     <div class="section-sep">Externe Buchungs-API ${
       apiOn
-        ? `<span class="beds-badge on">● aktiv – Preise/Buchung von der eigenen App</span>`
-        : `<span class="beds-badge off">○ optional</span>`
+        ? `<span class="beds-badge on"><i class="dot"></i>aktiv – Preise/Buchung von der eigenen App</span>`
+        : `<span class="beds-badge off"><i class="dot"></i>optional</span>`
     }</div>
     <p class="hint" style="margin:-6px 0 14px">Nur ausfüllen, wenn diese Unterkunft eine <b>eigene Buchungs-App mit Sonderlogik</b> hat (z. B. Antonhaus/Alpinappart mit Kindertarifen &amp; Zuschlägen). Dann holt Valuero Preise, Verfügbarkeit und Buchung von dort – statt aus Beds24. Leer lassen → Beds24 wird genutzt.</p>
     <div class="fr two">
@@ -2057,7 +2118,7 @@ function accBookingFields(it) {
     </div>
     <div class="fr" style="margin-bottom:6px"><label>Zimmer</label>
       <div id="roomsList">${roomRows}</div>
-      <button type="button" class="btn btn-ghost btn-sm" id="addRoom" style="align-self:flex-start;margin-top:2px">+ Zimmer hinzufügen</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="addRoom" style="align-self:flex-start;margin-top:2px">${icon("plus", { size: 16, stroke: 2.25 })}Zimmer hinzufügen</button>
     </div>
     <div class="fr two">
       <div class="fr" style="margin:0"><label>Max. Gäste gesamt (Filter, optional)</label><input type="number" min="0" name="max_guests" value="${esc(
@@ -2080,7 +2141,7 @@ function accBookingFields(it) {
           +'<div class="fr" style="margin:0;flex:2"><label>Zimmername</label><input name="room_name" placeholder="z. B. Doppelzimmer Bergblick"></div>'
           +'<div class="fr" style="margin:0;flex:1.2"><label>Beds24 Zimmer-ID</label><input name="room_beds24_id" placeholder="z. B. 678901" inputmode="numeric"></div>'
           +'<div class="fr" style="margin:0;flex:.7"><label>Max. Gäste</label><input type="number" min="0" name="room_max_guests"></div>'
-          +'<button type="button" class="btn-remove" title="Zimmer entfernen">\\u00d7</button></div>';
+          +'<button type="button" class="btn-remove" title="Zimmer entfernen" aria-label="Zimmer entfernen">'+${JSON.stringify(icon("x", { size: 18, stroke: 2 })).replace(/</g, "\\u003c")}+'</button></div>';
         list.insertAdjacentHTML('beforeend',t);bind();
       };
       bind();
@@ -2175,7 +2236,7 @@ function entryForm(kind, label, it, pendingCount) {
   }
   const body = `
   <div class="page-title"><h1>${isNew ? "Neu" : "Bearbeiten"} · ${label}</h1>
-    <a class="btn btn-ghost" href="${base}">← Zurück</a></div>
+    <a class="btn btn-ghost" href="${base}">${icon("arrow-left", { size: 16, stroke: 2 })}Zurück</a></div>
   <form class="form-card" method="POST" action="${action}">
     ${fields}
     <div class="form-actions"><button class="btn btn-primary" type="submit">Speichern</button>
@@ -2200,7 +2261,7 @@ function webdesignPage(c, pendingCount, saved) {
   };
   const body = `
   <div class="page-title"><h1>Webdesign</h1><span class="hint">Texte & Bilder aller Seiten</span></div>
-  ${saved ? `<div style="background:#1c3326;color:#5cbf8c;border:1px solid #2f6e52;padding:12px 16px;border-radius:10px;margin-bottom:18px">Gespeichert ✓</div>` : ""}
+  ${saved ? `<div class="saved">${icon("circle-check", { size: 18 })}Gespeichert</div>` : ""}
   <form method="POST" action="/admin/webdesign">
     <div class="wd-group"><h3>Allgemein</h3>
       ${txt("site_tagline", "Slogan (Untertitel)")}
@@ -3344,7 +3405,7 @@ function eventHref(ev) {
 function breadcrumbsHTML(trail) {
   return `<nav class="crumbs" aria-label="Brotkrumen">${trail
     .map((t, i) =>
-      i < trail.length - 1 ? `<a href="${t.href}">${esc(t.name)}</a><span>›</span>` : `<span class="cur">${esc(t.name)}</span>`
+      i < trail.length - 1 ? `<a href="${t.href}">${esc(t.name)}</a><span class="sep">${icon("chevron-right", { size: 13, stroke: 2 })}</span>` : `<span class="cur">${esc(t.name)}</span>`
     )
     .join("")}</nav>`;
 }
@@ -3369,12 +3430,12 @@ function seoAccCard(row) {
     <div class="card-img" style="${imgStyle(row.image, row.name)}">${row.badge ? `<span class="card-badge">${esc(row.badge)}</span>` : ""}</div>
     <div class="card-body">
       <h3>${esc(row.name)}</h3>
-      ${row.rating ? `<div class="rating">★ ${esc(row.rating)}</div>` : ""}
+      ${row.rating ? `<div class="rating">${icon("star", { size: 15, fill: true })}${esc(row.rating)}</div>` : ""}
       <p class="desc">${esc(row.description)}</p>
-      <div class="card-meta">${row.location ? `<span class="chip">📍 ${esc(row.location)}</span>` : ""}${row.type ? `<span class="chip">${esc(row.type)}</span>` : ""}${
-    feats.length ? feats.map((k) => `<span class="chip">${FEATURE_ICON[k]} ${esc(FEATURE_LABEL[k])}</span>`).join("") : ""
+      <div class="card-meta">${row.location ? `<span class="chip">${icon("map-pin", { size: 14 })}${esc(row.location)}</span>` : ""}${row.type ? `<span class="chip">${esc(row.type)}</span>` : ""}${
+    feats.length ? feats.map((k) => `<span class="chip">${FEATURE_ICON[k]}${esc(FEATURE_LABEL[k])}</span>`).join("") : ""
   }</div>
-      <span class="card-link">Details &amp; buchen →</span>
+      <span class="card-link">Details &amp; buchen${icon("arrow-right", { size: 16, stroke: 2 })}</span>
     </div>
   </a>`;
 }
@@ -3397,7 +3458,7 @@ function seoLandingPage(c, opts) {
       <div class="eyebrow">${esc(eyebrow || c.site_tagline)}</div>
       <h1>${esc(h1)}</h1>
       <p>${esc(intro)}</p>
-      ${kind !== "gastro" ? `<div style="margin-top:20px"><a class="btn btn-primary" href="/unterkuenfte">Verfügbarkeit &amp; Preise prüfen</a></div>` : ""}
+      ${kind !== "gastro" ? `<div style="margin-top:20px"><a class="btn btn-primary" href="/unterkuenfte">${icon("calendar-days")}Verfügbarkeit &amp; Preise prüfen</a></div>` : ""}
     </div>
   </section>
   <section class="section" style="padding-top:40px">
@@ -3429,15 +3490,15 @@ function accDetailPage(c, row, rooms, req) {
   const gallery = imgs.length
     ? `<div class="dx-galwrap"><div class="dx-gal n${shown.length}" id="dxGal">${imgs
         .map((u, i) => `<button type="button" class="${i < 5 ? "g" + i : "gx"}" data-lb="${i}" aria-label="Foto ${i + 1} von ${imgs.length} vergrößern"><img src="${esc(pimg(u))}" alt="${esc(row.name)} – Foto ${i + 1}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async"></button>`)
-        .join("")}</div>${imgs.length > 1 ? `<button type="button" class="dx-all" data-lb="0">Alle ${imgs.length} Fotos</button><span class="dx-count" id="dxCount" aria-hidden="true">1 / ${imgs.length}</span>` : ""}</div>`
+        .join("")}</div>${imgs.length > 1 ? `<button type="button" class="dx-all" data-lb="0">${icon("images", { size: 17 })}<span>Alle ${imgs.length} Fotos</span></button><span class="dx-count" id="dxCount" aria-hidden="true">1 / ${imgs.length}</span>` : ""}</div>`
     : "";
   const feats = parseFeatures(row.features);
   const featHTML = feats.length
-    ? `<h2>Ausstattung</h2><div class="dx-feats">${feats.map((k) => `<span>${FEATURE_ICON[k]} ${esc(FEATURE_LABEL[k])}</span>`).join("")}</div>`
+    ? `<h2>Ausstattung</h2><div class="dx-feats">${feats.map((k) => `<span>${ICONS.featureIcon(k, { size: 20 })}${esc(FEATURE_LABEL[k])}</span>`).join("")}</div>`
     : "";
   const roomHTML = rooms.length > 1
     ? `<h2>Zimmer &amp; Wohnungen</h2><ul class="detail-rooms">${rooms
-        .map((r) => `<li><strong>${esc(r.name || i18n.tjs("Zimmer"))}</strong>${r.max_guests ? ` · bis ${r.max_guests} Gäste` : ""}</li>`)
+        .map((r) => `<li>${icon("bed-double", { size: 18 })}<strong>${esc(r.name || i18n.tjs("Zimmer"))}</strong>${r.max_guests ? `<span class="muted">· bis ${r.max_guests} Gäste</span>` : ""}</li>`)
         .join("")}</ul>`
     : "";
   // Beschreibung: lange Fassung von der Plattform (mit Absätzen), sonst Admin-Text.
@@ -3451,19 +3512,19 @@ function accDetailPage(c, row, rooms, req) {
   const highlights = (info && info.page && Array.isArray(info.page.highlights) ? info.page.highlights : []).slice(0, 6);
   const facts = [];
   const cap = Math.max(row.max_guests || 0, ...rooms.map((r) => r.max_guests || 0), unit ? unit.maxGuests || 0 : 0);
-  if (cap) facts.push(["Gäste", `bis ${cap} Personen`]);
-  if (unit && unit.sizeM2) facts.push(["Größe", `${String(unit.sizeM2).replace(".", ",")} m²`]);
-  if (unit && unit.bedrooms) facts.push(["Schlafzimmer", String(unit.bedrooms)]);
-  if (unit && unit.bathrooms) facts.push(["Bäder", String(unit.bathrooms)]);
-  if (info && info.settings && info.settings.checkInFrom) facts.push(["Check-in", `${info.settings.checkInFrom}${info.settings.checkInUntil ? "–" + info.settings.checkInUntil : ""} Uhr`]);
-  if (info && info.settings && info.settings.checkOutUntil) facts.push(["Check-out", `bis ${info.settings.checkOutUntil} Uhr`]);
-  const factsHTML = facts.length ? `<div class="dx-facts">${facts.map(([k, v]) => `<div><b>${esc(k)}</b><span>${esc(v)}</span></div>`).join("")}</div>` : "";
+  if (cap) facts.push(["Gäste", `bis ${cap} Personen`, "users"]);
+  if (unit && unit.sizeM2) facts.push(["Größe", `${String(unit.sizeM2).replace(".", ",")} m²`, "ruler-dimension-line"]);
+  if (unit && unit.bedrooms) facts.push(["Schlafzimmer", String(unit.bedrooms), "bed"]);
+  if (unit && unit.bathrooms) facts.push(["Bäder", String(unit.bathrooms), "shower-head"]);
+  if (info && info.settings && info.settings.checkInFrom) facts.push(["Check-in", `${info.settings.checkInFrom}${info.settings.checkInUntil ? "–" + info.settings.checkInUntil : ""} Uhr`, "log-in"]);
+  if (info && info.settings && info.settings.checkOutUntil) facts.push(["Check-out", `bis ${info.settings.checkOutUntil} Uhr`, "log-out"]);
+  const factsHTML = facts.length ? `<div class="dx-facts">${facts.map(([k, v, ic]) => `<div><i class="fi">${icon(ic, { size: 20 })}</i><p><b>${esc(k)}</b><span>${esc(v)}</span></p></div>`).join("")}</div>` : "";
   const cancel = info && info.rules && info.rules.cancellation ? `<h2>Storno &amp; Bedingungen</h2><p class="dx-small" style="font-size:15px">${esc(info.rules.cancellation)}</p>` : "";
 
   const connected = !!(plat && plat.connected);
   const isPlat = !!(plat && plat.platform);
   const prefill = c.__prefill || {};
-  const web = row.link ? `<a class="btn btn-ghost" href="${esc(safeUrl(row.link))}" target="_blank" rel="noopener" style="width:100%;justify-content:center">Zur Website der Unterkunft ↗</a>` : "";
+  const web = row.link ? `<a class="btn btn-ghost" href="${esc(safeUrl(row.link))}" target="_blank" rel="noopener" style="width:100%;justify-content:center">Zur Website der Unterkunft${icon("external-link", { size: 18 })}</a>` : "";
   const box = connected
     ? `<aside class="bx" id="bx" data-id="${row.id}" data-platform="${isPlat ? 1 : 0}" data-connected="1" data-max="${cap || 0}" aria-label="Verfügbarkeit &amp; Buchung">
         <div class="bx-price" id="bxPrice">${plat.fromPrice ? `ab <b>${esc(eur(plat.fromPrice))}</b> / Nacht` : "Live-Preis für deine Reisedaten"}</div>
@@ -3475,7 +3536,7 @@ function accDetailPage(c, row, rooms, req) {
         <div id="bxOut" aria-live="polite"></div>
         <a class="btn btn-primary bx-cta" id="bxCta" role="button">Reisedaten wählen</a>
         <p class="bx-note">${isPlat ? "Gebucht wird direkt beim Gastgeber über die sichere VALUERO-Buchungsseite – mit allen Bedingungen &amp; Zahlungsoptionen auf einen Blick." : "Sichere Buchung über VALUERO – direkt beim Gastgeber."}</p>
-        ${row.link && !isPlat ? `<a class="dt-web" href="${esc(safeUrl(row.link))}" target="_blank" rel="noopener" style="justify-content:center">Zur Website ↗</a>` : ""}
+        ${row.link && !isPlat ? `<a class="dt-web" href="${esc(safeUrl(row.link))}" target="_blank" rel="noopener" style="justify-content:center">Zur Website${icon("external-link", { size: 16 })}</a>` : ""}
       </aside>`
     : `<aside class="bx" aria-label="Preise &amp; Buchung">
         <h3 style="font-size:22px">Preise &amp; Buchung</h3>
@@ -3492,13 +3553,18 @@ function accDetailPage(c, row, rooms, req) {
   ];
   const title = `${row.name}${row.location ? " – " + row.location : ""} | VALUERO`;
   const desc = trimDesc(row.description || `${row.name} im Montafon`);
-  const meta = [row.type, row.location ? "📍 " + row.location : "", cap ? `bis ${cap} Gäste` : ""].filter(Boolean);
+  const meta = [
+    row.type ? icon("house", { size: 17 }) + `<span>${esc(row.type)}</span>` : "",
+    row.location ? icon("map-pin", { size: 17 }) + `<span>${esc(row.location)}</span>` : "",
+    cap ? icon("users", { size: 17 }) + `<span>bis ${cap} Gäste</span>` : "",
+    row.rating ? `<span class="rt-wrap">${icon("star", { size: 16, fill: true })}<span>${esc(row.rating)}</span></span>` : "",
+  ].filter(Boolean);
   const body = `
   <section class="page-hero" style="padding-bottom:22px">
     <div class="container">
       ${breadcrumbsHTML(trail)}
       <h1>${esc(row.name)}</h1>
-      <p class="dx-small" style="font-size:16px;margin-top:8px">${meta.map(esc).join(" · ")}${row.rating ? ` · <span style="color:var(--gold);font-weight:600">★ ${esc(row.rating)}</span>` : ""}</p>
+      <div class="dx-small meta-line" style="font-size:16px;margin-top:10px">${meta.map((m) => `<span>${m}</span>`).join("")}</div>
     </div>
   </section>
   <section class="section" style="padding-top:22px"><div class="container">
@@ -3506,7 +3572,7 @@ function accDetailPage(c, row, rooms, req) {
     <div class="dx-cols">
       <div class="dx-main">
         ${factsHTML}
-        ${highlights.length ? `<ul class="dx-high" style="margin-top:18px">${highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>` : ""}
+        ${highlights.length ? `<ul class="dx-high" style="margin-top:18px">${highlights.map((h) => `<li>${icon("check", { size: 18, stroke: 2.25 })}<span>${esc(h)}</span></li>`).join("")}</ul>` : ""}
         <h2>Über die Unterkunft</h2>
         <div class="dx-desc">${descHTML}</div>
         ${featHTML}
@@ -3544,7 +3610,7 @@ function eventDetailPage(c, ev, req) {
     { name: i18n.t("Veranstaltungen"), href: "/veranstaltungen" },
     { name: ev.name, href: eventHref(ev) },
   ];
-  const web = safeUrl(ev.website) ? `<a class="btn btn-primary" href="${esc(safeUrl(ev.website))}" target="_blank" rel="noopener">Zur Veranstaltung ↗</a>` : "";
+  const web = safeUrl(ev.website) ? `<a class="btn btn-primary" href="${esc(safeUrl(ev.website))}" target="_blank" rel="noopener">Zur Veranstaltung${icon("external-link", { size: 18 })}</a>` : "";
   const iso = dateISO(ev.event_date) || parseGermanDate(ev.date_text);
   const isoEnd = dateISO(ev.event_end_date);
   const extra = ev.event_date ? ev.date_text || "" : "";
@@ -3578,7 +3644,7 @@ function eventDetailPage(c, ev, req) {
       ${breadcrumbsHTML(trail)}
       <div class="eyebrow">${esc(ev.type || "Veranstaltung")}${dateLabel ? " · " + esc(dateLabel) : ""}</div>
       <h1>${esc(ev.name)}</h1>
-      ${ev.location ? `<p>📍 ${esc(ev.location)}</p>` : ""}
+      ${ev.location ? `<p class="ev-loc">${icon("map-pin", { size: 19 })}<span>${esc(ev.location)}</span></p>` : ""}
     </div>
   </section>
   <section class="section" style="padding-top:26px"><div class="container">
@@ -3858,7 +3924,7 @@ function publicAcc(row, connected, rooms) {
     images: images.map(pimg),
     link: safeUrl(row.link),
     features: featureKeys,
-    featureLabels: featureKeys.map((k) => ({ key: k, label: FEATURE_LABEL[k], icon: FEATURE_ICON[k] })),
+    featureLabels: featureKeys.map((k) => ({ key: k, label: FEATURE_LABEL[k], icon: ICONS.featureIcon(k, { size: 14 }) })),
     maxGuests: capacity,
     roomCount: (rooms || []).length,
     connected: !!connected,
@@ -4179,8 +4245,8 @@ function seoEventCard(ev) {
   return `<a class="card reveal" href="${eventHref(ev)}"><div class="card-img" style="${imgStyle(ev.image, ev.name)}">${
     ev.date_text ? `<span class="card-badge">${esc(ev.date_text)}</span>` : ""
   }</div><div class="card-body"><h3>${esc(ev.name)}</h3><p class="desc">${esc(ev.description)}</p><div class="card-meta">${
-    ev.location ? `<span class="chip">📍 ${esc(ev.location)}</span>` : ""
-  }${ev.type ? `<span class="chip">${esc(ev.type)}</span>` : ""}</div><span class="card-link">Mehr erfahren →</span></div></a>`;
+    ev.location ? `<span class="chip">${icon("map-pin", { size: 14 })}${esc(ev.location)}</span>` : ""
+  }${ev.type ? `<span class="chip">${esc(ev.type)}</span>` : ""}</div><span class="card-link">Mehr erfahren${icon("arrow-right", { size: 16, stroke: 2 })}</span></div></a>`;
 }
 // German originals live in i18n.js (SX.faq1_q …) so they exist in all three languages.
 function defaultAccFaqs() {
